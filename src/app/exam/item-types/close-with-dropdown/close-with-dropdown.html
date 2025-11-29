@@ -1,0 +1,45 @@
+<div class="lg:h-full">
+    <div class="rounded-md bg-white lg:h-full flex flex-col w-full">
+        <div class="py-1 pr-2">
+            <div class="border-l-4 border-primary flex justify-between items-center">
+                <div class="font-bold text-sm px-3">
+                    Question {{ store().currentQuestionIndex + 1 }}
+                </div>
+                <div class="flex gap-3">
+                    <app-answer-tools></app-answer-tools>
+                    <app-question-tools [showQuestionModalButton]="false"></app-question-tools>
+                </div>
+            </div>
+        </div>
+
+        <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
+
+            @if (store().currentQuestion?.passage_stimulus) {
+                <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
+            }
+
+            <div class="mt-3">
+                @for(item of clozeRenderArray(); track item; let i = $index) {
+                        <!-- Plain Text -->
+                    <span [innerHTML]="item.text.replaceAll('<p>', '').replaceAll('</p>', '')"></span>
+
+                    <!-- Dropdown -->
+                    @if(item.dropBox) {
+                        <span class="bg-gray-100 inline-flex gap-1 rounded-2xl w-max p-0.5 m-0.5">
+                            <span class="bg-white inline-flex items-center gap-2 rounded-2xl w-max px-2 border border-gray-200">
+                                <select class="rounded-full flex-1 border border-transparent appearance-none outline-none ring-0 py-2 text-sm inline" #dropRef (change)="captureResponses(i, dropRef.value)">
+                                    <option selected value="">Select answer</option>
+                                    @for(resp of store().currentQuestion?.possible_responses?.[i]?.responses; track resp) {
+                                        <option [selected]="store().currentQuestion?.responses?.[i] === resp.label.trim()" [value]="resp.value"> {{ resp.label }} </option>
+                                    }
+                                </select>
+                                <i class="pi pi-angle-down"></i>
+                            </span>
+                        </span>
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="bg-gray-100 flex items-center gap-1 rounded-2xl w-max p-1">
+    @if(showQuestionModalButton()){
+        <button (click)="showQuestionModal.set(true)" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
+            <span class="hidden lg:inline">Show Question</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none" stroke="#141B34" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16.0633 16.0634C16.5806 15.5461 16.4946 13.3483 16.4946 13.3483M16.0633 16.0634C15.546 16.5808 13.3483 16.4946 13.3483 16.4946M16.0633 16.0634L13 13M7.93655 7.93661C8.45388 7.41928 10.6516 7.50537 10.6516 7.50537M7.93655 7.93661C7.41923 8.45394 7.50538 10.6516 7.50538 10.6516M7.93655 7.93661L11 11" />
+            </svg>
+        </button>
+    }
+
+    @if(!currentSectionSummary()?.summary?.attempted?.includes(currentQuestionIndex())) {
+        @if(currentSectionSummary()?.summary?.revisits?.includes(currentQuestionIndex())) {
+            <button (click)="revisit()" class="bg-amber-50 flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-amber-200 text-sm hover:border-primary cursor-pointer">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+                </svg>
+                <span>Revisit</span>
+            </button>
+        } @else {
+            <button (click)="revisit()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
+                <span class="hidden lg:inline">Revisit later</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none" stroke="#3c3c3c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8.76938 2.5C8.4973 2.59728 8.23058 2.70543 7.96979 2.8239M5.42501 4.46566C5.19851 4.66428 4.98106 4.87255 4.77334 5.08979M3.03178 7.56476C2.84599 7.93804 2.68313 8.32421 2.54498 8.72152M2.01608 11.3914C1.99387 11.7808 1.99471 12.1778 2.01835 12.5673M2.56845 15.2658C2.70147 15.6396 2.85641 16.0035 3.03178 16.3558M4.69086 18.7435C4.93508 19.005 5.19323 19.2539 5.46415 19.4891M7.77635 21.0064C8.17073 21.1954 8.57927 21.3606 9 21.5" />
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2" />
+                    <path d="M12 13.5C12.8284 13.5 13.5 12.8284 13.5 12C13.5 11.1716 12.8284 10.5 12 10.5M12 13.5C11.1716 13.5 10.5 12.8284 10.5 12C10.5 11.1716 11.1716 10.5 12 10.5M12 13.5V16M12 10.5V6" />
+                </svg>
+            </button>
+        }
+    }
+
+    <button (click)="showIntructionDrawer.set(!showIntructionDrawer())" class="rounded-full size-10 flex items-center justify-center transition duration-150 bg-white border border-transparent hover:border-primary cursor-pointer">
+        <svg class="w-6 h-6 text-[#4a4a4a]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+        </svg>
+    </button>
+
+    @if((currentQuestion()?.item_type == itemTypes().DRAWING_AND_WRITING) &&  showToggleLayoutButton()){
+        <button (click)="toggleLayout()" class="rounded-full size-10 flex items-center justify-center transition duration-150 bg-white border border-transparent hover:border-primary cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#292828" fill="none">
+                <path d="M2 12C2 8.25027 2 6.3754 2.95491 5.06107C3.26331 4.6366 3.6366 4.26331 4.06107 3.95491C5.3754 3 7.25027 3 11 3H13C16.7497 3 18.6246 3 19.9389 3.95491C20.3634 4.26331 20.7367 4.6366 21.0451 5.06107C22 6.3754 22 8.25027 22 12C22 15.7497 22 17.6246 21.0451 18.9389C20.7367 19.3634 20.3634 19.7367 19.9389 20.0451C18.6246 21 16.7497 21 13 21H11C7.25027 21 5.3754 21 4.06107 20.0451C3.6366 19.7367 3.26331 19.3634 2.95491 18.9389C2 17.6246 2 15.7497 2 12Z" stroke="#292828" stroke-width="1.5" stroke-linejoin="round"></path>
+                <path d="M9.5 3.5L9.5 20.5" stroke="#292828" stroke-width="1.5" stroke-linejoin="round"></path>
+                <path d="M5 7C5 7 5.91421 7 6.5 7" stroke="#292828" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M5 11H6.5" stroke="#292828" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M17 10L15.7735 11.0572C15.2578 11.5016 15 11.7239 15 12C15 12.2761 15.2578 12.4984 15.7735 12.9428L17 14" stroke="#292828" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </button>
+    }
+</div>
+
+<p-dialog [appendTo]="'body'" [header]="'Question ' + (currentQuestionIndex() + 1)" [position]="'top'" [modal]="true" [(visible)]="showQuestionModal" (visibleChange)="showQuestionModal.set(false)" [style]="{ width: '70rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <div class="mb-8">
+        @if(currentQuestion()?.passage_stimulus) {
+            <div [innerHTML]="currentQuestion()?.passage_stimulus"></div>
+        }
+        @if(currentQuestion()?.stimulus) {
+            <div [innerHTML]="currentQuestion()?.stimulus" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
+        }
+    </div>
+</p-dialog>
+
+
+<p-drawer header="Instruction" [(visible)]="showIntructionDrawer" (visibleChange)="showCalculator.set(!showCalculator())" position="right" [style]="{ width: '25rem' }">
+     <p-accordion value="0">
+        <p-accordion-panel value="0">
+            <p-accordion-header>Exam Instruction</p-accordion-header>
+            <p-accordion-content>
+                <div [innerHTML]="store().loginData?.assessment_data?.start_exam_instruction"></div>
+            </p-accordion-content>
+        </p-accordion-panel>
+        <p-accordion-panel value="1">
+            <p-accordion-header>Section Instruction</p-accordion-header>
+            <p-accordion-content>
+                <p-accordion >
+                    @for(item of store().loginData?.sections_questions; track item; let i = $index) {
+                        <p-accordion-panel value="{{i}}">
+                            <p-accordion-header>{{ item.name }} Instruction</p-accordion-header>
+                            <p-accordion-content>
+                                <div [innerHTML]="item.section_settings.section_instruction"></div>
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    }
+                </p-accordion>
+            </p-accordion-content>
+        </p-accordion-panel>
+    </p-accordion>
+</p-drawer>
+ 

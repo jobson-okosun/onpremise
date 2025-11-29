@@ -1,0 +1,51 @@
+ <div class="h-full w-full overflow-y-auto lg:overlow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5">   
+    <!-- question -->
+    <div class="lg:w-1/2 lg:h-full lg:overflow-hidden">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="py-1 pr-2">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Question {{ store().currentQuestionIndex + 1 }}</div>
+                    <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                </div>
+            </div>
+            <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
+                @if(store().currentQuestion?.passage_stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
+                }
+                @if(store().currentQuestion?.stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.stimulus" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- answer -->
+    <div class="lg:w-1/2">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="p-1.5">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Answer</div>
+                    <app-answer-tools></app-answer-tools>
+                </div>
+            </div>
+            @if(store().currentQuestion) {
+                <div class="flex-1 flex flex-col gap-3 overflow-y-auto p-5 border-t border-gray-300 border-dashed">
+                    @for (option of store().currentQuestion!.options; track option.value; let i = $index) {
+                        <div (click)="selectOption(option.value)" class="p-4 bg-gray-50 has-checked:bg-primary! has-checked:text-white! flex items-center border border-transparent hover:border-blue-200 hover:bg-white rounded-lg cursor-pointer transition">
+                            <div class="flex items-center gap-2">
+                                <span class="mx-2 font-semibold">
+                                    {{ alphabetList[i].toLowerCase() }}
+                                </span>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input [checked]="store().currentQuestion!.responses[0] == option.value" type="radio" name="choice" class="accent-primary hidden" [value]="option.value"/>
+                                    <span class="cursor-pointer" [innerHTML]="option.label"></span>
+                                </label>
+                            </div>
+                        </div>
+                        }
+                </div>
+            }
+        </div>
+    </div>
+</div>   

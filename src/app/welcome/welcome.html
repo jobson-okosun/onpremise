@@ -1,0 +1,29 @@
+<div class="h-full">
+    <div class="h-full flex items-start">
+        <div class="h-full w-full lg:w-1/2 p-5">
+            <div class="h-full bg-gray-100/70 rounded-2xl p-5 flex flex-col justify-between">
+                <div class="animate__animated animate__slideInUp">
+                    <div class="bg-white rounded-2xl px-6 py-2 w-max mb-2">Welcome!</div>
+                    <div class="uppercase font-black text-2xl text-primary">{{ store().preloginData?.name }}</div>
+                    <div class="mt-2"> {{ store().preloginData?.description }} </div>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-4 w-full lg:w-max justify-between">
+                    @if(store().platformIsTauri) {
+                        <span class="flex gap-2 items-center">
+                            <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
+                            <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
+                        </span>
+                    }
+
+                    <div class="flex gap-2">
+                        <a routerLink="../usage-guide" class="btn-outline bg-white! flex-1">Back to guide</a>
+                        <a routerLink="../login" class="btn flex-1 lg:hidden!">Proceed</a>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="hidden lg:flex lg:w-1/2 items-center justify-center h-full animate__animated animate__fadeIn">
+            <app-login ></app-login>
+        </div>
+    </div>
+</div>

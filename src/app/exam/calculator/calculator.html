@@ -1,0 +1,39 @@
+<div>
+    <!-- Display -->
+    <div class="text-right text-4xl h-20 flex items-center justify-end pr-4 text-[#2f1b4c] overflow-hidden">
+        {{ display() }}
+    </div>
+
+
+    <!-- Buttons Grid -->
+    <div class="grid grid-cols-4 gap-3 mt-4">
+        <button class="rounded-3xl py-4 text-xl flex items-center justify-center transition bg-cyan-200 hover:bg-cyan-300" (click)="clear()">C</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('%')">%</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('/')">÷</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="backspace()">⌫</button>
+
+
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('7')">7</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('8')">8</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('9')">9</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('+')">+</button>
+
+
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('4')">4</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('5')">5</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('6')">6</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('-')">-</button>
+
+
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('1')">1</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('2')">2</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('3')">3</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('*')">×</button>
+
+
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('0')">0</button>
+        <button class="bg-gray-200 rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition" (click)="append('.')">.</button>
+        <div></div>
+        <button class="rounded-3xl py-4 text-xl flex items-center justify-center hover:bg-gray-300 transition bg-cyan-200" (click)="calculate()">=</button>
+    </div>
+</div>

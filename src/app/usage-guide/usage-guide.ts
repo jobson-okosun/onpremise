@@ -1,0 +1,75 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { preloginData, SLIDES } from '../utils/constants';
+import { DataService } from '../services/data';
+import { finalize } from 'rxjs';
+import { DeliveryMethod, IAssessmentPreLoginData, Slide } from '../store/model/types';
+import { HttpErrorResponse } from '@angular/common/http';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { TauriService } from '../services/tauri';
+import { AuthService } from '../services/auth';
+import { Router } from '@angular/router';
+import { Store } from '../store/store';
+
+@Component({
+  selector: 'app-usage-guide',
+  imports: [],
+  templateUrl: './usage-guide.html',
+  styleUrl: './usage-guide.css',
+})
+export default class UsageGuide {
+  private _dataService = inject(DataService)
+  private _tauriService = inject(TauriService)
+  private _toast = inject(HotToastService)
+  private _authService = inject(AuthService)
+  private _router = inject(Router)
+  private _store = inject(Store)
+
+  store = computed(() => this._store.store())
+  isLoading = signal(false)
+  currentIndex = signal(0);
+  slides: Slide[] = SLIDES
+
+  ngOnInit() {
+    this.startAutoSlide()
+  }
+
+  fetchPreLoginData() {
+    this.isLoading.set(true);
+
+    this._dataService.fetchPreLoginData()
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: async (value) => this.successfullPrelogin(value),
+        error: (err: HttpErrorResponse) => {
+          this._toast.error(err.error.error ?? 'Sorry! Unable to complete task')
+          this.successfullPrelogin(preloginData as any)
+        },
+      });
+  }
+
+  async successfullPrelogin(res: IAssessmentPreLoginData) {
+    if (res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER) {
+      const isSecure = this.store().platformIsTauri
+
+      if (!isSecure) {
+        this._toast.error('Exam can only run on secure browser')
+        // return
+      }
+    }
+
+    this._authService.setPreLoginData(res);
+    this._router.navigate(['welcome']);
+  }
+
+  nextSlide(): void {
+    this.currentIndex.set((this.currentIndex() + 1) % this.slides.length);
+  }
+
+  prevSlide(): void {
+    this.currentIndex.set((this.currentIndex() - 1 + this.slides.length) % this.slides.length);
+  }
+
+  startAutoSlide(): void {
+    setInterval(() => this.nextSlide(), 3000);
+  }
+}

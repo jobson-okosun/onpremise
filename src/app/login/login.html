@@ -1,0 +1,27 @@
+<div class="w-full  h-full flex items-center p-5">
+    <div class="w-full md:w-2/3 md:mx-auto lg:w-full">
+        @if(store().organizationAssets?.hasLogo) {
+            <img [src]="store().organizationAssets?.logo" class="mx-auto w-44 mb-20">
+        } @else {
+            <img src="EXPryLogoHor.png" class="mx-auto w-44 mb-20">
+        }
+
+        <div class="mb-2 text-center">Enter your login credentials to continue</div>
+        <div> 
+            <div class="flex flex-col gap-3">
+                <input [formControl]="candidateId" (keyup.enter)="login()" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" [placeholder]="store().preloginData?.login_field ?? 'CANDIDATE ID'">
+                @if(candidateId.invalid && candidateId.touched) {
+                    @if(candidateId.hasError('required')) {
+                        <div class="text-red-500 text-sm bg-red-50 p-3 text-center">Please enter your credential</div>
+                    }
+                    @if(candidateId.hasError('serverError')) {
+                        <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ candidateId.errors?.['serverError'].msg }} </div>
+                    }
+                }
+            </div>
+            <div class="my-10">
+                <button type="button" [disabled]="isLoading() || !candidateId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
