@@ -34,12 +34,12 @@ export class DrawingAndWriting {
   selectedMeasuringToolsSet = signal(new Set())
 
   questionChanged = effect(() => {
-    // if (this.currentQuestion()?.id !== this.currentQuestionId()) {
-    //   this.currentQuestionId.set(this.currentQuestion()!.id)
+    if (this.currentQuestion()?.id !== this.currentQuestionId()) {
+      this.currentQuestionId.set(this.currentQuestion()!.id)
 
-    //   this._konvaEventTools._questionChanged$.next(true)
-    //   setTimeout(() => { this.prepareCanvasAndStoreDataOnLoad() }, 500)
-    // }
+      this._konvaEventTools._questionChanged$.next(true)
+      setTimeout(() => { this.prepareCanvasAndStoreDataOnLoad() }, 500)
+    }
   })
 
   pages = computed(() => Array.from({ length: this._drawingStore.store().pages.length }, (_, i) => i))
