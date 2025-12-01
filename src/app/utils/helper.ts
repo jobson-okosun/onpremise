@@ -358,6 +358,6 @@ export function formatDuration(timestamp: number): string {
 export const scrollContainers = () => {
     try {
         document.getElementById('question-container')?.scrollTo({ top: 0, behavior: 'smooth' });
-        document.getElementById('stage-parent')?.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('stage-parent')?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     } catch (e) { }
 }

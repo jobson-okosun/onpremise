@@ -142,6 +142,7 @@ export class ICandidateItem {
   drawing_writing_split_type: string
   lastUpdated?: any
   isPassageItem: boolean
+  roughWorkResponse: string[]
 }
 
 export interface ICandidatePassageItem {

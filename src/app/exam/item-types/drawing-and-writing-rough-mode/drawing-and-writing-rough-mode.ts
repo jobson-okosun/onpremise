@@ -1,21 +1,21 @@
-import { Component, computed, effect, inject, input, model, signal } from '@angular/core';
-import { QuestionTools } from '../../question-tools/question-tools';
+import { Component, computed, effect, inject, model, signal } from '@angular/core';
+import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { ExamService } from '../../../services/exam';
-import { Store } from '../../../store/store';
-import { CanvasService } from './services/canvas.service';
-import { DrawingAndWritingStore } from './services/store.service';
-import { KonvaToolsEvent } from './services/event.service';
-import { Dialog } from 'primeng/dialog';
 import { scrollContainers } from '../../../utils/helper';
+import { QuestionTools } from '../../question-tools/question-tools';
+import { CanvasService } from './services/canvas.service';
+import { KonvaToolsEvent } from './services/event.service';
+import { DrawingAndWritingStore } from './services/store.service';
+import { Store } from '../../../store/store';
 
 @Component({
-  selector: 'app-drawing-and-writing',
-  templateUrl: './drawing-and-writing.html',
-  styleUrl: './drawing-and-writing.css', 
+  selector: 'app-drawing-and-writing-rough-mode',
   imports: [QuestionTools, MenuModule, Dialog],
-})
-export class DrawingAndWriting {
+  templateUrl: '../drawing-and-writing/drawing-and-writing.html',
+  styleUrl: './drawing-and-writing-rough-mode.css',
+}) 
+export class DrawingAndWritingRoughMode {
   private _store = inject(Store)
   private _exam = inject(ExamService)
   private _canvasService = inject(CanvasService)
@@ -24,7 +24,7 @@ export class DrawingAndWriting {
 
   showClearPageModal = false;
   showDeletePageModal = false;
-  
+
   fontSize = model<number>()
   store = computed(() => this._store.store())
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex)
@@ -34,12 +34,12 @@ export class DrawingAndWriting {
   selectedMeasuringToolsSet = signal(new Set())
 
   questionChanged = effect(() => {
-    // if (this.currentQuestion()?.id !== this.currentQuestionId()) {
-    //   this.currentQuestionId.set(this.currentQuestion()!.id)
+    if (this.currentQuestion()?.id !== this.currentQuestionId()) {
+      this.currentQuestionId.set(this.currentQuestion()!.id)
 
-    //   this._konvaEventTools._questionChanged$.next(true)
-    //   setTimeout(() => { this.prepareCanvasAndStoreDataOnLoad() }, 500)
-    // }
+      this._konvaEventTools._questionChanged$.next(true)
+      setTimeout(() => { this.prepareCanvasAndStoreDataOnLoad() }, 500)
+    }
   })
 
   pages = computed(() => Array.from({ length: this._drawingStore.store().pages.length }, (_, i) => i))
@@ -53,8 +53,8 @@ export class DrawingAndWriting {
 
     this._konvaEventTools._backgroundChange$.next(backgroundType)
 
-    if (currentQuestion!.responses.length) {
-      const jsonResponse = JSON.parse(currentQuestion!.responses[0])
+    if (currentQuestion?.roughWorkResponse.length) {
+      const jsonResponse = JSON.parse(currentQuestion!.roughWorkResponse[0])
 
       const storeData = { ...jsonResponse, shouldReset: false, currentPage: 0 }
       this._drawingStore.updateStore(storeData)
@@ -83,9 +83,9 @@ export class DrawingAndWriting {
         const currentQuestion = this.store().currentQuestion;
         const storeData = this._drawingStore.getStoreData()
 
-        currentQuestion!.responses = [JSON.stringify(storeData)];
-        currentQuestion!.lastUpdated = new Date()
-        
+        currentQuestion!.roughWorkResponse = [JSON.stringify(storeData)];
+        // currentQuestion!.lastUpdated = new Date()
+
         this._store.updateStore({ currentQuestion })
       })
   }
@@ -107,13 +107,13 @@ export class DrawingAndWriting {
 
         if (storeData.pages.length == 1) {
           if (!pointFound) {
-            currentQuestion!.responses = []
+            currentQuestion!.roughWorkResponse = []
           }
         } else {
-          currentQuestion!.responses = [JSON.stringify(storeData)];
+          currentQuestion!.roughWorkResponse = [JSON.stringify(storeData)];
         }
 
-        currentQuestion!.lastUpdated = new Date()
+        // currentQuestion!.lastUpdated = new Date()
         this._store.updateStore({ currentQuestion })
 
       }, 1000)
@@ -137,13 +137,13 @@ export class DrawingAndWriting {
 
       if (storeData.pages.length == 1) {
         if (!pointFound) {
-          currentQuestion!.responses = []
+          currentQuestion!.roughWorkResponse = []
         }
       } else {
-        currentQuestion!.responses = [JSON.stringify(storeData)];
+        currentQuestion!.roughWorkResponse = [JSON.stringify(storeData)];
       }
 
-      currentQuestion!.lastUpdated = new Date()
+      // currentQuestion!.lastUpdated = new Date()
       this._store.updateStore({ currentQuestion })
     })
   }

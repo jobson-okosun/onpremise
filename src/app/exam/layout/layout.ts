@@ -15,12 +15,13 @@ import { NgClass } from '@angular/common';
 import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-dropdown';
 import { CloseWithText } from '../item-types/close-with-text/close-with-text';
 import { CloseWithSelect } from '../item-types/close-with-select/close-with-select';
+import { DrawingAndWritingRoughMode } from '../item-types/drawing-and-writing-rough-mode/drawing-and-writing-rough-mode';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
   styleUrl: './layout.css',
-  imports: [SingleChoice, DrawingAndWriting, CloseWithDropdown, CloseWithText, CloseWithSelect, ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass]
+  imports: [SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect, ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass]
 })
 export default class Layout implements OnDestroy {
   private _store = inject(Store)

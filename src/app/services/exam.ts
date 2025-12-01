@@ -153,7 +153,8 @@ export class ExamService {
                 return block.items.map(item => ({
                     ...item,
                     block_id: block.id,
-                    isPassageItem: false
+                    isPassageItem: false,
+                    roughWorkResponse: []
                 }));
             }
 
@@ -163,7 +164,8 @@ export class ExamService {
                         ...item,
                         block_id: block.id,
                         passage_stimulus: passage.stimulus,
-                        isPassageItem: true
+                        isPassageItem: true,
+                        roughWorkResponse: []
                     }))
                 );
             }
