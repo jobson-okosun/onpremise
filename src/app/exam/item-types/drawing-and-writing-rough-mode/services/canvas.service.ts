@@ -550,9 +550,9 @@ export class CanvasService {
         }
 
         stage.on('pointerdown', (e) => {
-            // if (e.evt.pointerType !== 'pen') {
-            //     return
-            // }
+            if (e.evt.pointerType !== 'pen') {
+                return
+            }
 
             if (!(this.currentTool() === 'brush' || this.currentTool() === 'eraser')) {
                 return
@@ -577,9 +577,9 @@ export class CanvasService {
         });
 
         stage.on('pointermove', (e) => {
-            // if (e.evt.pointerType !== 'pen') {
-            //     return
-            // }
+            if (e.evt.pointerType !== 'pen') {
+                return
+            }
 
             if (!this.drawing() || !this.currentLine()) {
                 return
