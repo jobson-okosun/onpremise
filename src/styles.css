@@ -38,15 +38,15 @@
 
 body {
   font-family: Roboto;
-  @apply h-dvh w-full overflow-x-hidden  text-gray-700 p-0 m-0
+  @apply h-dvh w-full overflow-hidden text-gray-700 p-0 m-0
 }
 
 .btn {
-    @apply outline-none ring-0 focus:ring-transparent focus:outline-transparent p-2.5 px-6 rounded-xl text-center bg-primary text-white w-max first-letter:capitalize font-normal hover:bg-primary/70 transition duration-300 cursor-pointer text-sm flex items-center justify-center
+  @apply outline-none ring-0 focus:ring-transparent focus:outline-transparent p-2.5 px-6 rounded-xl text-center bg-primary text-white w-max first-letter:capitalize font-normal hover:bg-primary/70 transition duration-300 cursor-pointer text-sm flex items-center justify-center
 }
 
 .btn-outline {
-    @apply outline-none ring-0 focus:ring-transparent focus:outline-transparent p-2.5 px-6 rounded-xl text-center bg-transparent w-max first-letter:capitalize font-normal hover:bg-gray-300 transition duration-300 cursor-pointer text-sm flex items-center justify-center border border-gray-200 gap-2
+  @apply outline-none ring-0 focus:ring-transparent focus:outline-transparent p-2.5 px-6 rounded-xl text-center bg-transparent w-max first-letter:capitalize font-normal hover:bg-gray-300 transition duration-300 cursor-pointer text-sm flex items-center justify-center border border-gray-200 gap-2
 }
 
 .btn.btn-sm {
@@ -55,4 +55,18 @@ body {
 
 button:disabled {
   @apply opacity-30 cursor-not-allowed
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.8; 
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+.fade-in {
+  animation: fadeIn 300ms ease-in forwards;
 }

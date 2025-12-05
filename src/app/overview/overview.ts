@@ -1,6 +1,5 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Store } from '../store/store';
-import { ExamService } from '../services/exam';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -12,7 +11,6 @@ import { RouterLink } from '@angular/router';
 
 export default class Overview {
   private _store = inject(Store)
-  private _examService = inject(ExamService)
 
   store = computed(() => this._store.store())
   examDuration = computed(() => this.store().examDuration)

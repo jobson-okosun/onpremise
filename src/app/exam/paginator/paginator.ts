@@ -96,6 +96,7 @@ export class Paginator {
   }
 
   selectPage(index: number) {
+    console.log(true)
     const currentQuestion = this.store().currentSection?.items[index]
     this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
   }

@@ -18,7 +18,6 @@ import { Store } from '../store/store';
 })
 export default class UsageGuide {
   private _dataService = inject(DataService)
-  private _tauriService = inject(TauriService)
   private _toast = inject(HotToastService)
   private _authService = inject(AuthService)
   private _router = inject(Router)
@@ -42,7 +41,7 @@ export default class UsageGuide {
         next: async (value) => this.successfullPrelogin(value),
         error: (err: HttpErrorResponse) => {
           this._toast.error(err.error.error ?? 'Sorry! Unable to complete task')
-          this.successfullPrelogin(preloginData as any)
+          // this.successfullPrelogin(preloginData as any)
         },
       });
   }
@@ -53,7 +52,7 @@ export default class UsageGuide {
 
       if (!isSecure) {
         this._toast.error('Exam can only run on secure browser')
-        // return
+        return
       }
     }
 

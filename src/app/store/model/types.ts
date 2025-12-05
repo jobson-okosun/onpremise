@@ -56,20 +56,20 @@ export interface ICandidateSectionsOverview {
 
 export interface ICandidateAssessmentData {
   name: string;
-  start_exam_instruction?: string; //done
-  end_exam_instruction?: string; // done
-  duration_minutes: number; //done
+  start_exam_instruction?: string;
+  end_exam_instruction?: string;
+  duration_minutes: number;
   display_all_sections_at_once: boolean;
-  instruction_read_time_sec: number; //done
-  warn_end_of_reading_time_sec: number; //done
-  auto_save_sec: number; //done
+  instruction_read_time_sec: number;
+  warn_end_of_reading_time_sec: number;
+  auto_save_sec: number;
   inactivity_waring_sec: number;
-  warn_unattempted_questions: boolean; //done
-  end_exam_confirmation: boolean; //done
-  allow_end_exam_after_xquestions: number; //done
+  warn_unattempted_questions: boolean;
+  end_exam_confirmation: boolean;
+  allow_end_exam_after_xquestions: number;
   preserve_section_order: boolean;
-  font_size: AssessmentFont; //done
-  compensatory_time_value: number; //done
+  font_size: AssessmentFont;
+  compensatory_time_value: number;
 }
 
 export interface ICandidateSectionQuestions {
@@ -168,7 +168,7 @@ export interface IResponsePosition {
 export enum ItemType {
   MCQ = 'MCQ',
   MRQ = 'MRQ',
-  //ESSAY_PLAIN_TEXT = 'ESSAY_PLAIN_TEXT',
+  ESSAY_PLAIN_TEXT = 'ESSAY_PLAIN_TEXT',
   ESSAY_RICH_TEXT = 'ESSAY_RICH_TEXT',
   CLOZE_TEXT = 'CLOZE_TEXT',
   CLOZE_DROPDOWN = 'CLOZE_DROPDOWN',
@@ -198,6 +198,7 @@ export interface Ping {
     message: string,
     timestamp?: string, 
 }
+
 export interface Pong {
     message: String,
     timestamp: string,

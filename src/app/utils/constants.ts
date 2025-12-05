@@ -113,7 +113,7 @@ export const preloginData = {
 
 export const mockStore = {
   "candidate_data": {
-    "name": "John Doe",
+    "name": "John ikechukwuogheni osemudiamen paul",
     "id": "CAND-10023",
     "minutes_left": 89,
     "seconds_left": 45,
@@ -176,23 +176,6 @@ export const mockStore = {
           "block_type": "SINGLE_QUESTIONS",
           "total_questions": 3,
           "items": [
-                        {
-              "id": "ENG-Qf6",
-              "stimulus": "What is the antonym of 'Brave'?",
-              "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
-              ],
-              "item_type": "DRAWING_AND_WRITING",
-              "background_type": "GRID",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
             {
               "id": "ENG-Q9",
               "stimulus": "Which word is a noun?",
@@ -536,130 +519,403 @@ export const mockStore = {
               "revisit": false
             },
             {
-              "id": "ENG-Q7",
-              "stimulus": "Choose the correct spelling:",
+              "id": "ENG-Qf6",
+              "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Definately", "value": "definately" },
-                { "label": "Definitely", "value": "definitely" },
-                { "label": "Defanitely", "value": "defanitely" },
-                { "label": "Definetly", "value": "definetly" }
+                { "label": "Courageous", "value": "courageous" },
+                { "label": "Fearful", "value": "fearful" },
+                { "label": "Bold", "value": "bold" },
+                { "label": "Daring", "value": "daring" }
               ],
-              "item_type": "MCQ",
+              "item_type": "SHORT_TEXT",
+              "background_type": "GRID",
               "responses": [],
+              "max_words": 5,
+              "max_length": 100,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q8",
-              "stimulus": "What is the synonym of 'Happy'?",
+              "id": "ENG-Qfjd6",
+              "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Joyful", "value": "joyful" },
-                { "label": "Sad", "value": "sad" },
-                { "label": "Angry", "value": "angry" },
-                { "label": "Tired", "value": "tired" }
+                { "label": "Courageous", "value": "courageous" },
+                { "label": "Fearful", "value": "fearful" },
+                { "label": "Bold", "value": "bold" },
+                { "label": "Daring", "value": "daring" }
               ],
-              "item_type": "MCQ",
+              "item_type": "ESSAY_RICH_TEXT",
+              "background_type": "GRID",
               "responses": [],
+              "max_words": 5,
+              "max_length": 100,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q10",
-              "stimulus": "What is the plural of 'Child'?",
+              "id": "ENG-Qfffj6",
+              "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Childs", "value": "childs" },
-                { "label": "Children", "value": "children" },
-                { "label": "Childes", "value": "childes" },
-                { "label": "Childrens", "value": "childrens" }
+                { "label": "Courageous", "value": "courageous" },
+                { "label": "Fearful", "value": "fearful" },
+                { "label": "Bold", "value": "bold" },
+                { "label": "Daring", "value": "daring" }
               ],
-              "item_type": "MCQ",
+              "item_type": "ESSAY_PLAIN_TEXT",
+              "background_type": "GRID",
               "responses": [],
+              "max_words": null,
+              "max_length": 100,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q11",
-              "stimulus": "Which word is a verb?",
-              "options": [
-                { "label": "Jump", "value": "jump" },
-                { "label": "Happiness", "value": "happiness" },
-                { "label": "Green", "value": "green" },
-                { "label": "Soft", "value": "soft" }
+              "id": "ENG-Qfj6",
+              "stimulus": "<p><strong>Match each country with its correct capital city by dragging the options on the right to align with the stems on the left.</strong></p>",
+              "stems": [
+                "<p><strong>1. France</strong></p>",
+                "<p><strong>2. Japan</strong></p>",
+                "<p><strong>3. Canada</strong></p>",
+                "<p><strong>4. Brazil</strong></p>"
               ],
-              "item_type": "MCQ",
+              "options": [
+                { "label": "<p>Tokyo</p>", "value": "tokyo" },
+                { "label": "<p>Ottawa</p>", "value": "ottawa" },
+                { "label": "<p>Brasília</p>", "value": "brasilia" },
+                { "label": "<p>Paris</p>", "value": "paris" }
+              ],
+              "item_type": "ASSOCIATION",
+              "background_type": "GRID",
               "responses": [],
+              "max_words": 5,
+              "max_length": 100,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q12",
-              "stimulus": "Choose the correct synonym for 'Begin':",
-              "options": [
-                { "label": "Start", "value": "start" },
-                { "label": "End", "value": "end" },
-                { "label": "Stop", "value": "stop" },
-                { "label": "Wait", "value": "wait" }
+              "id": "ENG-Qffdfj6",
+              "stimulus": "<p><strong>Match each country with its correct capital city by dragging the options on the right to align with the stems on the left.</strong></p>",
+              "stems": [
+                "<p><strong>1. France</strong></p>",
+                "<p><strong>2. Japan</strong></p>",
+                "<p><strong>3. Canada</strong></p>",
+                "<p><strong>4. Brazil</strong></p>"
               ],
-              "item_type": "MCQ",
+              "options": [
+                { "label": "<p>Tokyo</p>", "value": "tokyo" },
+                { "label": "<p>Ottawa</p>", "value": "ottawa" },
+                { "label": "<p>Brasília</p>", "value": "brasilia" },
+                { "label": "<p>Paris</p>", "value": "paris" }
+              ],
+              "item_type": "ORDER_LIST",
+              "background_type": "GRID",
               "responses": [],
+              "max_words": 5,
+              "max_length": 100,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q13",
-              "stimulus": "What is the opposite of 'Hot'?",
-              "options": [
-                { "label": "Boiling", "value": "boiling" },
-                { "label": "Warm", "value": "warm" },
-                { "label": "Cold", "value": "cold" },
-                { "label": "Heat", "value": "heat" }
+              "id": "ENG-IMG-MAP-001",
+              "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
+              "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
+
+              "item_type": "CLOZE_TEXT_IMAGE",
+              "background_type": "IMAGE",
+
+              "image_data": {
+                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "width": 1026,
+                "height": 1083
+              },
+
+              "response_positions": [
+                { "x": 22, "y": 30 },
+                { "x": 63, "y": 28 },
+                { "x": 28, "y": 72 },
+                { "x": 70, "y": 75 }
               ],
-              "item_type": "MCQ",
+
+              "stems": [
+                "<p>1. Nile River</p>",
+                "<p>2. Sahara Desert</p>",
+                "<p>3. Congo Rainforest</p>",
+                "<p>4. Kalahari Desert</p>"
+              ],
+
+              "options": [
+                { "label": "<p>Nile River</p>", "value": "nile_river" },
+                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
+                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
+                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+              ],
+
               "responses": [],
+
+              "max_words": 5,
+              "max_length": 50,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q14",
-              "stimulus": "Which sentence is correct?",
-              "options": [
-                { "label": "She go to school.", "value": "she_go" },
-                { "label": "She goes to school.", "value": "she_goes" },
-                { "label": "She going to school.", "value": "she_going" },
-                { "label": "She gone to school.", "value": "she_gone" }
+              "id": "ENG-IMG-MAP-002",
+              "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
+              "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
+
+              "item_type": "CLOZE_DROPDOWN_IMAGE",
+              "background_type": "IMAGE",
+
+              "image_data": {
+                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "width": 402,
+                "height": 361
+              },
+
+              "response_positions": [
+                { "x": 22, "y": 30 },
+                { "x": 63, "y": 28 },
+                { "x": 28, "y": 72 },
+                { "x": 70, "y": 75 }
               ],
-              "item_type": "MCQ",
+
+              "possible_responses": [
+                {
+                  "responses": [
+                    { "label": "misinformation", "value": "misinformation" },
+                    { "label": "advertising", "value": "advertising" },
+                    { "label": "technology", "value": "technology" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "confusion", "value": "confusion" },
+                    { "label": "clarity", "value": "clarity" },
+                    { "label": "accuracy", "value": "accuracy" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "carefully", "value": "carefully" },
+                    { "label": "rarely", "value": "rarely" },
+                    { "label": "publicly", "value": "publicly" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "competition", "value": "competition" },
+                    { "label": "collaboration", "value": "collaboration" },
+                    { "label": "curiosity", "value": "curiosity" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "created", "value": "created" },
+                    { "label": "shared", "value": "shared" },
+                    { "label": "edited", "value": "edited" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "credibility", "value": "credibility" },
+                    { "label": "length", "value": "length" },
+                    { "label": "tone", "value": "tone" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "evidence", "value": "evidence" },
+                    { "label": "comments", "value": "comments" },
+                    { "label": "opinions", "value": "opinions" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "outlets", "value": "outlets" },
+                    { "label": "platforms", "value": "platforms" },
+                    { "label": "channels", "value": "channels" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "opportunities", "value": "opportunities" },
+                    { "label": "problems", "value": "problems" },
+                    { "label": "dangers", "value": "dangers" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion", "value": "discussion" },
+                    { "label": "entertainment", "value": "entertainment" },
+                    { "label": "consumption", "value": "consumption" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion-1", "value": "discussion-1" },
+                    { "label": "entertainment-1", "value": "entertainment-1" },
+                    { "label": "consumption-1", "value": "consumption-1" }
+                  ]
+                }
+              ],
+
+              "options": [
+                { "label": "<p>Nile River</p>", "value": "nile_river" },
+                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
+                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
+                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+              ],
+
               "responses": [],
+
+              "max_words": 5,
+              "max_length": 50,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              "id": "ENG-Q15",
-              "stimulus": "Which word is an adjective?",
-              "options": [
-                { "label": "Beautiful", "value": "beautiful" },
-                { "label": "Run", "value": "run" },
-                { "label": "Happily", "value": "happily" },
-                { "label": "Laugh", "value": "laugh" }
+              "id": "ENG-IMG-MAP-003",
+              "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
+              "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
+
+              "item_type": "IMAGE_DRAG_AND_DROP",
+              "background_type": "IMAGE",
+
+              "image_data": {
+                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "width": 402,
+                "height": 361
+              },
+
+              "response_positions": [
+                { "x": 22, "y": 30 },
+                { "x": 63, "y": 28 },
+                { "x": 28, "y": 72 },
+                { "x": 70, "y": 75 }
               ],
-              "item_type": "MCQ",
+
+              "possible_responses": [
+                {
+                  "responses": [
+                    { "label": "misinformation", "value": "misinformation" },
+                    { "label": "advertising", "value": "advertising" },
+                    { "label": "technology", "value": "technology" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "confusion", "value": "confusion" },
+                    { "label": "clarity", "value": "clarity" },
+                    { "label": "accuracy", "value": "accuracy" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "carefully", "value": "carefully" },
+                    { "label": "rarely", "value": "rarely" },
+                    { "label": "publicly", "value": "publicly" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "competition", "value": "competition" },
+                    { "label": "collaboration", "value": "collaboration" },
+                    { "label": "curiosity", "value": "curiosity" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "created", "value": "created" },
+                    { "label": "shared", "value": "shared" },
+                    { "label": "edited", "value": "edited" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "credibility", "value": "credibility" },
+                    { "label": "length", "value": "length" },
+                    { "label": "tone", "value": "tone" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "evidence", "value": "evidence" },
+                    { "label": "comments", "value": "comments" },
+                    { "label": "opinions", "value": "opinions" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "outlets", "value": "outlets" },
+                    { "label": "platforms", "value": "platforms" },
+                    { "label": "channels", "value": "channels" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "opportunities", "value": "opportunities" },
+                    { "label": "problems", "value": "problems" },
+                    { "label": "dangers", "value": "dangers" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion", "value": "discussion" },
+                    { "label": "entertainment", "value": "entertainment" },
+                    { "label": "consumption", "value": "consumption" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion-1", "value": "discussion-1" },
+                    { "label": "entertainment-1", "value": "entertainment-1" },
+                    { "label": "consumption-1", "value": "consumption-1" }
+                  ]
+                }
+              ],
+
+              "options": [
+                { "label": "<p>Nile River</p>", "value": "nile_river" },
+                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
+                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
+                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+              ],
+
               "responses": [],
+
+              "max_words": 5,
+              "max_length": 50,
+              "allow_paste": false,
+              "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+
               "drawing_writing_split_type": "NONE",
               "revisit": false
             }

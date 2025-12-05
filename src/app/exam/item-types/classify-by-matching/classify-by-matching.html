@@ -1,0 +1,91 @@
+<div class="h-full w-full overflow-y-auto lg:overlow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5">
+    <div class="lg:w-2/6 lg:h-full lg:overflow-hidden">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="py-1 pr-2">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Question {{ store().currentQuestionIndex + 1 }}</div>
+                    <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                </div>
+            </div>
+            <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
+                @if(store().currentQuestion?.passage_stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
+                }
+
+                @if(store().currentQuestion?.stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.stimulus" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:w-4/6">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="p-1.5">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Answer</div>
+                    <app-answer-tools></app-answer-tools>
+                </div>
+            </div>
+
+            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed p-1">
+
+                <div #wrapper class="relative bg-gray-100 p-3">
+                    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none">
+                        @for (line of lines(); track i; let i = $index) {
+                            <line class="stroke-gray-800" [attr.x1]="line.x1" [attr.y1]="line.y1" [attr.x2]="line.x2" [attr.y2]="line.y2" stroke-width="3" stroke-linecap="round"></line>
+                        }
+                    </svg>
+
+                    <div class="grid grid-cols-2 gap-10 lg:gap-32 relative">
+                        <div>
+                            @for (item of leftItems(); track item; let i = $index) {
+                                <div #leftBox class="p-4 mb-4 bg-white rounded-xl border border-gray-200 relative">
+                                    <span [innerHTML]="item"></span>
+                                    <span
+                                        class="absolute right-0 top-0 translate-x-2.5 h-full flex items-center justify-center">
+                                        <span class="rounded-full border border-gray-200 bg-white size-6"></span>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="flex flex-col gap-4 drag-container">
+                            @for (right of rightItems(); track i; let i = $index) {
+                                <div #rightBox cdkDropList [id]="'right-box-' + i" [cdkDropListConnectedTo]="getConnectedDropLists()" (cdkDropListDropped)="dropRightBox($event)" class="p-4 bg-white rounded-xl border border-gray-200 min-h-14 relative drag-item ">
+                                    @if(right) {
+                                        <div cdkDrag [cdkDragData]="right" class="cursor-move pl-3">
+                                            <span [innerHTML]="right.label"></span>
+                                        </div>
+                                    } @else {
+                                        <div class="text-gray-300 italic select-none">Drop here</div>
+                                    }
+
+                                    <span
+                                        class="absolute left-0 top-0 -translate-x-2.5 h-full flex items-center justify-center">
+                                        <span class="rounded-full border border-gray-300 bg-white size-6"></span>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @if(options().length) { -->
+                    <div class="mt-6 bg-gray-100 p-3">
+                        <div class="font-semibold mb-2">Options</div>
+
+                        <div cdkDropList [cdkDropListConnectedTo]="rightBoxIds()" [cdkDropListData]="options()" (cdkDropListDropped)="dropRightBox($event)" cdkDropList id="option-list" [cdkDropListConnectedTo]="rightBoxIds()" class="flex flex-wrap gap-3 py-3">
+                            @for (opt of options(); track opt.value; let i = $index) {
+                                <div cdkDrag [cdkDragData]="opt" class="px-4 py-2 bg-white rounded-lg cursor-move select-none hover:border-primary border border-transparent">
+                                    <span class="flex gap-1 items-center">
+                                        <span [innerHTML]="opt.label"></span>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                <!-- } -->
+            </div>
+        </div>
+    </div>
+</div>

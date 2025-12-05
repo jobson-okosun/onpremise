@@ -151,9 +151,9 @@ export class CanvasService {
         }
 
         const resizeStage = () => {
-            const parent = document.getElementById('stage-parent')!;
-
             const answerSpace = document.querySelector('.answer-space') as HTMLElement
+            
+            const parent = document.getElementById('stage-parent')!;
             parent.style.height = (answerSpace.offsetHeight - 10) + 'px';
 
             const currentWidth = this.store().drawingAndWritingConfig.layoutFullModeWidth

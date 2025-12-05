@@ -2,7 +2,6 @@ import { Component, computed, ElementRef, HostListener, inject, linkedSignal, On
 import { DrawingAndWriting } from '../item-types/drawing-and-writing/drawing-and-writing';
 import { ExamTools } from '../exam-tools/exam-tools';
 import { Paginator } from '../paginator/paginator';
-import { Calculator } from '../calculator/calculator';
 import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
@@ -16,12 +15,25 @@ import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-
 import { CloseWithText } from '../item-types/close-with-text/close-with-text';
 import { CloseWithSelect } from '../item-types/close-with-select/close-with-select';
 import { DrawingAndWritingRoughMode } from '../item-types/drawing-and-writing-rough-mode/drawing-and-writing-rough-mode';
+import { ShortText } from '../item-types/short-text/short-text';
+import { EssayRichText } from '../item-types/essay-rich-text/essay-rich-text';
+import { EssayPlainText } from '../item-types/essay-plain-text/essay-plain-text';
+import { ClassifyByMatching } from '../item-types/classify-by-matching/classify-by-matching';
+import { ClassifyByOrdering } from '../item-types/classify-by-ordering/classify-by-ordering';
+import { LabelImageWithText } from '../item-types/label-image-with-text/label-image-with-text';
+import { LabelImageWithDropdownselect } from '../item-types/label-image-with-dropdownselect/label-image-with-dropdownselect';
+import { LabelImageWithDragAndDrop } from '../item-types/label-image-with-drag-and-drop/label-image-with-drag-and-drop';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
   styleUrl: './layout.css',
-  imports: [SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect, ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass]
+  imports: [
+    SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
+    ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
+    LabelImageWithDragAndDrop,
+    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass
+  ]
 })
 export default class Layout implements OnDestroy {
   private _store = inject(Store)
@@ -82,13 +94,24 @@ export default class Layout implements OnDestroy {
     return map
   })
 
+  examName = computed(() => {
+    const name = this.store().loginData?.assessment_data.name ?? ''
+    return name.length > 21 ? name.slice(0, 21).concat('...') : name
+  })
+
+  candidateName = computed(() => {
+    const name = this.store().loginData?.candidate_data?.name! ?? ''
+    return name.length > 15 ? name.slice(0, 15).concat('...') : name
+  })
+
+
   ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    if (!this.store().loginData) {
-      this._exam.formatLoginDataToStore(mockStore as any)
-    }
+    // if (!this.store().loginData) {
+    //   this._exam.formatLoginDataToStore(mockStore as any)
+    // }
 
     if (!this.store().platformIsTauri) {
       fullscreen()

@@ -9,7 +9,6 @@ export const routes: Routes = [
     { path: 'login', canActivate: [hasActiveExam], loadComponent: () => import('./login/login')},
     { path: 'overview', canActivate: [isLoggedin], loadComponent: () => import('./overview/overview')},
     { path: 'instruction', canActivate: [isLoggedin], loadComponent: () => import('./instructions/instructions')},
-    // canActivate: [isLoggedin],
-    { path: 'exam',  canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
+    { path: 'exam', canActivate: [isLoggedin], canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
     { path: 'exam-ended', loadComponent: () => import('./exam-ended/exam-ended')}
 ];

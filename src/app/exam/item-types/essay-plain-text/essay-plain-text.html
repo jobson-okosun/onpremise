@@ -1,0 +1,38 @@
+<div class="h-full w-full overflow-y-auto lg:overlow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5">   
+    <!-- question -->
+    <div class="lg:w-2/5 lg:h-full lg:overflow-hidden">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="py-1 pr-2">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Question {{ store().currentQuestionIndex + 1 }}</div>
+                    <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                </div>
+            </div>
+            <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
+                @if(store().currentQuestion?.passage_stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
+                }
+                @if(store().currentQuestion?.stimulus) {
+                    <div [innerHTML]="store().currentQuestion?.stimulus" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- answer -->
+    <div class="lg:w-3/5">
+        <div class="rounded-md bg-white h-full flex flex-col">
+            <div class="p-1.5">
+                <div class="border-l-4 border-primary flex justify-between items-center">
+                    <div class="font-bold text-sm px-3">Answer</div> 
+                    <app-answer-tools></app-answer-tools>
+                </div>
+            </div>
+            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed p-1">
+               <div class="items-center bg-gray-100 p-3 h-full">
+                    <textarea #input (input)="captureResponses(input)" [value]="store().currentQuestion?.responses?.[0] || ''" placeholder="Enter your answer..." class="bg-white resize-none border border-gray-200 rounded-md outline-none ring-0 text-sm close-item w-full h-full p-3"></textarea>  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   

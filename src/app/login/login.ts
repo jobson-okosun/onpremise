@@ -63,7 +63,7 @@ export default class Login {
 
           control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
           control.markAsTouched();
-          this.onSuccessfullLogin(mockStore as any)
+          // this.onSuccessfullLogin(mockStore as any)
         }
       })
   }
@@ -71,8 +71,8 @@ export default class Login {
   onSuccessfullLogin(value: ICandidateLoginResponse) {
     this._exam.formatLoginDataToStore(value).then(async () => {
       await this._dataService.downloadParticipantPassport()
-      
-      if(this.store().preloginData?.delivery_method == this.deliveryMethods().ON_PREMISE_SECURE_BROWSER) {
+
+      if (this.store().preloginData?.delivery_method == this.deliveryMethods().ON_PREMISE_SECURE_BROWSER) {
         this._tauriService.sendExamStarted()
       }
 

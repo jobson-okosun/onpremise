@@ -7,12 +7,12 @@ import { StoreSection } from '../../store/model/types';
 
 @Component({
   selector: 'app-overview',
-  imports: [],
+  imports: [Paginator],
   templateUrl: './overview.html',
   styleUrl: './overview.css',
 })
 export class Overview {
-  private _store = inject(Store)
+  private _store = inject(Store) 
   private _exam = inject(ExamService)
 
   paginator = viewChild(Paginator)
@@ -62,5 +62,10 @@ export class Overview {
 
   isCurrent(index: number): boolean {
     return this.currentQuestionIndex() === index;
+  }
+
+  selectPage(page: number) {
+    console.log(this.paginator)
+    this.paginator()?.selectPage(page)
   }
 }

@@ -1,5 +1,8 @@
 @let showClearBtn = showClearAnwer() && (currentSectionSummary()?.summary?.attempted?.includes(currentQuestionIndex()));
-@let showContainer = showClearBtn;
+@let showWordCount = [itemTypes().SHORT_TEXT, itemTypes().ESSAY_RICH_TEXT, itemTypes().ESSAY_PLAIN_TEXT].includes(store().currentQuestion!.item_type);
+@let showZoomInput = [itemTypes().CLOZE_TEXT_IMAGE, itemTypes().CLOZE_DROPDOWN_IMAGE, itemTypes().IMAGE_DRAG_AND_DROP].includes(store().currentQuestion!.item_type);
+
+@let showContainer = showClearBtn || showWordCount || showZoomInput;
 
 <div [class.h-[42px]]="!showContainer" [class.p-1]="showContainer" class="bg-gray-100 flex items-center gap-1 rounded-2xl w-max">
     @if(showClearBtn) {
@@ -10,5 +13,23 @@
                 <path d="M3 5.5H21M16.0557 5.5L15.3731 4.09173C14.9196 3.15626 14.6928 2.68852 14.3017 2.39681C14.215 2.3321 14.1231 2.27454 14.027 2.2247C13.5939 2 13.0741 2 12.0345 2C10.9688 2 10.436 2 9.99568 2.23412C9.8981 2.28601 9.80498 2.3459 9.71729 2.41317C9.32164 2.7167 9.10063 3.20155 8.65861 4.17126L8.05292 5.5" />
             </svg>
         </button>
+    }
+
+    @if(showWordCount) {
+        <span class="bg-white flex items-center gap-1 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm">
+            <b>{{ wordCount() }}</b>
+            words of 
+            <b [innerHTML]="maxWords()"></b>
+        </span>
+
+    }
+
+    @if(showZoomInput) {
+        <div class="bg-white text-red-500 flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
+            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M10 7v6m-3-3h6m4 0a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+            </svg>
+            <input type="range" min="0.5" max="3" step="0.1"[value]="zoom()"#zoomEl (input)="zoom.set(+zoomEl.value)" class="w-20 accent-primary" />
+        </div>
     }
 </div>

@@ -22,6 +22,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/cdk": "~20.2.12",
     "@angular/common": "^20.2.0",
     "@angular/compiler": "^20.2.0",
     "@angular/core": "^20.2.0",
@@ -33,6 +34,7 @@
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/postcss": "^4.1.17",
     "@tauri-apps/api": "^2.9.0",
+    "@tinymce/tinymce-angular": "^5.0.1",
     "animate.css": "^4.1.1",
     "konva": "^10.0.12",
     "postcss": "^8.5.6",

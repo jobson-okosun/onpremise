@@ -23,11 +23,11 @@
                         }
                         <div>
                             <!-- truncate -->
-                            <div class="font-semibold">{{ store().loginData?.candidate_data?.name!.length > 15 ? store().loginData?.candidate_data?.name!.substr(0, 15).concat('..') : store().loginData?.candidate_data?.name! }}</div>
+                            <div class="font-semibold">{{ candidateName() }}</div>
                             <div class="text-xs">{{ store().loginData?.candidate_data?.login_field_value }}</div>
                         </div>
                     </div>
-                    <div class="lg:hidden uppercase font-bold">waec testing theory 3.</div>
+                    <div class="lg:hidden uppercase font-bold">{{ examName() }}</div>
                     <button (click)="sectionsList.toggle($event)" class="bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
                         <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
                         <i class="pi pi-angle-down"></i>
@@ -35,7 +35,7 @@
                 </div>
 
                 <!-- truncate -->
-                <div class="hidden lg:block uppercase font-bold">waec testing theory 3.</div>
+                <div class="hidden lg:block uppercase font-bold">{{ examName() }}</div>
                  
                 <app-exam-tools (resizeFont)="fontSize.toggle($event)"></app-exam-tools>
             </div>
@@ -50,7 +50,7 @@
                 <!-- pagination -->
                 <app-paginator class="w-full lg:w-max"></app-paginator>
 
-                <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
+                <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
                     <div class="flex flex-col items-center justify-center">
                         <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
                         <div class="flex gap-2 items-center">
@@ -79,35 +79,66 @@
     </div>
 
     <!-- content area -->
-    <!-- @if(store().currentQuestion) { -->
     <div id="itemTypesContainer" class="flex-1 max-h-[580px] 2xl:max-h-[1000px] overflow-hidden"> 
         @if(showItemTypesContainer()) {
+
             @if(store().currentQuestion!.item_type === itemTypes().MCQ) {
-                <app-single-choice [(fontSize)]="questionFontSize"></app-single-choice>
+                <app-single-choice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                <app-close-with-dropdown [(fontSize)]="questionFontSize"></app-close-with-dropdown>
+                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
-                <app-close-with-text [(fontSize)]="questionFontSize"></app-close-with-text>
+                <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_SELECT) {
-                <app-close-with-select [(fontSize)]="questionFontSize"></app-close-with-select>
+                <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().SHORT_TEXT) {
+                <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ESSAY_RICH_TEXT) {
+                <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ESSAY_PLAIN_TEXT) {
+                <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ASSOCIATION) {
+                <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ORDER_LIST) {
+                <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT_IMAGE) {
+                <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN_IMAGE) {
+                <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().IMAGE_DRAG_AND_DROP) {
+                <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop>
             }
             
             @if(store().currentQuestion!.item_type === itemTypes().DRAWING_AND_WRITING) {
                 @if(store().drawingAndWritingConfig.roughWorkMode) {
-                    <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize"></app-drawing-and-writing-rough-mode>
+                    <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
                 } @else {
                     <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
                 }
             }
         }
-    </div>
-    <!-- } -->
+    </div> 
 
     <!-- bottom -->
     <div>
@@ -189,13 +220,8 @@
 
 <p-dialog  header="Close Notice" [visible]="closeCandidateBrowser() == null ? false : true" [modal]="true" [closable]="false" [dismissableMask]="false" [style]="{ width: '500px' }" [blockScroll]="true">
     <div class="text-center p-4">
-        <p class="text-muted">
-            This browser has been closed by the admin. It will close in
-        </p>
-
-        <p class="text-muted fw-bold text-dark" style="font-size: 20px;">
-            <strong>{{ closeCandidateBrowser() }} secs</strong>
-        </p>
+        <p class="text-muted">This browser has been closed by the admin. It will close in</p>
+        <p class="text-muted fw-bold text-dark" style="font-size: 20px;"><strong>{{ closeCandidateBrowser() }} secs</strong></p>
     </div>
 
 </p-dialog>

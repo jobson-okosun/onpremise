@@ -41,7 +41,7 @@
         <div class="flex gap-1 flex-wrap mb-8">
             @if(activeTab() == 0) {
                 @for( item of currentSection()?.items; track item.id; let page = $index) {
-                    <button (click)="paginator()?.selectPage(page)"
+                    <button (click)="selectPage(page)"
                         class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent cursor-pointer font-medium hover:border-blue-300!"
                         [class.bg-yellow-50]="isRevisit(page)"
                         [class.text-yellow-600]="isRevisit(page)"
@@ -59,14 +59,14 @@
             @if(activeTab() == 1) {
                 @for( item of currentSection()?.items; track item.id; let page = $index) {
                     @if(isAttempted(page)) {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent cursor-pointer font-medium hover:border-blue-300!"
                             [class.bg-green-200!]="isAttempted(page)"
                             [class.text-green-700!]="isAttempted(page)">
                             {{ page + 1 }}
                         </button>
                     } @else {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent bg-gray-100 cursor-pointer font-medium hover:border-blue-300!">
                             {{ page + 1 }}
                         </button>
@@ -76,7 +76,7 @@
             @if(activeTab() == 2) {
                 @for( item of currentSection()?.items; track item.id; let page = $index) {
                     @if(isUnattempted(page)) {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent cursor-pointer font-medium hover:border-blue-300!"
                             [class.bg-red-50]="isUnattempted(page)"
                             [class.text-red-500]="isUnattempted(page)"
@@ -85,7 +85,7 @@
                         </button>
                     }
                     @else {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent bg-gray-100 cursor-pointer font-medium hover:border-blue-300!">
                             {{ page + 1 }}
                         </button>
@@ -95,7 +95,7 @@
             @if(activeTab() == 3) {
                 @for( item of currentSection()?.items; track item.id; let page = $index) {
                     @if(isRevisit(page)) {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent cursor-pointer font-medium hover:border-blue-300!"
                                 [class.bg-yellow-50]="isRevisit(page)"
                                 [class.border-yellow-600]="isRevisit(page)"
@@ -104,7 +104,7 @@
                         </button>
                     }
                     @else {
-                        <button (click)="paginator()?.selectPage(page)"
+                        <button (click)="selectPage(page)"
                             class="rounded-full size-8 flex items-center justify-center transition duration-150 border border-transparent bg-gray-100 cursor-pointer font-medium hover:border-blue-300!">
                             {{ page + 1 }}
                         </button>
@@ -134,3 +134,5 @@
 
     </div>
 </div>
+
+    <app-paginator class="hidden"></app-paginator>

@@ -123,7 +123,7 @@ export class ExamService {
     })
 
     timeInMinsSpentInExam = computed(() => {
-        const totalExamTime = this.cummulativeExamDuration();
+        const totalExamTime = this.cummulativeExamDuration() * 60;
         const remaining = Math.max(this.examDuration(), 0);
 
         const spent = totalExamTime - remaining;
@@ -194,7 +194,7 @@ export class ExamService {
             duration = (firstSectionDuration > 0 ? firstSectionDuration : examTime) as number;
         }
 
-        duration = duration * 60
+        // duration = duration * 60
         this.cummulativeExamDuration.set(duration)
         return duration;
     }
@@ -238,7 +238,7 @@ export class ExamService {
     getExamDuration(startTime?: number) {
         const isFirstLogin = this.store().loginData!.candidate_data.login_times.length == 0
         const minsLeft = this.store().loginData!.candidate_data.minutes_left * 60
-        const time = startTime ? (startTime * 60) : (isFirstLogin ? this.cummulativeExamDuration() : minsLeft)
+        const time = startTime ? (startTime * 60) : (isFirstLogin ? this.cummulativeExamDuration() * 60 : minsLeft)
 
         return time
     }
@@ -471,7 +471,7 @@ export class ExamService {
     canCandidateEndExam() {
         const canEndExamWhen = this.store().loginData!.assessment_data.allow_end_exam_after_xquestions;
 
-        const examDuration = this.cummulativeExamDuration();
+        const examDuration = this.cummulativeExamDuration() * 60;
         const candidateExamTimeRemaining = this.timeDisplay().min * 60;
         const timeSpent = examDuration - candidateExamTimeRemaining;
 
