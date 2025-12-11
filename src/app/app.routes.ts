@@ -12,3 +12,4 @@ export const routes: Routes = [
     { path: 'exam', canActivate: [isLoggedin], canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
     { path: 'exam-ended', loadComponent: () => import('./exam-ended/exam-ended')}
 ];
+ 

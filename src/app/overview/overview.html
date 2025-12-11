@@ -21,7 +21,7 @@
             <div class="h-full bg-gray-100/70 rounded-2xl p-5 flex flex-col justify-between mt-5">
                 <div>
                     <div class="uppercase font-black text-2xl text-primary">{{ store().loginData?.assessment_data?.name }}</div>
-                    <div class="mt-2">This exams contains four ({{ store().sections.length }}) sections in total.</div>
+                    <div class="mt-2">This exams contains {{ store().sections.length }} sections in total.</div>
                     <div> Total duration of <span class="font-bold">{{ examDuration() }} Mins</span> </div>
                     <div class="flex flex-col my-10 gap-2">
                         @for(item of store().sections; track item; let i = $index) {

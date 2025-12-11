@@ -50,7 +50,7 @@ body {
 }
 
 .btn.btn-sm {
-  @apply !p-1.5 !px-2 !text-xs
+  @apply p-1.5! px-2! text-xs!
 }
 
 button:disabled {

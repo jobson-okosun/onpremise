@@ -33,6 +33,6 @@ export default class ExamEnded {
   });
 
   returnToLogin() {
-    location.href = '/usage-guide';
+    location.href = '/';
   }
 }

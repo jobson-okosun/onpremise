@@ -94,7 +94,7 @@
                 <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text>
             }
 
-            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_SELECT) {
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_RADIO) {
                 <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
             }
 
@@ -128,6 +128,10 @@
 
             @if(store().currentQuestion!.item_type === itemTypes().IMAGE_DRAG_AND_DROP) {
                 <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CHOICE_MATRIX) {
+                <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix>
             }
             
             @if(store().currentQuestion!.item_type === itemTypes().DRAWING_AND_WRITING) {

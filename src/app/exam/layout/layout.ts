@@ -23,6 +23,7 @@ import { ClassifyByOrdering } from '../item-types/classify-by-ordering/classify-
 import { LabelImageWithText } from '../item-types/label-image-with-text/label-image-with-text';
 import { LabelImageWithDropdownselect } from '../item-types/label-image-with-dropdownselect/label-image-with-dropdownselect';
 import { LabelImageWithDragAndDrop } from '../item-types/label-image-with-drag-and-drop/label-image-with-drag-and-drop';
+import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix';
 
 @Component({
   selector: 'app-layout',
@@ -31,7 +32,7 @@ import { LabelImageWithDragAndDrop } from '../item-types/label-image-with-drag-a
   imports: [
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
-    LabelImageWithDragAndDrop,
+    LabelImageWithDragAndDrop, ChoiceMatrix,
     ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass
   ]
 })

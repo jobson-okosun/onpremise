@@ -22,11 +22,19 @@ export class TauriService {
             return
         }
 
+        if(!this.isAndroid()) {
+            return
+        }
+        
+        if(!location.href.includes('app')){
+            return
+        }
+
         this.isAppPinned();
     });
 
     isTauri(): boolean {
-        return !!(window as any).__TAURI_INTERNALS__;
+        return !!(window as any).__TAURI_INTERNALS__; 
     }
 
     async importTauriApis(): Promise<void> {
@@ -118,7 +126,7 @@ export class TauriService {
 
         try {
             const unlisten = await this.tauriListen()('infrigment::discovered', (event: any) => {
-                const infridgementMessage =  event.payload || 'Infrigement Detected' ;
+                const infridgementMessage = event.payload || 'Infrigement Detected';
                 this._store.updateStore({ infridgementMessage });
             });
 
@@ -135,5 +143,10 @@ export class TauriService {
             const message = (error as any)?.message || 'Unable to exit application';
             this._store.updateStore({ exitApplicationMessage: message });
         }
+    }
+
+    isAndroid() {
+        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+        return /android/i.test(userAgent)
     }
 }

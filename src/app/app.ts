@@ -1,10 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { DataService } from './services/data';
 import { TauriService } from './services/tauri';
 import { Store } from './store/store';
 import { Dialog } from 'primeng/dialog';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,18 +15,27 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
   styleUrl: './app.css'
 })
 export class App {
+  private _route = inject(ActivatedRoute)
+  private _router = inject(Router)
   private _dataService = inject(DataService)
   private _tauriService = inject(TauriService)
   private _store = inject(Store)
 
+  isAdminRoute = signal(false)
   store = computed(() => this._store.store())
   userExitPassword = new FormControl('', Validators.required)
   isExitingApplication = signal(false)
+
+  watchURL = toSignal(this._router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), map(() => this.isAdminRoute.set(this.isAdminUrl()))))
 
   ngOnInit() {
     this._tauriService.updatePlatformType()
     this._dataService.downloadOrganizationAssets()
     this._tauriService.initializeBatteryStatus()
+  }
+
+  isAdminUrl() {
+    return location.href.includes('admin')
   }
 
   pinApp() {

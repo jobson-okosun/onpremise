@@ -1,4 +1,4 @@
-import { Component, computed, HostListener, inject, model, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild } from '@angular/core';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { Store } from '../../../store/store';
 import { Editor } from '../../editor/editor';
@@ -12,57 +12,65 @@ import { QuestionTools } from '../../question-tools/question-tools';
   styleUrl: './essay-rich-text.css',
 })
 export class EssayRichText {
-  private _store = inject(Store)
-  private _toast = inject(HotToastService)
-  private _editor = viewChild(Editor)
+  private _store = inject(Store);
+  private _toast = inject(HotToastService);
+  private _editor = viewChild(Editor);
 
-  fontSize = model<number>()
-  store = computed(() => this._store.store())
+  fontSize = model<number>();
+  store = computed(() => this._store.store());
   wordCount = computed(() => {
-    const str = this.store().currentQuestion?.responses[0] ?? ''
-    return str.split(/\s+/).filter(word => word.length).length
-  })
+    const str = this.store().currentQuestion?.responses[0] ?? '';
+    return str.split(/\s+/).filter(word => word.length).length;
+  });
 
-  editorConfig = signal<any>(null)
-  showEditor = signal(false)
+  editorConfig = signal<any>(null);
+  showEditor = signal(false);
 
-  @HostListener('window:resize')
+  private keyboardVisible = false;
+  private unsubscribeKeyboard?: () => void;
+
+  // @HostListener('window:resize')
   resizeEditor() {
-    this.showEditor.set(false)
+    // Only resize if keyboard is NOT visible
+    if (this.keyboardVisible) {
+      return;
+    }
+
+    this.showEditor.set(false);
 
     setTimeout(() => {
-      this.editorConfig.set(this.getConfig())
-      this.showEditor.set(true)
-    }, 500)
+      this.editorConfig.set(this.getConfig());
+      this.showEditor.set(true);
+    }, 500);
   }
 
   ngOnInit() {
-    this.editorConfig.set(this.getConfig())
-    this.showEditor.set(true)
+    this.editorConfig.set(this.getConfig());
+    this.showEditor.set(true);
   }
 
   getConfig() {
-    const answerSpace = document.querySelector('.answer-space') as HTMLElement
+    const answerSpace = document.querySelector('.answer-space') as HTMLElement;
 
     return {
       name: this.store().currentQuestion!.id,
-      height: (answerSpace.offsetHeight - 30).toString()
-    }
+      height: (answerSpace.offsetHeight - 30).toString(),
+    };
   }
 
   captureResponses(value: string | undefined) {
     if (!value) {
-      value = ''
+      value = '';
     }
 
     const currentQuestion = this.store().currentQuestion;
     if (!currentQuestion) {
-      return
-    };
+      return;
+    }
 
     currentQuestion.responses[0] = value;
-    currentQuestion.lastUpdated = new Date()
+    currentQuestion.lastUpdated = new Date();
 
-    this._store.updateStore({ currentQuestion })
+    this._store.updateStore({ currentQuestion });
   }
 }

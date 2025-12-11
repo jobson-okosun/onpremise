@@ -4,6 +4,7 @@ export class StoreDTO {
     preloginData: null | IAssessmentPreLoginData
     candidatePassport: null | any
     organizationAssets: null | { logo: null | string, hasLogo: boolean }
+    currentRoute: { title?: string, url?: string }
     loginData: null | ICandidateLoginResponse
     sections: StoreSection[]
     currentSection: null | StoreSection

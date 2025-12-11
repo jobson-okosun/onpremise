@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { IAssessmentPreLoginData, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidateEndExamData, ICandidateLoginDTO, ICandidateLoginResponse, ICandidationEndExamResponse, Ping, Pong } from "../store/model/types";
 import { filter, finalize, interval, map, Observable, of, Subscription } from "rxjs";
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Store } from "../store/store";
 import { APP_BRANDING } from "../utils/constants";

@@ -918,7 +918,27 @@ export const mockStore = {
 
               "drawing_writing_split_type": "NONE",
               "revisit": false
+            },
+            {
+              "id": "SCI-CM-301",
+              "item_type": "CHOICE_MATRIX",
+              "passage_stimulus": "",
+              "stimulus": "<p><strong>For each statement below, choose whether it is <em>True</em> or <em>False</em>.</strong></p>",
+              "stems": [
+                "<p>Solar energy is considered a renewable resource.</p>",
+                "<p>Wind turbines generate electricity without producing carbon emissions.</p>",
+                "<p>Fossil fuels are classified as renewable sources of energy.</p>",
+                "<p>Hydropower plants use the movement of water to create electricity.</p>"
+              ],
+              "options": [
+                { "label": "<p>True</p>", "value": "true" },
+                { "label": "<p>False</p>", "value": "false" }
+              ],
+              "responses": [],
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             }
+
           ],
           "passages": []
         },

@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ExamService } from '../services/exam';
 import { mockStore } from '../utils/constants';
 import { TauriService } from '../services/tauri';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ export default class Login {
   private _dataService = inject(DataService)
   private _router = inject(Router)
   private _tauriService = inject(TauriService)
+  private _toast = inject(HotToastService)
 
   showLogin = signal(false)
   isLoading = signal(false)
@@ -46,26 +48,24 @@ export default class Login {
       return
     }
 
-    const payload: ICandidateLoginDTO = {
-      assessment_id: preLoginData.id,
-      login_value: this.candidateId.value,
-      unique_id: preLoginData.unique_id,
-    } as any;
+    const payload: ICandidateLoginDTO = { assessment_id: preLoginData.id, login_value: this.candidateId.value, unique_id: preLoginData.unique_id} as any;
 
     this.isLoading.set(true)
-
     this._dataService.login(payload)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (res) => this.onSuccessfullLogin(res),
-        error: (err: HttpErrorResponse) => {
-          const control = this.candidateId
+    .pipe(
+      this._toast.observe({ loading: 'Please wait...', success: 'Login successfull', error: 'Error!'}),
+      finalize(() => this.isLoading.set(false))
+    )
+    .subscribe({
+      next: (res) => this.onSuccessfullLogin(res),
+      error: (err: HttpErrorResponse) => {
+        const control = this.candidateId
 
-          control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
-          control.markAsTouched();
-          // this.onSuccessfullLogin(mockStore as any)
-        }
-      })
+        control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
+        control.markAsTouched();
+        // this.onSuccessfullLogin(mockStore as any)
+      }
+    })
   }
 
   onSuccessfullLogin(value: ICandidateLoginResponse) {
