@@ -1,0 +1,12 @@
+<div>
+    <input class="w-full bg-transparent text-4xl text-right outline-none mb-8" [value]="display()" placeholder="0" disabled />
+    <div class="grid grid-cols-6 gap-2">
+        @for(btn of buttons; track btn;) {
+            <ng-container>
+                <button (click)="onButton(btn)" [ngClass]="btn.class" class="text-white hover:opacity-80 rounded-lg py-4 text-xl flex items-center justify-center transition">
+                    {{ btn.label }}
+                </button>
+            </ng-container>
+        }
+    </div>
+</div>

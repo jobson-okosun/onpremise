@@ -23,7 +23,13 @@ import { ClassifyByOrdering } from '../item-types/classify-by-ordering/classify-
 import { LabelImageWithText } from '../item-types/label-image-with-text/label-image-with-text';
 import { LabelImageWithDropdownselect } from '../item-types/label-image-with-dropdownselect/label-image-with-dropdownselect';
 import { LabelImageWithDragAndDrop } from '../item-types/label-image-with-drag-and-drop/label-image-with-drag-and-drop';
-import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix';
+import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix'; 
+import { CdkDrag } from '@angular/cdk/drag-drop';
+import { Calculator } from '../calculator/calculator';
+import { ScientificCalculator } from '../scientific-calculator/scientific-calculator';
+import { MultipleResponse } from '../item-types/multiple-response/multiple-response';
+import { TrueOrFalse } from '../item-types/true-or-false/true-or-false';
+import { YesOrNo } from '../item-types/yes-or-no/yes-or-no';
 
 @Component({
   selector: 'app-layout',
@@ -32,14 +38,15 @@ import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix';
   imports: [
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
-    LabelImageWithDragAndDrop, ChoiceMatrix,
-    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass
+    LabelImageWithDragAndDrop, ChoiceMatrix, MultipleResponse, TrueOrFalse, YesOrNo,
+    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator
   ]
 })
-export default class Layout implements OnDestroy {
+export default class Layout implements OnDestroy { 
   private _store = inject(Store)
   private _exam = inject(ExamService)
-
+  
+  showCalculator = signal<null | string>(null)
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
   showUserProfileModal: boolean = false;
@@ -50,6 +57,9 @@ export default class Layout implements OnDestroy {
   deliveryMethods = signal(DeliveryMethod)
   paginator = viewChild(Paginator)
   standardChoice = viewChild(SingleChoice)
+  multipleChoice = viewChild(MultipleResponse)
+  yesOrNo = viewChild(YesOrNo)
+  trueOrFalse = viewChild(TrueOrFalse)
   store = computed(() => this._store.store())
   isCandidateSuspendedModalActive = computed(() => this._exam.isCandidateSuspendedModalActive())
   isLogoutNoticeActive = computed(() => this._exam.isConcurrentExamModalActive())
@@ -110,9 +120,9 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    // if (!this.store().loginData) {
-    //   this._exam.formatLoginDataToStore(mockStore as any)
-    // }
+    if (!this.store().loginData) {
+      this._exam.formatLoginDataToStore(mockStore as any)
+    }
 
     if (!this.store().platformIsTauri) {
       fullscreen()
@@ -122,6 +132,11 @@ export default class Layout implements OnDestroy {
   }
 
   selectSection(section: StoreSection) {
+    const currentSection = this.store().currentSection
+    if(currentSection?.id == section.id) {
+      return
+    }
+    
     const currentQuestion = section.items[0]
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
   }
@@ -187,6 +202,18 @@ export default class Layout implements OnDestroy {
 
     if (this.store().currentQuestion!.item_type == this.itemTypes().MCQ) {
       component = this.standardChoice() as any
+    }
+
+    if (this.store().currentQuestion!.item_type == this.itemTypes().MRQ) {
+      component = this.multipleChoice() as any
+    }
+
+    if (this.store().currentQuestion!.item_type == this.itemTypes().TRUE_FALSE) {
+      component = this.trueOrFalse() as any
+    }
+
+    if (this.store().currentQuestion!.item_type == this.itemTypes().YES_NO) {
+      component = this.yesOrNo() as any
     }
 
     useShortcut(event.key, this.store().currentQuestionIndex, this.paginator()!, this.totalSectionsQuestions(), this.store().currentQuestion!, component)

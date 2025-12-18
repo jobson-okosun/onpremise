@@ -28,7 +28,7 @@
                     <app-answer-tools></app-answer-tools>
                 </div>
             </div>
-            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed">
+            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed h-[400px] lg:h-full">
                 @if(showEditor()) {
                     <app-editor [value]="store().currentQuestion?.responses?.[0] || ''" (valueChanges)="captureResponses($event)" [(config)]="editorConfig"></app-editor>                      
                 }

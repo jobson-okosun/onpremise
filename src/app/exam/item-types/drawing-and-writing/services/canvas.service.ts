@@ -2,13 +2,15 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import Konva from 'konva';
 import { DrawingAndWritingStore } from "./store.service";
 import { Store } from "../../../../store/store";
-import simplify from 'simplify-js';
 import { Subscription } from "rxjs";
 import { KonvaToolsEvent } from "./event.service";
 import { scrollContainers } from "../../../../utils/helper";
+import { DRAWING_AND_WRITING_BRUSH_COLORS } from "../../../../utils/constants";
 
 @Injectable({ providedIn: 'root' })
 export class CanvasService {
+    private canvasWorker?: Worker;
+
     private _drawingStore = inject(DrawingAndWritingStore)
     private _konvaEventTools = inject(KonvaToolsEvent)
     private _store = inject(Store)
@@ -27,8 +29,10 @@ export class CanvasService {
 
     store = computed(() => this._store.store())
     isTouchDevice = signal('ontouchstart' in window)
-    backgroundType = signal<'LINE' | 'GRID' | 'NONE'>('LINE')
-    currentTool = signal<'brush' | 'eraser'>('brush')
+    backgroundType = signal<'LINE' | 'GRID' | 'GRAPH' | 'NONE'>('LINE')
+    currentTool = signal<'brush' | 'eraser' | 'rectangle' | 'square' | 'circle'>('brush')
+    currentShape = signal<Konva.Shape | null>(null)
+    private shapeStartPos: { x: number, y: number } | null = null
     eraserSize = signal<number>(10)
     drawing = signal<boolean>(false)
     currentLine = signal<Konva.Line | null>(null)
@@ -38,10 +42,51 @@ export class CanvasService {
     protractorTransformer = signal<Konva.Transformer | null>(null)
     eraserCursor = signal<any>(null)
     loaded = signal(false)
+    brushSize = signal(2)
+    brushColor = signal(DRAWING_AND_WRITING_BRUSH_COLORS[0])
+    eraserColor = signal('#f5f5f7')
 
     constructor() {
         this.loaded.set(true)
     }
+
+    workOnMessageHandler() {
+        this.canvasWorker!.onmessage = (e) => {
+            if (!e.data) {
+                return
+            }
+
+            if (e.data.type === 'UNKNOWN_SHAPE_COMPLETE') {
+                return
+            }
+
+            if (!['LINE_COMPLETE', 'SHAPE_COMPLETE'].includes(e.data.type)) {
+                return;
+            }
+
+            const newStroke = e.data.type == 'LINE_COMPLETE' ? e.data.stroke : e.data.shape
+            const currentPageData = this._drawingStore.getCurrentPageData();
+            const updatedStrokes = [...currentPageData?.strokes, newStroke];
+
+            this._drawingStore.updateCurrentPageStrokes(updatedStrokes);
+
+            // save into question response
+            const updatedStore = this._drawingStore.getStoreData();
+            const dataJson = JSON.stringify(updatedStore);
+
+            const currentQuestion = this.store().currentQuestion;
+            currentQuestion!.responses = [dataJson];
+            currentQuestion!.lastUpdated = new Date();
+
+            this._store.updateStore({ currentQuestion });
+        };
+    }
+
+    terminateWorker() {
+        this.canvasWorker?.terminate();
+        this.canvasWorker = undefined;
+    }
+
 
     initializeCanvas() {
         const stageContainer = document.getElementById('stage')
@@ -49,17 +94,37 @@ export class CanvasService {
             return
         }
 
+        const registerCanvasWorker = () => {
+            this.terminateWorker()
+
+            if (typeof Worker !== 'undefined') {
+                this.canvasWorker = new Worker(new URL('../workers/canvas.worker', import.meta.url));
+                this.workOnMessageHandler()
+            }
+        }
+
+        registerCanvasWorker()
+
         const width = stageContainer.parentElement!.parentElement!.offsetWidth > this.store().drawingAndWritingConfig.layoutFullModeWidth
             ? stageContainer.parentElement!.parentElement!.offsetWidth : this.store().drawingAndWritingConfig.layoutFullModeWidth;
 
         const height = 1000;
         let stage = new Konva.Stage({ container: 'stage', width, height, draggable: false });
         let gridLayer = new Konva.Layer();
-        let plottedLayer = new Konva.Layer();
         let drawingLayer = new Konva.Layer();
         let uiLayer = new Konva.Layer();
         let toolLayer = new Konva.Layer();
-        stage.add(gridLayer, plottedLayer, drawingLayer, uiLayer, toolLayer);
+
+        stage.add(gridLayer, drawingLayer, uiLayer, toolLayer);
+
+        // Performance optimization: batch drawing
+        let rafId = null;
+        let needsRedraw = false;
+
+        // Simplified smooth drawing for performance
+        let lastPoint = null;
+        let lastTime = Date.now();
+        let pointBuffer: any[] = [];
 
         const createEraserTool = (size: number | null = null) => {
             const eraserCursor = new Konva.Circle({
@@ -88,71 +153,147 @@ export class CanvasService {
 
         function drawGrid(gridSize = 50) {
             gridLayer.destroyChildren();
+
             const w = stage?.width();
             const h = stage?.height();
-            for (let x = 0; x <= w; x += gridSize) {
-                gridLayer.add(new Konva.Line({ points: [x, 0, x, h], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
-            }
-            for (let y = 0; y <= h; y += gridSize) {
-                gridLayer.add(new Konva.Line({ points: [0, y, w, y], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
-            }
 
-            gridLayer?.cache();
+            const grid = new Konva.Shape({
+                listening: false,
+                perfectDrawEnabled: false,
+                sceneFunc: function (ctx, shape) {
+                    ctx.strokeStyle = '#e6e7e9';
+                    ctx.lineWidth = 1;
+
+                    // vertical lines
+                    for (let x = 0; x <= w; x += gridSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, h);
+                        ctx.stroke();
+                    }
+
+                    // horizontal lines
+                    for (let y = 0; y <= h; y += gridSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(w, y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            gridLayer?.add(grid);
+            gridLayer?.cache()
             gridLayer?.batchDraw();
         }
 
         function drawLineBackground(lineSpacing = 50) {
             gridLayer.destroyChildren();
+
             const w = stage?.width();
             const h = stage?.height();
 
-            for (let y = 0; y <= h; y += lineSpacing) {
-                gridLayer.add(new Konva.Line({
-                    points: [0, y, w, y],
-                    stroke: '#e6e7e9',
-                    strokeWidth: 1,
-                    listening: false
-                }));
-            }
+            const lines = new Konva.Shape({
+                listening: false,
+                perfectDrawEnabled: false,
+                sceneFunc: function (ctx, shape) {
+                    ctx.strokeStyle = '#e6e7e9';
+                    ctx.lineWidth = 1;
 
+                    for (let y = 0; y <= h; y += lineSpacing) {
+                        ctx.beginPath();           // 🔥 reset path
+                        ctx.moveTo(0, y);          // start of line
+                        ctx.lineTo(w, y);          // end of line
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            gridLayer?.add(lines);
+            gridLayer?.cache()
+            gridLayer?.batchDraw();
+        }
+
+        function drawGraphBackground(majorSize = 50, minorSize = 10) {
+            gridLayer.destroyChildren();
+
+            const w = stage?.width();
+            const h = stage?.height();
+
+            const graph = new Konva.Shape({
+                listening: false,
+                perfectDrawEnabled: false,
+                sceneFunc: function (ctx) {
+                    // ---- minor lines ----
+                    ctx.strokeStyle = '#e5e7eb'; // light gray
+                    ctx.lineWidth = 1;
+
+                    for (let x = 0; x <= w; x += minorSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, h);
+                        ctx.stroke();
+                    }
+
+                    for (let y = 0; y <= h; y += minorSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(w, y);
+                        ctx.stroke();
+                    }
+
+                    // ---- major lines ----
+                    ctx.strokeStyle = '#bac2cf'; // darker gray
+                    ctx.lineWidth = 1.5;
+
+                    for (let x = 0; x <= w; x += majorSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, h);
+                        ctx.stroke();
+                    }
+
+                    for (let y = 0; y <= h; y += majorSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(w, y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            gridLayer?.add(graph);
             gridLayer?.cache();
             gridLayer?.batchDraw();
         }
 
-        function drawPlottedGrid(gridSize = 50) {
-            plottedLayer.destroyChildren();
-
-            const w = stage?.width();
-            const h = stage?.height();
-            for (let x = 0; x <= w; x += gridSize) {
-                for (let y = 0; y <= h; y += gridSize) {
-                    plottedLayer.add(new Konva.Circle({ x, y, radius: 2, fill: '#9ca3af', listening: false }));
-                }
-            }
-
-            plottedLayer?.cache();
-            plottedLayer?.batchDraw();
-        }
 
         const setBackgroundType = () => {
             clearBackground()
 
-            if (this.backgroundType() == 'LINE') {
-                drawLineBackground();
-                return
-            }
+            switch (this.backgroundType()) {
+                case 'LINE':
+                    drawLineBackground();
+                    break;
 
-            if (this.backgroundType() == 'GRID') {
-                drawGrid();
-                drawPlottedGrid();
-                return
+                case 'GRID':
+                    drawGrid();
+                    break;
+
+                case 'GRAPH':
+                    drawGraphBackground();
+                    break;
+
+                case 'NONE':
+                default:
+                    break;
             }
 
         }
 
         const resizeStage = () => {
             const answerSpace = document.querySelector('.answer-space') as HTMLElement
-            
+
             const parent = document.getElementById('stage-parent')!;
             parent.style.height = (answerSpace.offsetHeight - 10) + 'px';
 
@@ -179,6 +320,10 @@ export class CanvasService {
                 newWidth = currentWidth
             }
 
+            if (newWidth == 0) {
+                newWidth = this.store().drawingAndWritingConfig.layoutFullModeWidth
+            }
+
             const newHeight = 1000;
             stage?.width(newWidth);
             stage?.height(newHeight);
@@ -189,23 +334,8 @@ export class CanvasService {
         }
 
         function clearBackground() {
-            plottedLayer.visible(false);
             gridLayer.destroyChildren();
             gridLayer.batchDraw();
-        }
-
-        function deltaEncode(points: number[]): number[] {
-            if (!points || points.length < 2) return [];
-
-            const deltas = [points[0], points[1]];
-
-            for (let i = 2; i < points.length; i += 2) {
-                const dx = points[i] - points[i - 2];
-                const dy = points[i + 1] - points[i - 1];
-                deltas.push(Number(dx.toFixed(1)), Number(dy.toFixed(1)));
-            }
-
-            return deltas;
         }
 
         function deltaDecode(deltas: number[]): number[] {
@@ -233,40 +363,67 @@ export class CanvasService {
                 perfectDrawEnabled: false,
             });
 
-            // Decode all strokes before drawing
             const decodedStrokes = currentPageData.strokes.map(stroke => ({
                 ...stroke,
                 points: deltaDecode(stroke.points)
             }));
 
-            decodedStrokes.forEach(stroke => {
-                const line = new Konva.Line({
-                    points: stroke.points,
-                    stroke: stroke.mode === 'eraser' ? '#000' : (stroke.color || '#111827'),
-                    strokeWidth: stroke.size,
-                    globalCompositeOperation: stroke.mode === 'eraser'
-                        ? 'destination-out'
-                        : 'source-over',
-                    lineCap: 'round',
-                    lineJoin: 'round',
-                    listening: false,
-                    perfectDrawEnabled: false,
-                });
-                strokeGroup.add(line);
+            decodedStrokes.forEach((stroke: any) => {
+                let shape: Konva.Shape | null = null;
+
+                if (stroke.type && stroke.type === 'shape') {
+                    const shapeItem = stroke;
+                    const shapeType = shapeItem.shapeType;
+                    const commonProps = {
+                        stroke: shapeItem.color || '#111827',
+                        fill: 'transparent',
+                        strokeWidth: shapeItem.size,
+                        listening: false,
+                        perfectDrawEnabled: false,
+                    };
+
+                    if (shapeType === 'rectangle' || shapeType === 'square') {
+                        shape = new Konva.Rect({
+                            x: shapeItem.x,
+                            y: shapeItem.y,
+                            width: shapeItem.width || 0,
+                            height: shapeItem.height || 0,
+                            ...commonProps
+                        })
+
+                    }
+                    else if (shapeType === 'circle') {
+                        shape = new Konva.Circle({
+                            x: shapeItem.x,
+                            y: shapeItem.y,
+                            radius: shapeItem.radius || 0,
+                            ...commonProps
+                        })
+                    }
+
+                } else {
+                    shape = new Konva.Line({
+                        points: stroke.points,
+                        stroke: stroke.mode === 'eraser' ? '#000' : (stroke.color || '#111827'),
+                        strokeWidth: stroke.size,
+                        globalCompositeOperation: stroke.mode === 'eraser'
+                            ? 'destination-out'
+                            : 'source-over',
+                        lineCap: 'round',
+                        lineJoin: 'round',
+                        listening: false,
+                        perfectDrawEnabled: false,
+                    });
+                }
+
+                if (!shape) return;
+
+                strokeGroup.add(shape);
             });
 
 
             drawingLayer.add(strokeGroup);
             drawingLayer.batchDraw();
-
-            requestAnimationFrame(() => {
-                if (!currentPageData?.strokes?.length) {
-                    return
-                }
-
-                strokeGroup?.cache({ pixelRatio: 1 });
-                drawingLayer?.batchDraw();
-            });
         };
 
         const loadCurrentPageStrokes = () => {
@@ -274,7 +431,7 @@ export class CanvasService {
         }
 
         const clearCurrentPageStrokes = () => {
-            this._drawingStore.updateCurrentPageStrokes([], true);
+            this._drawingStore.clearCurrentPage();
             drawingLayer.destroyChildren();
             drawingLayer.batchDraw();
         }
@@ -549,111 +706,378 @@ export class CanvasService {
             return group;
         }
 
-        stage.on('pointerdown', (e) => {
-            if (e.evt.pointerType !== 'pen') {
-                return
+        function scheduleDraw() {
+            if (!needsRedraw) {
+                needsRedraw = true;
+                rafId = requestAnimationFrame(() => {
+                    drawingLayer.batchDraw();
+                    needsRedraw = false;
+                });
+            }
+        }
+
+        // Smooth line drawing with pressure simulation
+        const getStrokeWidth = (speed: number) => {
+            // Simulate pressure based on drawing speed (faster = thinner)
+            const minWidth = this.brushSize() * 0.5;
+            const maxWidth = this.brushSize() * 1.5;
+            const normalizedSpeed = Math.min(speed / 10, 1);
+            return maxWidth - (normalizedSpeed * (maxWidth - minWidth));
+        }
+
+        function getCatmullRomPoints(points: any[], tension = 0.5) {
+            if (points.length < 4) return points;
+
+            const result = [];
+            const numSegments = 8; // Optimized for performance
+
+            for (let i = 0; i < points.length - 2; i += 2) {
+                const p0 = i === 0 ? points.slice(i, i + 2) : points.slice(i - 2, i);
+                const p1 = points.slice(i, i + 2);
+                const p2 = points.slice(i + 2, i + 4);
+                const p3 = i + 4 >= points.length ? points.slice(i + 2, i + 4) : points.slice(i + 4, i + 6);
+
+                if (i === 0) {
+                    result.push(p1[0], p1[1]);
+                }
+
+                for (let t = 0; t <= 1; t += 1 / numSegments) {
+                    const t2 = t * t;
+                    const t3 = t2 * t;
+
+                    const x = 0.5 * (
+                        (2 * p1[0]) +
+                        (-p0[0] + p2[0]) * t +
+                        (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
+                        (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
+                    );
+
+                    const y = 0.5 * (
+                        (2 * p1[1]) +
+                        (-p0[1] + p2[1]) * t +
+                        (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
+                        (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
+                    );
+
+                    result.push(x, y);
+                }
             }
 
-            if (!(this.currentTool() === 'brush' || this.currentTool() === 'eraser')) {
-                return
+            return result;
+        }
+
+        // Douglas-Peucker point simplification to reduce lag
+        function simplifyPoints(points: any[], tolerance = 2) {
+            if (points.length <= 4) return points;
+
+            function getPerpendicularDistance(px: number, py: number, x1: number, y1: number, x2: number, y2: number) {
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const mag = Math.sqrt(dx * dx + dy * dy);
+                if (mag > 0) {
+                    const u = ((px - x1) * dx + (py - y1) * dy) / (mag * mag);
+                    const ix = x1 + u * dx;
+                    const iy = y1 + u * dy;
+                    return Math.sqrt((px - ix) * (px - ix) + (py - iy) * (py - iy));
+                }
+                return Math.sqrt((px - x1) * (px - x1) + (py - y1) * (py - y1));
             }
 
-            this.drawing.set(true);
-            const pos = stage.getPointerPosition();
+            const pointList = [];
+            for (let i = 0; i < points.length; i += 2) {
+                pointList.push({ x: points[i], y: points[i + 1] });
+            }
 
-            const currentLine = new Konva.Line({
-                stroke: this.currentTool() === 'eraser' ? '#000' : '#111827',
-                strokeWidth: parseInt(this.currentTool() == 'eraser' ? this.eraserSize().toString() : '2.0', 10),
-                globalCompositeOperation: this.currentTool() === 'eraser' ? 'destination-out' : 'source-over',
-                lineCap: 'round',
-                lineJoin: 'round',
-                points: [pos!.x, pos!.y],
-                listening: false,
-                perfectDrawEnabled: false
+            function douglasPeucker(points: any[], tolerance: number): any {
+                if (points.length <= 2) return points;
+
+                let maxDistance = 0;
+                let maxIndex = 0;
+                const end = points.length - 1;
+
+                for (let i = 1; i < end; i++) {
+                    const distance = getPerpendicularDistance(
+                        points[i].x, points[i].y,
+                        points[0].x, points[0].y,
+                        points[end].x, points[end].y
+                    );
+
+                    if (distance > maxDistance) {
+                        maxDistance = distance;
+                        maxIndex = i;
+                    }
+                }
+
+                if (maxDistance > tolerance) {
+                    const left = douglasPeucker(points.slice(0, maxIndex + 1), tolerance);
+                    const right = douglasPeucker(points.slice(maxIndex), tolerance);
+                    return left.slice(0, -1).concat(right);
+                }
+
+                return [points[0], points[end]];
+            }
+
+            const simplified: any[] = douglasPeucker(pointList, tolerance);
+            const result: any[] = [];
+            simplified.forEach(p => {
+                result.push(p.x, p.y);
             });
 
-            this.currentLine.set(currentLine)
-            drawingLayer.add(this.currentLine() as any);
-        });
+            return result;
+        }
 
-        stage.on('pointermove', (e) => {
-            if (e.evt.pointerType !== 'pen') {
-                return
+        // Interpolate points for fast movements
+        function interpolatePoints(p1: any, p2: any, numPoints = 3) {
+            const points = [];
+            for (let i = 1; i <= numPoints; i++) {
+                const t = i / (numPoints + 1);
+                points.push(
+                    p1.x + (p2.x - p1.x) * t,
+                    p1.y + (p2.y - p1.y) * t
+                );
             }
+            return points;
+        }
 
-            if (!this.drawing() || !this.currentLine()) {
+        stage.on('pointerdown', (e) => {
+
+            if (e.evt.pointerType !== 'pen' || e.evt.buttons !== 1) {
                 return
             };
 
             const pos = stage.getPointerPosition();
-
-            if (this.isTouchDevice() && this.currentTool() === 'eraser') {
-                this.eraserCursor().position(pos);
-                this.eraserCursor().visible(true);
-                uiLayer.batchDraw();
-            } else if (this.isTouchDevice()) {
-                this.eraserCursor().visible(false);
-            }
-
-            if (!(this.currentTool() === 'brush' || this.currentTool() === 'eraser')) {
+            if (!pos) {
                 return
             }
 
-            const newPoints = this.currentLine()?.points().concat([pos!.x, pos!.y]);
-            this.currentLine()?.points(newPoints);
+            const tool = this.currentTool();
+            if (tool === 'brush' || tool === 'eraser') {
+                lastPoint = pos;
+                lastTime = Date.now();
+                pointBuffer = [pos.x, pos.y];
+
+                const line = new Konva.Line({
+                    stroke: this.currentTool() === 'eraser' ? this.eraserColor() : this.brushColor(),
+                    strokeWidth: parseInt(this.currentTool() == 'eraser' ? this.eraserSize().toString() : '2.0', 10),
+                    globalCompositeOperation: this.currentTool() === 'eraser' ? 'destination-out' : 'source-over',
+                    lineCap: 'round',
+                    lineJoin: 'round',
+                    points: [pos!.x, pos!.y],
+                    listening: false,
+                    tension: 0.5
+                });
+
+                this.currentLine.set(line)
+                this.drawing.set(true);
+                drawingLayer.add(this.currentLine() as any);
+                drawingLayer.draw();
+
+                return;
+            }
+
+            this.shapeStartPos = { x: pos.x, y: pos.y };
+
+            let shape: Konva.Shape | null = null;
+            const common = {
+                x: pos.x,
+                y: pos.y,
+                stroke: this.brushColor(),
+                strokeWidth: this.brushSize(),
+                listening: false,
+                dash: []
+            };
+
+            if (tool === 'rectangle' || tool === 'square') {
+                shape = new Konva.Rect({
+                    width: 1,
+                    height: 1,
+                    fill: 'transparent',
+                    ...common
+                } as any);
+            } else if (tool === 'circle') {
+                shape = new Konva.Circle({
+                    radius: 1,
+                    fill: 'transparent',
+                    ...common
+                } as any);
+            }
+
+            if (!shape) return;
+
+            this.currentShape.set(shape)
+            drawingLayer.add(shape);
+            drawingLayer.draw();
+        });
+
+        stage.on('pointermove', (e) => {
+
+            if (e.evt.pointerType !== 'pen') {
+                return
+            }
+
+            const pos = stage.getPointerPosition();
+            if (!pos) {
+                return
+            }
+
+            if (this.drawing() && this.currentLine()) {
+
+                if (this.isTouchDevice() && this.currentTool() === 'eraser') {
+                    this.eraserCursor().position(pos);
+                    this.eraserCursor().visible(true);
+                    uiLayer.batchDraw();
+                } else if (this.isTouchDevice()) {
+                    this.eraserCursor().visible(false);
+                }
+
+                const now = Date.now();
+                const timeDiff = Math.max(now - lastTime, 1);
+                const distance = Math.sqrt(
+                    Math.pow(pos.x - lastPoint!.x, 2) +
+                    Math.pow(pos.y - lastPoint!.y, 2)
+                );
+                const speed = distance / timeDiff;
+
+                if (distance > 10) {
+                    const interpolated = interpolatePoints(lastPoint!, pos, Math.floor(distance / 10));
+                    pointBuffer = pointBuffer.concat(interpolated);
+                }
+
+                pointBuffer.push(pos.x, pos.y);
+
+                this.currentLine()!.points(pointBuffer);
+
+                if (this.currentTool() === 'brush' && distance > 0) {
+                    const dynamicWidth = getStrokeWidth(speed);
+                    this.currentLine()!.strokeWidth(dynamicWidth);
+                }
+
+                lastPoint = pos;
+                lastTime = now;
+
+                drawingLayer.draw();
+                return;
+            }
+
+            // If drawing a shape
+            const shape = this.currentShape();
+            if (!shape || !this.shapeStartPos) return;
+
+            const dx = pos.x - this.shapeStartPos.x;
+            const dy = pos.y - this.shapeStartPos.y;
+
+            if (shape instanceof Konva.Rect) {
+                let x = this.shapeStartPos.x;
+                let y = this.shapeStartPos.y;
+                let width = dx;
+                let height = dy;
+
+                if (width < 0) { x = pos.x; width = Math.abs(width); }
+                if (height < 0) { y = pos.y; height = Math.abs(height); }
+
+                if (this.currentTool() === 'square') {
+                    const size = Math.max(width, height);
+                    // keep square anchored from start corner direction
+                    width = size;
+                    height = size;
+                    if (pos.x < this.shapeStartPos.x) x = this.shapeStartPos.x - size;
+                    if (pos.y < this.shapeStartPos.y) y = this.shapeStartPos.y - size;
+                }
+
+                (shape as Konva.Rect).x(x);
+                (shape as Konva.Rect).y(y);
+                (shape as Konva.Rect).width(width);
+                (shape as Konva.Rect).height(height);
+            } else if (shape instanceof Konva.Circle) {
+                const radius = Math.sqrt(dx * dx + dy * dy) / 2;
+                // center between start and current for nicer behaviour
+                const centerX = (this.shapeStartPos.x + pos.x) / 2;
+                const centerY = (this.shapeStartPos.y + pos.y) / 2;
+                (shape as Konva.Circle).x(centerX);
+                (shape as Konva.Circle).y(centerY);
+                (shape as Konva.Circle).radius(radius);
+            }
+
+            drawingLayer.draw();
         });
 
         stage.on('pointerup', (e) => {
+
             if (this.drawing() && this.currentLine()) {
-                this.currentLine()!.cache();
-                drawingLayer.batchDraw();
+                const line = this.currentLine()!;
+                const rawPoints = line.points();
 
-                const roundedPoints = this.currentLine()!.points().map((val, idx) => {
-                    return Number(val.toFixed(1));
-                });
-
-                const pointObjects = [];
-                for (let i = 0; i < roundedPoints.length; i += 2) {
-                    pointObjects.push({ x: roundedPoints[i], y: roundedPoints[i + 1] });
+                if (rawPoints.length <= 6) {
+                    return;
                 }
 
-                const simplifiedPoints = simplify(pointObjects, 0.275, true);
-                const finalPoints = simplifiedPoints.flatMap((p: any) => [p.x, p.y]);
+                if (rawPoints.length >= 500) {
+                    return;
+                }
 
-                // Delta encode before saving
-                const encodedPoints = deltaEncode(finalPoints);
+                const simplified = simplifyPoints(rawPoints, 1.5);
 
-                const newStroke = {
-                    points: encodedPoints,
-                    mode: this.currentLine()?.attrs.globalCompositeOperation === 'destination-out' ? 'eraser' : 'brush',
-                    color: this.currentLine()?.stroke(),
-                    size: this.currentLine()?.strokeWidth(),
-                };
+                const finalPoints = simplified.length < 200 ? getCatmullRomPoints(simplified) : simplified;
 
-                // Get the current strokes from the store, add the new one, and then update the store.
-                const currentPageData = this._drawingStore.getCurrentPageData();
-                const updatedStrokes: any[] = [...currentPageData?.strokes, newStroke];
+                line.points(finalPoints);
 
-                this._drawingStore.updateCurrentPageStrokes(updatedStrokes);
-                const updatedStore = this._drawingStore.getStoreData()
+                scheduleDraw();
 
-                // save directly to item response
-                const dataJson = JSON.stringify(updatedStore)
-                const currentQuestion = this.store().currentQuestion;
-                currentQuestion!.responses = [dataJson];
-                currentQuestion!.lastUpdated = new Date()
-                this._store.updateStore({ currentQuestion })
+                this.canvasWorker?.postMessage({
+                    type: 'LINE_POINTER_UP',
+                    points: line.points(),
+                    mode: line.attrs.globalCompositeOperation === 'destination-out' ? 'eraser' : 'brush',
+                    color: line.stroke(),
+                    size: line.strokeWidth(),
+                });
 
-                // Reset local state for the next stroke
                 this.currentLine.set(null as any);
+                this.drawing.set(false);
+                pointBuffer = [];
+
+                return;
             }
 
-            this.drawing.set(false)
-
-            if (this.isTouchDevice()) {
-                this.eraserCursor().visible(false);
-                uiLayer.batchDraw();
+            const shape = this.currentShape();
+            if (!shape) {
+                return;
             }
+
+            const tool = this.currentTool();
+
+            const shapeStroke: any = {
+                type: 'shape',
+                shapeType: tool,
+                stroke: shape.stroke(),
+                size: shape.strokeWidth(),
+                fill: shape.fill() ?? 'transparent',
+            };
+
+            if (shape instanceof Konva.Rect) {
+                Object.assign(shapeStroke, {
+                    x: shape.x(),
+                    y: shape.y(),
+                    width: shape.width(),
+                    height: shape.height(),
+                });
+            }
+
+            if (shape instanceof Konva.Circle) {
+                Object.assign(shapeStroke, {
+                    x: shape.x(),
+                    y: shape.y(),
+                    radius: shape.radius(),
+                });
+            }
+
+            this.canvasWorker?.postMessage({
+                type: 'SHAPE_POINTER_UP',
+                shape: shapeStroke,
+            });
+
+            this.currentShape.set(null);
+            this.shapeStartPos = null;
+            drawingLayer.draw();
         });
 
         stage.on('mouseenter', () => {
@@ -695,6 +1119,7 @@ export class CanvasService {
         this.questionChangeSub$ = this._konvaEventTools._questionChanged$.subscribe({
             next: () => {
                 this._drawingStore.clearStoreData()
+                this.terminateWorker()
                 destroyCanvas()
                 scrollContainers()
                 this._drawingStore.createStore()
@@ -787,7 +1212,7 @@ export class CanvasService {
 
                 if (tool == 'all') {
                     this.ruler()?.destroy()
-                    this.ruler.set(null) 
+                    this.ruler.set(null)
                     this.protractor()?.destroy()
                     this.protractor.set(null)
                     toolLayer.destroyChildren()

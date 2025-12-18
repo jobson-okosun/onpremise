@@ -33,7 +33,8 @@
             ],
             "scripts": [
               "node_modules/tinymce/tinymce.js"
-            ]
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -98,7 +99,8 @@
             ],
             "styles": [
               "src/styles.css"
-            ]
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         }
       }

@@ -28,8 +28,8 @@
                     <app-answer-tools></app-answer-tools>
                 </div>
             </div>
-            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed p-1">
-               <div class="items-center bg-gray-100 p-3 h-full">
+            <div class="answer-space flex-1 overflow-y-auto border-t border-gray-300 border-dashed p-1 ">
+               <div class="items-center bg-gray-100 p-3 h-[400px] lg:h-full">
                     <textarea #input (input)="captureResponses(input)" [value]="store().currentQuestion?.responses?.[0] || ''" placeholder="Enter your answer..." class="bg-white resize-none border border-gray-200 rounded-md outline-none ring-0 text-sm close-item w-full h-full p-3"></textarea>  
                 </div>
             </div>

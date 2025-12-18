@@ -101,6 +101,8 @@ export const APP_BRANDING = {
   logo: '/assets/images/exam-alpha-logo/EXPryLogoHor.png'
 }
 
+export const DRAWING_AND_WRITING_BRUSH_COLORS = ['#000000', '#007aff', '#34c759']
+
 export const preloginData = {
   "name": "Unified Tertiary Entrance Exam",
   "description": "A standardized assessment covering English, Mathematics and General Knowledge.",
@@ -191,6 +193,50 @@ export const mockStore = {
               "image_data": { "image": "", "width": null, "height": null },
               "drawing_writing_split_type": "NONE",
               "revisit": false
+            },
+            {
+              id: 'ENG-Qasfasfa8',
+              stimulus: "Which of the following words are coordinating conjunctions?",
+              options: [
+                { label: 'For', value: 'for' },
+                { label: 'Although', value: 'although' },
+                { label: 'Nor', value: 'nor' },
+                { label: 'Because', value: 'because' },
+              ],
+              item_type: 'MRQ',
+              responses: [],
+              max_responses: 2,
+              image_data: { image: '', width: null, height: null },
+              drawing_writing_split_type: 'NONE',
+              revisit: false,
+            },
+            {
+              id: 'ENG-Q1asafaWD2',
+              stimulus: "The word 'ostracize' means to welcome someone warmly into a group.",
+              options: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' }
+              ],
+              item_type: 'TRUE_FALSE',
+              responses: [],
+              max_responses: 1,
+              image_data: { image: '', width: null, height: null },
+              drawing_writing_split_type: 'NONE',
+              revisit: false,
+            },
+            {
+              id: 'ENG-Q1safsfa4',
+              stimulus: 'Is the word "ephemeral" used to describe something that lasts for a very long time?',
+              options: [
+                { label: 'Yes', value: 'yes' },
+                { label: 'No', value: 'no' }
+              ],
+              item_type: 'YES_NO',
+              responses: [],
+              max_responses: 1,
+              image_data: { image: '', width: null, height: null },
+              drawing_writing_split_type: 'NONE',
+              revisit: false,
             },
             {
               "id": "ENG-SUM-1112",
@@ -401,7 +447,7 @@ export const mockStore = {
             {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
-              "item_type": "CLOZE_SELECT",
+              "item_type": "CLOZE_RADIO",
               "responses": ["", "", "", "", "", "", "", "", "", "", ""],
               "max_responses": 10,
               "passage_stimulus": "",

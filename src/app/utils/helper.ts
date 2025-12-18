@@ -4,6 +4,9 @@ import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateItem, ItemType }
 import { SingleChoice } from "../exam/item-types/single-choice/single-choice";
 import { ExamService } from "../services/exam";
 import { Store } from "../store/store";
+import { MultipleResponse } from "../exam/item-types/multiple-response/multiple-response";
+import { YesOrNo } from "../exam/item-types/yes-or-no/yes-or-no";
+import { TrueOrFalse } from "../exam/item-types/true-or-false/true-or-false";
 
 export function fullscreen() {
     const elem = document.documentElement;
@@ -62,63 +65,70 @@ export function useShortcut(keyPressed: string, currentQuestionNumber: number, p
     }
 
     if (currentQuestion.item_type === itemTypes.MRQ) {
-        // switch (keyPressed.toLowerCase()) {
-        //     case `a`:
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[0].value
-        //         );
-        //         break;
-        //     case 'b':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[1].value
-        //         );
-        //         break;
-        //     case 'c':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[2].value
-        //         );
-        //         break;
-        //     case 'd':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[3].value
-        //         );
-        //         break;
-        //     case 'e':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[4]?.value
-        //         );
-        //         break;
-        //     case 'f':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[5]?.value
-        //         );
-        //         break;
-        //     case 'g':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[6]?.value
-        //         );
-        //         break;
-        //     case 'h':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[7]?.value
-        //         );
-        //         break;
-        //     case 'i':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[8]?.value
-        //         );
-        //         break;
-        //     case 'j':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[9]?.value
-        //         );
-        //         break;
-        //     case 'k':
-        //         multipleResponseRef.optionClicked(
-        //             currentQuestion.options[10]?.value
-        //         );
-        //         break;
-        // }
+        if (!component) return
+
+        const ref = component as MultipleResponse
+        if(currentQuestion.responses.length == currentQuestion.max_responses) {
+            return
+        }
+
+        switch (keyPressed.toLowerCase()) {
+            case `a`:
+                ref.selectOption(
+                    currentQuestion.options[0].value
+                );
+                break;
+            case 'b':
+                ref.selectOption(
+                    currentQuestion.options[1].value
+                );
+                break;
+            case 'c':
+                ref.selectOption(
+                    currentQuestion.options[2].value
+                );
+                break;
+            case 'd':
+                ref.selectOption(
+                    currentQuestion.options[3].value
+                );
+                break;
+            case 'e':
+                ref.selectOption(
+                    currentQuestion.options[4]?.value
+                );
+                break;
+            case 'f':
+                ref.selectOption(
+                    currentQuestion.options[5]?.value
+                );
+                break;
+            case 'g':
+                ref.selectOption(
+                    currentQuestion.options[6]?.value
+                );
+                break;
+            case 'h':
+                ref.selectOption(
+                    currentQuestion.options[7]?.value
+                );
+                break;
+            case 'i':
+                ref.selectOption(
+                    currentQuestion.options[8]?.value
+                );
+                break;
+            case 'j':
+                ref.selectOption(
+                    currentQuestion.options[9]?.value
+                );
+                break;
+            case 'k':
+                ref.selectOption(
+                    currentQuestion.options[10]?.value
+                );
+                break;
+        }
     } else if (currentQuestion.item_type === itemTypes.MCQ) {
         if (!component) return
 
@@ -182,18 +192,21 @@ export function useShortcut(keyPressed: string, currentQuestionNumber: number, p
                 );
                 break;
         }
-    } else if (
-        currentQuestion.item_type === itemTypes.TRUE_FALSE ||
-        currentQuestion.item_type === itemTypes.YES_NO
-    ) {
+    } else if (currentQuestion.item_type === itemTypes.TRUE_FALSE || currentQuestion.item_type === itemTypes.YES_NO) {
+        if (!component) return
+
+        const ref = component as YesOrNo | TrueOrFalse
+
         switch (keyPressed.toLowerCase()) {
             case `a`:
-                currentQuestion.responses[0] =
-                    currentQuestion.options[0].value;
+                ref.selectOption(
+                    currentQuestion.options[0].value
+                );
                 break;
             case 'b':
-                currentQuestion.responses[0] =
-                    currentQuestion.options[1].value;
+                ref.selectOption(
+                    currentQuestion.options[1].value
+                );
                 break;
         }
     }

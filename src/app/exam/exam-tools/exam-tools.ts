@@ -4,14 +4,13 @@ import { Overview } from "../overview/overview";
 import { fullscreen } from '../../utils/helper';
 import { ExamService } from '../../services/exam';
 import { Store } from '../../store/store';
-import { Dialog } from 'primeng/dialog';
-import { Calculator } from '../calculator/calculator';
+import { Menu } from 'primeng/menu';
 
 @Component({
   selector: 'app-exam-tools',
   templateUrl: './exam-tools.html',
   styleUrl: './exam-tools.css',
-  imports: [PopoverModule, Overview, Dialog, Calculator], 
+  imports: [PopoverModule, Overview,Menu], 
 })
 export class ExamTools {
   private _store = inject(Store)
@@ -23,7 +22,7 @@ export class ExamTools {
   connectionStatus = computed(() => this._exam.connectionStatus())
   canEndExam = computed(() => this._exam.canEndExam())
   lastAutosaveTimeDifference = computed(() => this._exam.lastAutosaveTimeDifference())
-  showCalculator = model(false)
+  showCalculator = model<null | string>()
   resizeFont = output<any>()
   overViewActiveTab = signal(0)
 

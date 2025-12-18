@@ -101,6 +101,6 @@ export class Paginator {
   }
 
   ngOnInit() {
-    this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
+    this.isMobile.set(window.matchMedia('(max-width: 1200px)').matches)
   }
 }

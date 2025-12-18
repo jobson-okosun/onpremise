@@ -1,6 +1,6 @@
 <div class="flex items-center gap-1 py-2 lg:py-0">
     <div class="border border-gray-200 flex items-center gap-2 rounded-2xl w-max p-1 pl-3">
-        <span class="text-base font-black">{{ minTimeSpent() }}</span>min{{ minTimeSpent() !== 1 ? 's' : '' }} of
+        <span class="text-base font-black">{{ minTimeSpent() }}</span>Min{{ minTimeSpent() !== 1 ? 's' : '' }} of
         <span class="bg-gray-100 flex items-center gap-1 rounded-2xl w-max px-3 py-1">
             <span class=" font-black">{{ countDownTimer().min }}:{{ countDownTimer().sec }}</span>
             <i [class.animate-spin]="lastAutosaveTimeDifference() < 300" class="pi pi-clock hidden! lg:block!"></i>
@@ -26,7 +26,7 @@
             </svg>
         </button>
     }
-    <button (click)="showCalculator.set(true)" type="button" class="rounded-full size-10 flex items-center justify-center hover:bg-gray-100 transition duration-150 bg-gray-100 border border-transparent hover:border-gray-400">
+    <button (click)="calculator.toggle($event)" type="button" class="rounded-full size-10 flex items-center justify-center hover:bg-gray-100 transition duration-150 bg-gray-100 border border-transparent hover:border-gray-400">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none">
             <path d="M21.5 12.95V11.05C21.5 7.01949 21.5 5.00424 20.1088 3.75212C18.7175 2.5 16.4783 2.5 12 2.5C7.52166 2.5 5.28249 2.5 3.89124 3.75212C2.5 5.00424 2.5 7.01949 2.5 11.05V12.95C2.5 16.9805 2.5 18.9958 3.89124 20.2479C5.28249 21.5 7.52166 21.5 12 21.5C16.4783 21.5 18.7175 21.5 20.1088 20.2479C21.5 18.9958 21.5 16.9805 21.5 12.95Z" stroke="#3c3c3c" stroke-width="1.5"></path>
             <path d="M18 8H14M16 6L16 10" stroke="#3c3c3c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -59,9 +59,16 @@
         <app-overview [(activeTab)]="overViewActiveTab"></app-overview>
     </p-popover>
 
+    <p-menu #calculator [popup]="true" class="flex justify-center" styleClass="w-max">
+        <ng-template #start>
+            <div class="flex flex-col p-1 cursor-pointer">
+                @for(item of ['SIMPLE', 'SCIENTIFIC']; track item) {
+                    <button (click)="showCalculator.set(item); calculator.toggle($event)" class="p-2 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left first-letter:uppercase">{{ item.toLowerCase() }} calculator</button>
+                }
+            </div>
+        </ng-template>
+    </p-menu>
+
 </div>
 
-<p-dialog appendTo="body" header="Simple Calculator" [position]="'bottomright'" [modal]="true" [visible]="showCalculator()" (visibleChange)="showCalculator.set(false)" [style]="{ width: '25rem' }">
-    <app-calculator />
-</p-dialog>
 

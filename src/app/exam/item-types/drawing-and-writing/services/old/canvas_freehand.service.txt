@@ -6,7 +6,9 @@ import simplify from 'simplify-js';
 import { Subscription } from "rxjs";
 import { KonvaToolsEvent } from "./event.service";
 import { scrollContainers } from "../../../../utils/helper";
-import { DRAWING_AND_WRITING_BRUSH_COLORS } from "../../../../utils/constants";
+import { getStroke } from 'perfect-freehand';
+
+// perfect freehand implementation
 
 @Injectable({ providedIn: 'root' })
 export class CanvasService {
@@ -28,10 +30,8 @@ export class CanvasService {
 
     store = computed(() => this._store.store())
     isTouchDevice = signal('ontouchstart' in window)
-    backgroundType = signal<'LINE' | 'GRID' | 'GRAPH' | 'NONE'>('LINE')
-    currentTool = signal<'brush' | 'eraser' | 'rectangle' | 'square' | 'circle'>('brush')
-    currentShape = signal<Konva.Shape | null>(null)
-    private shapeStartPos: { x: number, y: number } | null = null
+    backgroundType = signal<'LINE' | 'GRID' | 'NONE'>('LINE')
+    currentTool = signal<'brush' | 'eraser'>('brush')
     eraserSize = signal<number>(10)
     drawing = signal<boolean>(false)
     currentLine = signal<Konva.Line | null>(null)
@@ -41,12 +41,13 @@ export class CanvasService {
     protractorTransformer = signal<Konva.Transformer | null>(null)
     eraserCursor = signal<any>(null)
     loaded = signal(false)
-    brushSize = signal(2)
-    brushColor = signal(DRAWING_AND_WRITING_BRUSH_COLORS[0])
-    eraserColor = signal('#f5f5f7')
+    brushSize = signal(2.5)
 
     constructor() {
         this.loaded.set(true)
+
+        // optimize cpu performance
+        // Konva.pixelRatio = 1;
     }
 
     initializeCanvas() {
@@ -66,6 +67,10 @@ export class CanvasService {
         let uiLayer = new Konva.Layer();
         let toolLayer = new Konva.Layer();
         stage.add(gridLayer, plottedLayer, drawingLayer, uiLayer, toolLayer);
+
+        let rafScheduled = false;
+        let lastPointerMove = 0;
+        const POINTER_THROTTLE = 10;
 
         const createEraserTool = (size: number | null = null) => {
             const eraserCursor = new Konva.Circle({
@@ -92,53 +97,220 @@ export class CanvasService {
             }
         }
 
+        // function drawGrid(gridSize = 50) {
+        //     gridLayer.destroyChildren();
+        //     const w = stage?.width();
+        //     const h = stage?.height();
+        //     for (let x = 0; x <= w; x += gridSize) {
+        //         gridLayer.add(new Konva.Line({ points: [x, 0, x, h], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
+        //     }
+        //     for (let y = 0; y <= h; y += gridSize) {
+        //         gridLayer.add(new Konva.Line({ points: [0, y, w, y], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
+        //     }
+
+        //     gridLayer?.cache();
+        //     requestAnimationFrame(() => {
+        //         gridLayer.batchDraw();
+        //     });
+        // }
+
+        // function drawGrid(gridSize = 50) {
+        //     gridLayer.destroyChildren();
+
+        //     const w = stage?.width();
+        //     const h = stage?.height();
+
+        //     const verticalPoints = [];
+        //     const horizontalPoints = [];
+
+        //     // Build points for all vertical lines
+        //     for (let x = 0; x <= w; x += gridSize) {
+        //         verticalPoints.push(x, 0, x, h);
+        //     }
+
+        //     // Build points for all horizontal lines
+        //     for (let y = 0; y <= h; y += gridSize) {
+        //         horizontalPoints.push(0, y, w, y);
+        //     }
+
+        //     // Single vertical multi-line
+        //     const verticalLines = new Konva.Line({
+        //         points: verticalPoints,
+        //         stroke: '#e6e7e9',
+        //         strokeWidth: 1,
+        //         listening: false,
+        //         perfectDrawEnabled: false // faster
+        //     });
+
+        //     // Single horizontal multi-line
+        //     const horizontalLines = new Konva.Line({
+        //         points: horizontalPoints,
+        //         stroke: '#e6e7e9',
+        //         strokeWidth: 1,
+        //         listening: false,
+        //         perfectDrawEnabled: false // faster
+        //     });
+
+        //     gridLayer.add(verticalLines);
+        //     gridLayer.add(horizontalLines);
+
+        //     gridLayer.batchDraw();
+        // }
+
         function drawGrid(gridSize = 50) {
             gridLayer.destroyChildren();
-            const w = stage?.width();
-            const h = stage?.height();
-            for (let x = 0; x <= w; x += gridSize) {
-                gridLayer.add(new Konva.Line({ points: [x, 0, x, h], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
-            }
-            for (let y = 0; y <= h; y += gridSize) {
-                gridLayer.add(new Konva.Line({ points: [0, y, w, y], stroke: '#e6e7e9', strokeWidth: 1, listening: false }));
-            }
 
-            gridLayer?.cache();
-            gridLayer?.batchDraw();
+            const w = stage.width();
+            const h = stage.height();
+
+            const grid = new Konva.Shape({
+                listening: false,
+                perfectDrawEnabled: false,
+                sceneFunc: function (ctx, shape) {
+                    ctx.strokeStyle = '#e6e7e9';
+                    ctx.lineWidth = 1;
+
+                    // vertical lines
+                    for (let x = 0; x <= w; x += gridSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, h);
+                        ctx.stroke();
+                    }
+
+                    // horizontal lines
+                    for (let y = 0; y <= h; y += gridSize) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(w, y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            gridLayer.add(grid);
+            gridLayer.batchDraw();
         }
+
+
+
+        // function drawLineBackground(lineSpacing = 50) {
+        //     gridLayer.destroyChildren();
+        //     const w = stage?.width();
+        //     const h = stage?.height();
+
+        //     for (let y = 0; y <= h; y += lineSpacing) {
+        //         gridLayer.add(new Konva.Line({
+        //             points: [0, y, w, y],
+        //             stroke: '#e6e7e9',
+        //             strokeWidth: 1,
+        //             listening: false
+        //         }));
+        //     }
+
+        //     gridLayer?.cache();
+        //     requestAnimationFrame(() => {
+        //         gridLayer.batchDraw();
+        //     });
+        // }
+
+        // function drawLineBackground(lineSpacing = 50) {
+        //     gridLayer.destroyChildren();
+
+        //     const w = stage?.width();
+        //     const h = stage?.height();
+
+        //     const linePoints = [];
+
+
+        //     for (let y = 0; y <= h; y += lineSpacing) {
+        //         linePoints.push(0, y, w, y);
+        //     }
+
+        //     const lines = new Konva.Line({
+        //         points: linePoints,
+        //         stroke: '#e6e7e9',
+        //         strokeWidth: 1,
+        //         listening: false,
+        //         perfectDrawEnabled: false
+        //     });
+
+        //     gridLayer.add(lines);
+        //     gridLayer.batchDraw();
+        // }
 
         function drawLineBackground(lineSpacing = 50) {
             gridLayer.destroyChildren();
-            const w = stage?.width();
-            const h = stage?.height();
 
-            for (let y = 0; y <= h; y += lineSpacing) {
-                gridLayer.add(new Konva.Line({
-                    points: [0, y, w, y],
-                    stroke: '#e6e7e9',
-                    strokeWidth: 1,
-                    listening: false
-                }));
-            }
+            const w = stage.width();
+            const h = stage.height();
 
-            gridLayer?.cache();
-            gridLayer?.batchDraw();
+            const lines = new Konva.Shape({
+                listening: false,
+                perfectDrawEnabled: false,
+                sceneFunc: function (ctx, shape) {
+                    ctx.strokeStyle = '#e6e7e9';
+                    ctx.lineWidth = 1;
+
+                    for (let y = 0; y <= h; y += lineSpacing) {
+                        ctx.beginPath();           // 🔥 reset path
+                        ctx.moveTo(0, y);          // start of line
+                        ctx.lineTo(w, y);          // end of line
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            gridLayer.add(lines);
+            gridLayer.batchDraw();
         }
+
+
+
+        // function drawPlottedGrid(gridSize = 50) {
+        //     plottedLayer.destroyChildren();
+
+        //     const w = stage?.width();
+        //     const h = stage?.height();
+        //     for (let x = 0; x <= w; x += gridSize) {
+        //         for (let y = 0; y <= h; y += gridSize) {
+        //             plottedLayer.add(new Konva.Circle({ x, y, radius: 2, fill: '#9ca3af', listening: false }));
+        //         }
+        //     }
+
+        //     plottedLayer?.cache();
+        //     requestAnimationFrame(() => {
+        //         plottedLayer.batchDraw();
+        //     });
+        // }
 
         function drawPlottedGrid(gridSize = 50) {
             plottedLayer.destroyChildren();
 
-            const w = stage?.width();
+            const w = stage?.width(); 
             const h = stage?.height();
-            for (let x = 0; x <= w; x += gridSize) {
-                for (let y = 0; y <= h; y += gridSize) {
-                    plottedLayer.add(new Konva.Circle({ x, y, radius: 2, fill: '#9ca3af', listening: false }));
-                }
-            }
 
-            plottedLayer?.cache();
-            plottedLayer?.batchDraw();
+            const dotRadius = 2;
+
+            const dotShape = new Konva.Shape({
+                listening: false,
+                sceneFunc: function (ctx, shape) {
+                    ctx.fillStyle = '#9ca3af';
+
+                    for (let x = 0; x <= w; x += gridSize) {
+                        for (let y = 0; y <= h; y += gridSize) {
+                            ctx.beginPath();
+                            ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+            });
+
+            plottedLayer.add(dotShape);
+            plottedLayer.batchDraw();
         }
+
 
         const setBackgroundType = () => {
             clearBackground()
@@ -150,17 +322,16 @@ export class CanvasService {
 
             if (this.backgroundType() == 'GRID') {
                 drawGrid();
-                drawPlottedGrid();
                 return
             }
 
         }
 
         const resizeStage = () => {
-            const parent = document.getElementById('stage-parent')!;
-
             const answerSpace = document.querySelector('.answer-space') as HTMLElement
-            parent.style.height = (answerSpace.offsetHeight - 2) + 'px';
+
+            const parent = document.getElementById('stage-parent')!;
+            parent.style.height = (answerSpace.offsetHeight - 10) + 'px';
 
             const currentWidth = this.store().drawingAndWritingConfig.layoutFullModeWidth
             const canvasParentWidth = parent.parentElement!.offsetWidth;
@@ -214,19 +385,60 @@ export class CanvasService {
             return deltas;
         }
 
-        function deltaDecode(deltas: number[]): number[] {
-            if (!deltas || deltas.length < 2) return [];
+        // function deltaDecode(deltas: number[]): number[] {
+        //     if (!deltas || deltas.length < 2) return [];
 
-            const points = [deltas[0], deltas[1]];
+        //     const points = [deltas[0], deltas[1]];
 
-            for (let i = 2; i < deltas.length; i += 2) {
-                const x = points[points.length - 2] + deltas[i];
-                const y = points[points.length - 1] + deltas[i + 1];
-                points.push(x, y);
+        //     for (let i = 2; i < deltas.length; i += 2) {
+        //         const x = points[points.length - 2] + deltas[i];
+        //         const y = points[points.length - 1] + deltas[i + 1];
+        //         points.push(x, y);
+        //     }
+
+        //     return points;
+        // }
+
+        // function deltaDecode(deltas: number[]): number[][] {
+        //     if (!deltas || deltas.length < 2) return [];
+
+        //     const points = [deltas[0], deltas[1]];
+        //     const newPoints: any[][] = []
+        //     newPoints.push(points)
+
+        //     for (let i = 2; i < deltas.length; i += 2) {
+        //         const x = points[points.length - 2] + deltas[i];
+        //         const y = points[points.length - 1] + deltas[i + 1];
+        //         points.push(x, y);
+        //         newPoints.push([x, y])
+        //     }
+
+
+
+        //     return newPoints;
+        // }
+
+        function deltaDecode(deltas: number[]): number[][] {
+            const len = deltas.length;
+            if (len < 2) return [];
+
+            const newPoints: number[][] = [];
+
+            // first absolute point
+            let x = deltas[0];
+            let y = deltas[1];
+            newPoints.push([x, y]);
+
+            // decode remaining deltas
+            for (let i = 2; i < len; i += 2) {
+                x += deltas[i];
+                y += deltas[i + 1];
+                newPoints.push([x, y]);
             }
 
-            return points;
+            return newPoints;
         }
+
 
         const redrawStrokes = () => {
             drawingLayer.destroyChildren();
@@ -240,39 +452,72 @@ export class CanvasService {
             });
 
             // Decode all strokes before drawing
-            const decodedStrokes = currentPageData.strokes.map(stroke => ({
-                ...stroke,
-                points: deltaDecode(stroke.points)
-            }));
+            // const decodedStrokes = currentPageData.strokes.map(stroke => ({
+            //     ...stroke,
+            //     points: deltaDecode(stroke.points) as any
+            // }));
 
-            decodedStrokes.forEach(stroke => {
-                const line = new Konva.Line({
-                    points: stroke.points,
-                    stroke: stroke.mode === 'eraser' ? '#000' : (stroke.color || '#111827'),
-                    strokeWidth: stroke.size,
+            const decodedStrokes = currentPageData.strokes.map(stroke => {
+                const points = deltaDecode(stroke.points) as any
+
+                // console.log('decoded points', points)
+                // console.log('stroke size', stroke.size)
+
+                const outline = getStroke(points, {
+                    size: stroke.size,
+                    thinning: 0.5,
+                    smoothing: 0.5,
+                    streamline: 0.5,
+                    simulatePressure: false,
+                });
+
+                const pathData = getSvgPathFromStroke(outline);
+                // console.log('path data', { pathData })
+
+                const path = new Konva.Path({
+                    data: pathData,                    // will be filled by perfect-freehand
+                    fill: stroke.mode === 'eraser' ? '#000' : (stroke.color || '#111827'),
+                    listening: false,
+                    perfectDrawEnabled: false,
+
+                    // 💥 The magic that makes eraser work
                     globalCompositeOperation: stroke.mode === 'eraser'
                         ? 'destination-out'
                         : 'source-over',
-                    lineCap: 'round',
-                    lineJoin: 'round',
-                    listening: false,
-                    perfectDrawEnabled: false,
                 });
-                strokeGroup.add(line);
-            });
+
+                strokeGroup.add(path);
+            })
+
+
+            // decodedStrokes.forEach(stroke => {
+            //     const line = new Konva.Line({
+            //         points: stroke.points,
+            //         stroke: stroke.mode === 'eraser' ? '#000' : (stroke.color || '#111827'),
+            //         strokeWidth: stroke.size,
+            //         globalCompositeOperation: stroke.mode === 'eraser'
+            //             ? 'destination-out'
+            //             : 'source-over',
+            //         lineCap: 'round',
+            //         lineJoin: 'round',
+            //         listening: false,
+            //         perfectDrawEnabled: false,
+            //     });
+            //     strokeGroup.add(line);
+            // });
 
 
             drawingLayer.add(strokeGroup);
             drawingLayer.batchDraw();
 
-            requestAnimationFrame(() => {
-                if (!currentPageData?.strokes?.length) {
-                    return
-                }
+            // requestAnimationFrame(() => {
+            //     if (!currentPageData?.strokes?.length) {
+            //         return
+            //     }
 
-                strokeGroup?.cache({ pixelRatio: 1 });
-                drawingLayer?.batchDraw();
-            });
+            //     strokeGroup?.cache({ pixelRatio: 1 });
+            //     drawingLayer?.batchDraw();
+            // });
         };
 
         const loadCurrentPageStrokes = () => {
@@ -280,7 +525,7 @@ export class CanvasService {
         }
 
         const clearCurrentPageStrokes = () => {
-            this._drawingStore.updateCurrentPageStrokes([]);
+            this._drawingStore.updateCurrentPageStrokes([], true);
             drawingLayer.destroyChildren();
             drawingLayer.batchDraw();
         }
@@ -555,21 +800,61 @@ export class CanvasService {
             return group;
         }
 
+        let rawPoints: number[][] = [];
+        let currentPath: Konva.Path | null = null;
+
+        function getSvgPathFromStroke(points: number[][]) {
+            if (!points.length) return "";
+
+            let d = `M ${points[0][0]} ${points[0][1]}`;
+            for (let i = 1; i < points.length; i++) {
+                d += ` L ${points[i][0]} ${points[i][1]}`;
+            }
+            return d + " Z"; // close the path for filled brush strokes
+        }
+
         stage.on('pointerdown', (e) => {
+                if (e.evt.pointerType !== 'pen') return;
+    if (e.evt.pressure === 0) return;
+    if (e.evt.buttons !== 1) return;
+    if (e.evt.width > 10 || e.evt.height > 10) return;
+
             if (e.evt.pointerType !== 'pen') {
                 return
             }
+
+            if (e.evt.pointerType !== 'pen' || e.evt.buttons !== 1) return;
 
             if (!(this.currentTool() === 'brush' || this.currentTool() === 'eraser')) {
                 return
             }
 
+
+
             this.drawing.set(true);
             const pos = stage.getPointerPosition();
 
+            rawPoints = [[pos!.x, pos!.y]];
+
+            currentPath = new Konva.Path({
+                data: "",                    // will be filled by perfect-freehand
+                fill: this.currentTool() === "eraser" ? "#000" : '#111827',
+                listening: false,
+                perfectDrawEnabled: false,
+                // lineCap: 'round',
+                // lineJoin: 'round',
+                strokeWidth: this.currentTool() == 'eraser' ? this.eraserSize() : 2.5,
+
+                // 💥 The magic that makes eraser work
+                globalCompositeOperation:
+                    this.currentTool() === "eraser"
+                        ? "destination-out"
+                        : "source-over",
+            });
+
             const currentLine = new Konva.Line({
-                stroke: this.currentTool() === 'eraser' ? this.eraserColor() : this.brushColor(),
-                strokeWidth: parseInt(this.currentTool() == 'eraser' ? this.eraserSize().toString() : '2.0', 10),
+                stroke: this.currentTool() === 'eraser' ? '#000' : '#111827',
+                strokeWidth: parseInt(this.currentTool() == 'eraser' ? this.eraserSize().toString() : 2.5.toString(), 10),
                 globalCompositeOperation: this.currentTool() === 'eraser' ? 'destination-out' : 'source-over',
                 lineCap: 'round',
                 lineJoin: 'round',
@@ -579,10 +864,16 @@ export class CanvasService {
             });
 
             this.currentLine.set(currentLine)
-            drawingLayer.add(this.currentLine() as any);
+            // drawingLayer.add(this.currentLine() as any);
+            drawingLayer.add(currentPath);
         });
 
         stage.on('pointermove', (e) => {
+                            if (e.evt.pointerType !== 'pen') return;
+    if (e.evt.pressure === 0) return;
+    if (e.evt.buttons !== 1) return;
+    if (e.evt.width > 10 || e.evt.height > 10) return;
+
             if (e.evt.pointerType !== 'pen') {
                 return
             }
@@ -590,6 +881,10 @@ export class CanvasService {
             if (!this.drawing() || !this.currentLine()) {
                 return
             };
+
+            const now = performance.now();
+            if (now - lastPointerMove < POINTER_THROTTLE) return;
+            lastPointerMove = now;
 
             const pos = stage.getPointerPosition();
 
@@ -605,14 +900,54 @@ export class CanvasService {
                 return
             }
 
-            const newPoints = this.currentLine()?.points().concat([pos!.x, pos!.y]);
-            this.currentLine()?.points(newPoints);
+            const pts = this.currentLine()!.points();
+            pts.push(pos!.x, pos!.y);
+            this.currentLine()!.points(pts);
+
+            rawPoints.push([pos!.x, pos!.y]);
+
+            // Generate smoothed outline for brush or eraser
+            const outline = getStroke(rawPoints, {
+                size: this.currentTool() === "eraser" ? this.eraserSize() : 2.5,
+                thinning: 0.5,
+                smoothing: 0.5,
+                streamline: 0.5,
+                simulatePressure: false,
+            });
+
+            // const newPoints = this.currentLine()?.points().concat([pos!.x, pos!.y]);
+            // this.currentLine()?.points(newPoints);
+
+            // requestAnimationFrame(() => {
+            //     drawingLayer.batchDraw();
+            // });
+
+            // --- Single RAF draw ---
+            const pathData = getSvgPathFromStroke(outline);
+            // console.log({ pathData })
+            currentPath?.data(pathData);
+
+
+            if (!rafScheduled) {
+                rafScheduled = true;
+                requestAnimationFrame(() => {
+                    drawingLayer.batchDraw();
+                    if (this.isTouchDevice()) uiLayer.batchDraw();
+                    rafScheduled = false;
+                });
+            }
+
+
+            // requestAnimationFrame(() => drawingLayer.batchDraw());
         });
 
         stage.on('pointerup', (e) => {
             if (this.drawing() && this.currentLine()) {
-                this.currentLine()!.cache();
-                drawingLayer.batchDraw();
+                // this.currentLine()!.cache();
+
+                requestAnimationFrame(() => {
+                    drawingLayer.batchDraw();
+                });
 
                 const roundedPoints = this.currentLine()!.points().map((val, idx) => {
                     return Number(val.toFixed(1));
@@ -626,6 +961,8 @@ export class CanvasService {
                 const simplifiedPoints = simplify(pointObjects, 0.275, true);
                 const finalPoints = simplifiedPoints.flatMap((p: any) => [p.x, p.y]);
 
+                // console.log({ finalPoints })
+
                 // Delta encode before saving
                 const encodedPoints = deltaEncode(finalPoints);
 
@@ -635,6 +972,8 @@ export class CanvasService {
                     color: this.currentLine()?.stroke(),
                     size: this.currentLine()?.strokeWidth(),
                 };
+
+                // console.log('stroke to store', newStroke.size)
 
                 // Get the current strokes from the store, add the new one, and then update the store.
                 const currentPageData = this._drawingStore.getCurrentPageData();
@@ -646,12 +985,15 @@ export class CanvasService {
                 // save directly to item response
                 const dataJson = JSON.stringify(updatedStore)
                 const currentQuestion = this.store().currentQuestion;
-                currentQuestion!.roughWorkResponse = [dataJson];
-                // currentQuestion!.lastUpdated = new Date()
+                currentQuestion!.responses = [dataJson];
+                currentQuestion!.lastUpdated = new Date()
                 this._store.updateStore({ currentQuestion })
 
                 // Reset local state for the next stroke
                 this.currentLine.set(null as any);
+                rawPoints = [];
+                currentPath = null;
+                console.log({rawPoints, currentPath, currentline: this.currentLine()})
             }
 
             this.drawing.set(false)
@@ -793,7 +1135,7 @@ export class CanvasService {
 
                 if (tool == 'all') {
                     this.ruler()?.destroy()
-                    this.ruler.set(null) 
+                    this.ruler.set(null)
                     this.protractor()?.destroy()
                     this.protractor.set(null)
                     toolLayer.destroyChildren()

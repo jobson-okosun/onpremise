@@ -98,7 +98,7 @@ export class DrawingAndWritingStore {
     this.updateStoreCurrentPage(pageIndex);
   }
 
-  updateCurrentPageStrokes(strokes: Strokes[], shouldReset?: boolean) {
+  updateCurrentPageStrokes(strokes: Strokes[]) {
     this._store.update(store => {
       const updatedPages = store.pages.map((page, i) => {
         if (i === store.currentPage) {
@@ -110,14 +110,12 @@ export class DrawingAndWritingStore {
       return {
         ...store,
         pages: updatedPages,
-        shouldReset
       };
     });
   }
 
   clearStoreData() {
     const newStore = new Store();
-    newStore.shouldReset = true;
 
     this._store.set(newStore);
   }

@@ -94,31 +94,87 @@ export class DrawingAndWritingStore {
     });
   }
 
+
   selectPage(pageIndex: number) {
     this.updateStoreCurrentPage(pageIndex);
   }
 
-  updateCurrentPageStrokes(strokes: Strokes[], shouldReset?: boolean) {
+  clearCurrentPage() {
     this._store.update(store => {
       const updatedPages = store.pages.map((page, i) => {
         if (i === store.currentPage) {
-          return { ...page, strokes: [...strokes] };
+          return { ...page, strokes: [], undoStack: page.strokes, redoStack: [] };
         }
+
+        return page;
+      });
+
+      return { ...store, pages: updatedPages };
+    });
+  }
+
+
+  updateCurrentPageStrokes(strokes: Strokes[]) {
+    this._store.update(store => {
+      const updatedPages = store.pages.map((page, i) => {
+        if (i === store.currentPage) {
+          return { ...page, strokes: [...strokes], undoStack: [], redoStack: [] };
+        }
+
         return page;
       });
 
       return {
         ...store,
         pages: updatedPages,
-        shouldReset
       };
     });
   }
 
   clearStoreData() {
     const newStore = new Store();
-    newStore.shouldReset = true;
 
     this._store.set(newStore);
   }
+
+  undo() {
+    this._store.update(store => {
+      const page = store.pages[store.currentPage];
+
+      // Case 1: undo last stroke
+      if (page.strokes.length) {
+        const stroke = page.strokes.pop()!;
+        page.redoStack.push(stroke);
+        return { ...store };
+      }
+
+      // CASE 2: undo clear page (ONLY ONCE)
+      if (page.undoStack.length) {
+        page.strokes = page.undoStack; 
+        page.undoStack = [];
+        page.redoStack = []; 
+        return { ...store };
+      }
+      return store;
+    });
+  }
+
+
+  redo() {
+    this._store.update(store => {
+      const pages = [...store.pages];
+      const page = pages[store.currentPage];
+
+      if (!page.redoStack.length) {
+        return store
+      }
+
+      const stroke = page.redoStack.pop()!;
+      page.strokes.push(stroke);
+
+      return { ...store, pages };
+    });
+  }
+
+
 }

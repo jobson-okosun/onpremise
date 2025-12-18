@@ -8,12 +8,12 @@ import { CanvasService } from './services/canvas.service';
 import { KonvaToolsEvent } from './services/event.service';
 import { DrawingAndWritingStore } from './services/store.service';
 import { Store } from '../../../store/store';
-
+import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 @Component({
   selector: 'app-drawing-and-writing-rough-mode',
   imports: [QuestionTools, MenuModule, Dialog],
   templateUrl: '../drawing-and-writing/drawing-and-writing.html',
-  styleUrl: './drawing-and-writing-rough-mode.css',
+  styleUrl: '../drawing-and-writing/drawing-and-writing.css',
 }) 
 export class DrawingAndWritingRoughMode {
   private _store = inject(Store)
@@ -32,6 +32,8 @@ export class DrawingAndWritingRoughMode {
   currentQuestionId = signal<string | null>(null)
   currentTool = computed(() => this._canvasService.currentTool())
   selectedMeasuringToolsSet = signal(new Set())
+  brushColors = signal(DRAWING_AND_WRITING_BRUSH_COLORS)
+  activeColor = computed(() => this._canvasService.brushColor())
 
   questionChanged = effect(() => {
     if (this.currentQuestion()?.id !== this.currentQuestionId()) {
@@ -44,6 +46,7 @@ export class DrawingAndWritingRoughMode {
 
   pages = computed(() => Array.from({ length: this._drawingStore.store().pages.length }, (_, i) => i))
   currentPage = computed(() => this._drawingStore.store().currentPage)
+  currentPageData = computed(() => this._drawingStore.getStoreData().pages[this.currentPage()])
 
   prepareCanvasAndStoreDataOnLoad() {
     const currentQuestion = this.store().currentQuestion
@@ -56,7 +59,7 @@ export class DrawingAndWritingRoughMode {
     if (currentQuestion?.roughWorkResponse.length) {
       const jsonResponse = JSON.parse(currentQuestion!.roughWorkResponse[0])
 
-      const storeData = { ...jsonResponse, shouldReset: false, currentPage: 0 }
+      const storeData = { ...jsonResponse, currentPage: 0 }
       this._drawingStore.updateStore(storeData)
     }
 
@@ -185,5 +188,13 @@ export class DrawingAndWritingRoughMode {
     const updatedConfig = { ...currentConfig, roughWorkMode: !currentConfig.roughWorkMode }
     this._store.updateStore({ drawingAndWritingConfig: updatedConfig })
     scrollContainers()
+  }
+
+  undo() { }
+
+  redo() { }
+ 
+  selectbrushColor(color: string) {
+    this._canvasService.brushColor.set(color)
   }
 }

@@ -8,7 +8,7 @@
         
         <div class="flex flex-col bg-white rounded-md rounded-t-none drop-shadow-sm drop-shadow-gray-50 divide-y divide-gray-200">
             <div class="flex flex-col lg:flex-row justify-between items-center gap-x-5 p-2">
-                <div class="flex flex-col lg:flex-row items-center gap-3 lg:gap-10">
+                <div class="flex flex-col lg:flex-row items-center gap-3 xl:gap-10">
                     <div class="items-end gap-2 hidden lg:flex">
                         @if(store().candidatePassport) {
                             <span (click)="showUserProfileModal = true" class="size-12 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -37,7 +37,7 @@
                 <!-- truncate -->
                 <div class="hidden lg:block uppercase font-bold">{{ examName() }}</div>
                  
-                <app-exam-tools (resizeFont)="fontSize.toggle($event)"></app-exam-tools>
+                <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
             </div>
             <div class="flex w-full gap-3 p-2 items-center justify-between text-sm">
                 <div class="hidden lg:flex gap-3 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
@@ -86,8 +86,21 @@
                 <app-single-choice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice>
             }
 
+            @if(store().currentQuestion!.item_type === itemTypes().MRQ) {
+                <app-multiple-response [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response>
+            }
+
+            @if(store().currentQuestion?.item_type === itemTypes().TRUE_FALSE) {
+                <app-true-or-false [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false>
+            }
+
+            @if(store().currentQuestion?.item_type === itemTypes().YES_NO) {
+                <app-yes-or-no [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no>
+            }
+
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
+                <!-- <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown> -->
+                 <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
@@ -147,9 +160,6 @@
     <!-- bottom -->
     <div>
         <div class="flex flex-col lg:flex-row gap-3 items-center justify-between bg-transparent rounded-md">
-            <div class="p-3 py-2 rounded-2xl bg-white text-sm font-medium">
-                <div>Attempted {{ allSectionsAttemp() }} of {{ totalSectionsQuestions() }} for all sections</div>
-            </div>
             <div class="flex gap-3">
                 @if(store().currentQuestionIndex > 0) {
                     <button (click)="prev()" class="btn gap-3!">
@@ -185,6 +195,10 @@
                         </svg>
                     </button>
                 }
+            </div>
+            
+            <div class="p-3 py-2 rounded-2xl bg-white text-sm font-medium">
+                <div>Attempted {{ allSectionsAttemp() }} of {{ totalSectionsQuestions() }} for all sections</div>
             </div>
         </div>
     </div>
@@ -318,4 +332,42 @@
   </div>
 
 </p-dialog>
+
+@if(showCalculator() == 'SIMPLE'){
+    <div animate.enter="fade-in" class="fixed top-0 left-0 z-10 bg-[rgba(0,0,0,0.2)] h-dvh w-full">
+        <div class="flex h-full w-full items-end justify-end p-5">
+            <div [style]="{ width: '25rem' }" class="bg-white p-5 rounded-2xl cursor-grab" cdkDrag>
+                <div class="flex items-center justify-between mb-5">
+                    <div class="font-bold text-2xl">Simple calculator</div>
+                    <button (click)="showCalculator.set(null)" class="rounded-full flex items-center justify-center size-12 hover:bg-gray-100 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#4a4a4a" fill="none" stroke="#141B34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6.00081 17.9992M17.9992 18L6 6.00085" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <app-calculator />
+            </div>
+        </div>
+    </div>
+}
+
+@if(showCalculator() == 'SCIENTIFIC'){
+    <div animate.enter="fade-in" class="fixed top-0 left-0 z-10 bg-[rgba(0,0,0,0.2)] h-dvh w-full">
+        <div class="flex h-full w-full items-end justify-end p-5">
+            <div [style]="{ width: '38rem' }" class="bg-white p-5 rounded-2xl cursor-grab" cdkDrag>
+                <div class="flex items-center justify-between mb-5">
+                    <div class="font-bold text-2xl">Scientific calculator</div>
+                    <button (click)="showCalculator.set(null)" class="rounded-full flex items-center justify-center size-12 hover:bg-gray-100 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#4a4a4a" fill="none" stroke="#141B34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6.00081 17.9992M17.9992 18L6 6.00085" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <app-scientific-calculator />
+            </div>
+        </div>
+    </div>
+}
 

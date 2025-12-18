@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, model, signal } from '@angular/core';
+import { Component, computed, effect, inject, model, signal } from '@angular/core';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { MenuModule } from 'primeng/menu';
 import { ExamService } from '../../../services/exam';
@@ -8,11 +8,12 @@ import { DrawingAndWritingStore } from './services/store.service';
 import { KonvaToolsEvent } from './services/event.service';
 import { Dialog } from 'primeng/dialog';
 import { scrollContainers } from '../../../utils/helper';
+import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 
 @Component({
   selector: 'app-drawing-and-writing',
   templateUrl: './drawing-and-writing.html',
-  styleUrl: './drawing-and-writing.css', 
+  styleUrl: './drawing-and-writing.css',
   imports: [QuestionTools, MenuModule, Dialog],
 })
 export class DrawingAndWriting {
@@ -24,7 +25,7 @@ export class DrawingAndWriting {
 
   showClearPageModal = false;
   showDeletePageModal = false;
-  
+
   fontSize = model<number>()
   store = computed(() => this._store.store())
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex)
@@ -32,6 +33,8 @@ export class DrawingAndWriting {
   currentQuestionId = signal<string | null>(null)
   currentTool = computed(() => this._canvasService.currentTool())
   selectedMeasuringToolsSet = signal(new Set())
+  brushColors = signal(DRAWING_AND_WRITING_BRUSH_COLORS)
+  activeColor = computed(() => this._canvasService.brushColor())
 
   questionChanged = effect(() => {
     if (this.currentQuestion()?.id !== this.currentQuestionId()) {
@@ -44,6 +47,7 @@ export class DrawingAndWriting {
 
   pages = computed(() => Array.from({ length: this._drawingStore.store().pages.length }, (_, i) => i))
   currentPage = computed(() => this._drawingStore.store().currentPage)
+  currentPageData = computed(() => this._drawingStore.getStoreData().pages[this.currentPage()])
 
   prepareCanvasAndStoreDataOnLoad() {
     const currentQuestion = this.store().currentQuestion
@@ -56,7 +60,7 @@ export class DrawingAndWriting {
     if (currentQuestion!.responses.length) {
       const jsonResponse = JSON.parse(currentQuestion!.responses[0])
 
-      const storeData = { ...jsonResponse, shouldReset: false, currentPage: 0 }
+      const storeData = { ...jsonResponse, currentPage: 0 }
       this._drawingStore.updateStore(storeData)
     }
 
@@ -80,13 +84,8 @@ export class DrawingAndWriting {
       .then(() => {
         this.selectPage(this.currentPage())
 
-        const currentQuestion = this.store().currentQuestion;
-        const storeData = this._drawingStore.getStoreData()
-
-        currentQuestion!.responses = [JSON.stringify(storeData)];
-        currentQuestion!.lastUpdated = new Date()
-        
-        this._store.updateStore({ currentQuestion })
+        const updatedQuestion = this.updatedQuestionResponse()
+        this._store.updateStore({ currentQuestion: updatedQuestion })
       })
   }
 
@@ -95,27 +94,9 @@ export class DrawingAndWriting {
 
     this._konvaEventTools.clearPage().then(() => {
       setTimeout(() => {
-        const currentQuestion = this.store().currentQuestion;
-        const storeData = this._drawingStore.getStoreData()
 
-        let pointFound = false
-        storeData.pages.forEach(page => {
-          if (page.strokes.length) {
-            pointFound = true
-          }
-        })
-
-        if (storeData.pages.length == 1) {
-          if (!pointFound) {
-            currentQuestion!.responses = []
-          }
-        } else {
-          currentQuestion!.responses = [JSON.stringify(storeData)];
-        }
-
-        currentQuestion!.lastUpdated = new Date()
-        this._store.updateStore({ currentQuestion })
-
+        const updatedQuestion = this.updatedQuestionResponse()
+        this._store.updateStore({ currentQuestion: updatedQuestion })
       }, 1000)
     })
   }
@@ -125,26 +106,9 @@ export class DrawingAndWriting {
 
     this._drawingStore.deleteCurrentPage()
     this._konvaEventTools.deletePage().then(() => {
-      const currentQuestion = this.store().currentQuestion;
-      const storeData = this._drawingStore.getStoreData()
 
-      let pointFound = false
-      storeData.pages.forEach(page => {
-        if (page.strokes.length) {
-          pointFound = true
-        }
-      })
-
-      if (storeData.pages.length == 1) {
-        if (!pointFound) {
-          currentQuestion!.responses = []
-        }
-      } else {
-        currentQuestion!.responses = [JSON.stringify(storeData)];
-      }
-
-      currentQuestion!.lastUpdated = new Date()
-      this._store.updateStore({ currentQuestion })
+      const updatedQuestion = this.updatedQuestionResponse()
+      this._store.updateStore({ currentQuestion: updatedQuestion })
     })
   }
 
@@ -185,5 +149,60 @@ export class DrawingAndWriting {
     const updatedConfig = { ...currentConfig, roughWorkMode: !currentConfig.roughWorkMode }
     this._store.updateStore({ drawingAndWritingConfig: updatedConfig })
     scrollContainers()
+  }
+
+  undo() {
+    this._drawingStore.undo();
+    this._konvaEventTools._pageSelectEvent.next();
+    this.updateStoreOnResponseChanges()
+  }
+
+  redo() {
+    this._drawingStore.redo();
+    this._konvaEventTools._pageSelectEvent.next();
+    this.updateStoreOnResponseChanges()
+  }
+
+  updateStoreOnResponseChanges() {
+    const currentQuestion = this.store().currentQuestion;
+    if (!currentQuestion) {
+      return
+    };
+
+    const updatedQuestion = this.updatedQuestionResponse()
+    this._store.updateStore({ currentQuestion: updatedQuestion })
+  }
+
+  updatedQuestionResponse() {
+    const currentQuestion = this.store().currentQuestion;
+    if (!currentQuestion) {
+      return
+    };
+
+    const updatedStore = this._drawingStore.getStoreData();
+
+    let pointFound = false
+    updatedStore.pages.forEach(page => {
+      if (page.strokes.length) {
+        pointFound = true
+      }
+    })
+
+    if (updatedStore.pages.length == 1) {
+      if (!pointFound) {
+        currentQuestion!.responses = []
+      } else {
+        currentQuestion!.responses = [JSON.stringify(updatedStore)]
+      }
+    } else {
+      currentQuestion!.responses = [JSON.stringify(updatedStore)];
+    }
+ 
+    currentQuestion!.lastUpdated = new Date()
+    return currentQuestion
+  }
+
+  selectbrushColor(color: string) {
+    this._canvasService.brushColor.set(color)
   }
 }

@@ -26,7 +26,7 @@ export class App {
   userExitPassword = new FormControl('', Validators.required)
   isExitingApplication = signal(false)
 
-  watchURL = toSignal(this._router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), map(() => this.isAdminRoute.set(this.isAdminUrl()))))
+  // watchURL = toSignal(this._router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd), map(() => this.isAdminRoute.set(this.isAdminUrl()))))
 
   ngOnInit() {
     this._tauriService.updatePlatformType()

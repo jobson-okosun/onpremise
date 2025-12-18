@@ -26,9 +26,9 @@ export class TauriService {
             return
         }
         
-        if(!location.href.includes('app')){
-            return
-        }
+        // if(location.href.includes('admin')){
+        //     return
+        // }
 
         this.isAppPinned();
     });
@@ -43,7 +43,7 @@ export class TauriService {
             const { listen } = await import('@tauri-apps/api/event');
 
             this.tauriInvoke.set(invoke)
-            this.tauriInvoke.set(listen)
+            this.tauriListen.set(listen)
 
             resolve()
         })
@@ -57,12 +57,12 @@ export class TauriService {
             return
         }
 
+        await this.importTauriApis()
         platformIsTauri = await this.verifyTauriEnvironment()
+
         if (platformIsTauri) {
-            await this.importTauriApis()
             this.listenForInfrigement()
         }
-
         this._store.updateStore({ platformIsTauri })
     }
 
@@ -71,7 +71,9 @@ export class TauriService {
         try {
             const result = await this.tauriInvoke()('is_tauri_app');
             return !!result;
-        } catch (error) { return false }
+        } catch (error) { 
+            return false
+         }
     }
 
     initializeBatteryStatus() {

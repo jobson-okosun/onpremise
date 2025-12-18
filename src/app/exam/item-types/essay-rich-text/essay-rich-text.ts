@@ -27,7 +27,6 @@ export class EssayRichText {
   showEditor = signal(false);
 
   private keyboardVisible = false;
-  private unsubscribeKeyboard?: () => void;
 
   // @HostListener('window:resize')
   resizeEditor() {
@@ -41,7 +40,7 @@ export class EssayRichText {
     setTimeout(() => {
       this.editorConfig.set(this.getConfig());
       this.showEditor.set(true);
-    }, 500);
+    }, 1000);
   }
 
   ngOnInit() {
@@ -54,7 +53,7 @@ export class EssayRichText {
 
     return {
       name: this.store().currentQuestion!.id,
-      height: (answerSpace.offsetHeight - 30).toString(),
+      height: ((answerSpace.offsetHeight ?? 400) - 30).toString(),
     };
   }
 
