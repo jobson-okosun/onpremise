@@ -99,8 +99,8 @@
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                <!-- <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown> -->
-                 <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
+                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
+                 <!-- <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> -->
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {

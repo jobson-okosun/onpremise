@@ -32,11 +32,13 @@ export class Editor implements OnInit {
   ngOnInit() {
     this.editorInit = {
       name: this.config.name,
-      placeholder: 'Type your text here...',
+      placeholder: 'Type here...',
       branding: false,
       menubar: true,
       base_url: '/tinymce',
       suffix: '.min',
+      statusbar: false,
+      resize: false,
       height: this.config()?.height ?? '300',
       toolbar:
         'undo redo | formatselect | bold italic backcolor | \

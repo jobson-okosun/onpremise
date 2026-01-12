@@ -85,7 +85,7 @@ export class ScientificCalculator {
         .replace(/(\d+)!/g, (_, n) => this.factorial(+n).toString());
 
 
-      const result = eval(expr);
+      const result = this.safeEval(expr);
       if (!Number.isFinite(result)) throw new Error();
 
 
@@ -95,6 +95,25 @@ export class ScientificCalculator {
     } catch {
       this.display.set('Invalid Expression');
     }
+  }
+
+  private safeEval(expression: string): number {
+    const sanitized = expression.replace(/\s+/g, '');
+
+    // Only allow numbers, operators, parentheses, commas, dots, and identifiers used by our replacements.
+    if (/[^0-9+\-*/().,A-Za-z_]/.test(sanitized)) {
+      throw new Error('Invalid characters');
+    }
+
+    const identifiers = sanitized.match(/[A-Za-z_]\w*/g) ?? [];
+    const allowed = new Set(['Math', 'sin', 'cos', 'tan', 'sqrt', 'cbrt']);
+    if (identifiers.some(id => !allowed.has(id))) {
+      throw new Error('Invalid identifier');
+    }
+
+    // Avoid direct eval (bundler warning) while still evaluating the generated expression.
+    // eslint-disable-next-line no-new-func
+    return Function(`"use strict"; return (${sanitized});`)() as number;
   }
 
 
