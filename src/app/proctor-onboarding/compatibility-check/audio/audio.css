@@ -1,0 +1,64 @@
+.camera-box {
+  width: 360px;
+  height: 270px;
+}
+
+.btn[disabled],
+.btn-outline[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Recording Animation Styles */
+.mic-record-btn {
+  border: 2px solid transparent;
+}
+
+.mic-record-btn:not([disabled]):hover {
+  border-color: var(--color-primary);
+}
+
+.recording-pulse {
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+.recording-waves {
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  animation: wave-expand 1.5s ease-out infinite;
+}
+
+.recording-dot {
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes wave-expand {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

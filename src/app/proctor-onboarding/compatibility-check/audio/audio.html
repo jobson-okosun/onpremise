@@ -1,0 +1,149 @@
+<div animate.enter="fade-in">
+<div class="py-3">
+    <div class="uppercase font-black text-xl text-primary">Device Compatibility Check</div>
+    <div class="mt-2">Test your audio and video devices. This ensures your equipment is working properly before starting the exam.</div>
+</div>
+
+@if (recordingError()) {
+    <div class="text-red-500 text-sm bg-red-50 p-3 text-center mb-4">{{ recordingError() }}</div>
+}
+
+<div class="rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" class="text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" x2="12" y1="19" y2="22"/>
+            </svg>
+        </div>
+        <div>
+            <div class="font-bold text-lg">Microphone Test</div>
+            <div class="text-sm text-gray-500">Ensure your microphone is working properly</div>
+        </div>
+    </div>
+
+    <!-- Step 1: Select & Allow Microphone -->
+    <div class="mb-10">
+        <div class="text-sm font-bold text-gray-700 mb-2">Step 1: Select your microphone</div>
+        <div class="flex flex-col gap-2">
+            @if (hasAudioPermission()) {
+                <div class="flex flex-col gap-2">
+                    <span class="flex gap-1">
+                        <svg class="text-green-600 inline-block mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+
+                        <div class="text-sm">Microphone access granted</div>
+                    </span>
+                    <div class="flex gap-1 items-start">
+                        <svg class="text-green-600 inline-block mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                        <div class="w-full">
+                            <div class="mb-1">Select your microphone</div>
+                            <select class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" (change)="selectAudioDevice($any($event.target).value)">
+                                @for (d of audioDevices(); track d.deviceId) {
+                                    <option [value]="d.deviceId" [selected]="d.deviceId === selectedAudioDeviceId()">{{ d.label || 'Microphone' }}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            } @else {
+                <div class="flex flex-col gap-2">
+                    <button type="button" class="btn rounded-full! text-xs! px-4! py-2!" (click)="requestAudioPermission()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        </svg> 
+                        Allow Microphone Access
+                    </button>
+                    <span class="text-xs text-gray-500">Required to detect devices</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Step 2: Record Audio -->
+    <div class="mb-10">
+        <div class="text-sm font-bold text-gray-700 mb-3">Step 2: Record a short audio clip</div>
+        <div class="rounded-md border border-gray-200 border-dashed p-5">
+            <div class="flex flex-col justify-center items-center gap-1 w-max mx-auto mb-3">
+                <button 
+                    type="button" 
+                    class="mic-record-btn relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer"
+                    [class.bg-gray-100]="audioState() !== 'recording'"
+                    [class.hover:bg-gray-200]="audioState() !== 'recording'"
+                    [class.bg-red-500]="audioState() === 'recording'"
+                    [class.recording-pulse]="audioState() === 'recording'"
+                    (click)="recordAudio()"
+                    [disabled]="audioState() === 'recording'">
+                    @if (audioState() === 'recording') {
+                        <div class="recording-waves absolute inset-0 rounded-full"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" class="text-white relative z-10" fill="currentColor">
+                            <rect x="6" y="6" width="12" height="12" rx="2"/>
+                        </svg>
+                    } @else {
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" class="text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" x2="12" y1="19" y2="22"/>
+                        </svg>
+                    }
+                </button>
+                <div class="flex-1">
+                    @if (audioState() === 'recording') {
+                        <div class="flex items-center justify-center gap-2 text-red-500 font-medium">
+                            <span class="recording-dot w-2 h-2 bg-red-500 rounded-full"></span>
+                            Recording... Speak now
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Recording will stop automatically after 2-5 seconds</div>
+                    } @else if (recordedBlobUrl()) {
+                        <div class="flex items-center justify-center gap-2 text-green-600 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            Recording complete!
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Click the mic to record again, or play to verify</div>
+                    } @else {
+                        <div class="text-gray-600 font-medium">Click the microphone to start recording</div>
+                        <div class="text-xs text-gray-500 mt-1">Speak clearly into your microphone for 2-5 seconds</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Play & Verify -->
+    <div class="text-sm font-bold text-gray-700 mb-3">Step 3: Play back and verify</div>
+    <div class="bg-gray-50 rounded-lg p-4">
+        <audio id="player" controls class="w-full h-10 mb-3"></audio>
+        <p class="text-sm text-gray-600 mb-3">Can you hear yourself clearly in the playback?</p>
+        <div class="flex flex-wrap items-center gap-3">
+            <button 
+                type="button" 
+                class="btn rounded-full!" 
+                (click)="confirmAudioWorks()" 
+                [disabled]="!recordedBlobUrl()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                Yes, Audio Works
+            </button>
+            @if (audioState() === 'passed') {
+                <span class="text-green-600 text-sm flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    Audio verified!
+                </span>
+            }
+        </div>
+    </div>
+</div>
+
+</div>

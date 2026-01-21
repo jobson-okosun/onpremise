@@ -1,5 +1,4 @@
 import { Component, computed, inject, model } from '@angular/core';
-import { ExamService } from '../../../services/exam';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';

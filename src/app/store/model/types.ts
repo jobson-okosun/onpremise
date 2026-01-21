@@ -265,3 +265,68 @@ export interface ILogOutParticipant {
   logout: boolean;
   reason: string;
 }
+
+
+// Onboarding step configuration
+export type OnboardingStepId = 
+    | 'details' 
+    | 'system-check'
+    | 'device-check-audio' 
+    | 'device-check-video' 
+    | 'facial' 
+    | 'guidelines' 
+    | 'rules' 
+    | 'start';
+
+export interface OnboardingStep {
+    id: OnboardingStepId;
+    label: string;
+    icon: string;
+    route: string;
+    requiresCompletion: boolean; // If true, user must complete an action before proceeding
+}
+
+// Track completion status of each step
+export type StepCompletionStatus = Record<OnboardingStepId, boolean>;
+
+export interface OnboardingSettings {
+    requireSystemCheck: boolean;
+    requireAudioCheck: boolean;
+    requireVideoCheck: boolean;
+    requireFacialAuth: boolean;
+    showGuidelines: boolean;
+    showRules: boolean;
+}
+
+// Default settings (all features enabled)
+export const DEFAULT_ONBOARDING_SETTINGS: OnboardingSettings = {
+    requireSystemCheck: true,
+    requireAudioCheck: true,
+    requireVideoCheck: true,
+    requireFacialAuth: true,
+    showGuidelines: true,
+    showRules: true,
+};
+
+export const ALL_ONBOARDING_STEPS: OnboardingStep[] = [
+    { id: 'details', label: 'Details', icon: 'info', route: '/proctored/onboarding/overview', requiresCompletion: false },
+    { id: 'system-check', label: 'System', icon: 'monitor', route: '/proctored/onboarding/system-check', requiresCompletion: true },
+    { id: 'device-check-audio', label: 'Audio', icon: 'mic', route: '/proctored/onboarding/device-check/audio', requiresCompletion: true },
+    { id: 'device-check-video', label: 'Video', icon: 'camera', route: '/proctored/onboarding/device-check/video', requiresCompletion: true },
+    { id: 'facial', label: 'Photo', icon: 'user', route: '/proctored/onboarding/facial-biometric', requiresCompletion: true },
+    { id: 'guidelines', label: 'Guidelines', icon: 'book', route: '/proctored/onboarding/guidelines', requiresCompletion: false },
+    { id: 'rules', label: 'Rules', icon: 'clipboard', route: '/proctored/onboarding/rules', requiresCompletion: false },
+    { id: 'start', label: 'Start', icon: 'play', route: '/proctored/onboarding/start-exam', requiresCompletion: false },
+];
+
+// Initial completion status - all false
+export const INITIAL_STEP_COMPLETION: StepCompletionStatus = {
+    'details': true, // Details is just viewing, always complete
+    'system-check': false,
+    'device-check-audio': false,
+    'device-check-video': false,
+    'facial': false,
+    'guidelines': true, // Just reading
+    'rules': true, // Just reading
+    'start': true, // Final step
+};

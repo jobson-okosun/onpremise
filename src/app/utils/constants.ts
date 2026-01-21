@@ -115,7 +115,7 @@ export const preloginData = {
 
 export const mockStore = {
   "candidate_data": {
-    "name": "John ikechukwuogheni osemudiamen paul",
+    "name": "John paul",
     "id": "CAND-10023",
     "minutes_left": 89,
     "seconds_left": 45,

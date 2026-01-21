@@ -24,7 +24,6 @@ export class MultipleResponse {
   alphabetList: typeof AlphabetList = AlphabetList;
 
   selectOption(value: string) {
-
     this.multipleResponseAnswers.update((answers: string[]) => {
       if (!answers.includes(value)) {
         return [...answers, value];

@@ -1,0 +1,124 @@
+<div animate.enter="fade-in">
+    <div class="py-3">
+        <div class="uppercase font-black text-xl text-primary">Ready to Begin</div>
+        <div class="mt-2">You've completed all the setup steps. You're now ready to start your exam.</div>
+    </div>
+
+    <!-- Success Checkmarks -->
+    <div class="rounded-xl border border-gray-200 p-5 mb-5">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <div>
+                <div class="font-bold text-lg">Setup Complete</div>
+                <div class="text-sm text-gray-500">All requirements have been verified</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Exam details reviewed</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Proctoring guidelines acknowledged</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Exam rules accepted</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Microphone tested and working</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Camera tested and working</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" class="text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span class="text-sm">Identity photo captured</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Summary -->
+    <div class="rounded-xl border border-gray-200 p-5 mb-5">
+        <div class="font-bold text-lg mb-3">Exam Summary</div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="text-xs text-gray-500 uppercase">Duration</div>
+                <div class="font-semibold text-lg">{{ examDuration() }} mins</div>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="text-xs text-gray-500 uppercase">Sections</div>
+                <div class="font-semibold text-lg">{{ sectionsCount() }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Important Reminders -->
+    <div class="rounded-xl border border-amber-200 bg-amber-50 p-5 mb-5">
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" class="text-amber-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <div>
+                <div class="font-bold text-amber-800 mb-2">Important Reminders</div>
+                <ul class="text-sm text-amber-700 space-y-1">
+                    <li>• Do not close or minimize this window during the exam</li>
+                    <li>• Keep your face visible in the camera at all times</li>
+                    <li>• Ensure you have a stable internet connection</li>
+                    <li>• The timer will start immediately after you click "Start Exam"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center gap-4 py-5">
+        <div class="text-center">
+            <div class="text-lg font-semibold text-gray-800">Good luck!</div>
+            <div class="text-sm text-gray-500 mt-1">Click the button below when you're ready to begin</div>
+        </div>
+        <button 
+            type="button" 
+            class="btn py-4! px-10! rounded-full! text-lg font-semibold" 
+            [disabled]="!canStartExam()"
+            [class.opacity-50]="!canStartExam()"
+            [class.cursor-not-allowed]="!canStartExam()"
+            (click)="startExam()">
+            <span class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                Start Exam
+            </span>
+        </button>
+        @if (!canStartExam()) {
+            <div class="text-sm text-red-500 text-center">
+                Please complete all required steps before starting the exam
+            </div>
+        }
+    </div>
+</div>

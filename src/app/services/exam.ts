@@ -6,10 +6,10 @@ import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, tim
 import { DataService } from "./data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
 import { HotToastService } from "@ngxpert/hot-toast";
-import { autoSaveResponse } from "../utils/constants";
 import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
 import { TauriService } from "./tauri";
+import { ProctorService } from "./proctor";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -18,6 +18,7 @@ export class ExamService {
     private _toast = inject(HotToastService)
     private _router = inject(Router)
     private _tauriService = inject(TauriService)
+    private _proctorService = inject(ProctorService)
 
     examTimerSub$: Subscription;
     examSubmit$: Subscription;
@@ -52,6 +53,10 @@ export class ExamService {
     pinnedRestrictionApplied = signal(false)
     lastUnpinnedTimeInMins = signal(0)
     lastAutosaveTimeDifference = signal(0)
+    isProctoredExam = computed(() => {
+        // this.store().preloginData?.delivery_method === DeliveryMethod.AUTO_PROCTORING
+        return true
+    })
 
     isAppPinned = effect(() => {
         const isPinned = this.store().appIsPinned;
@@ -204,6 +209,31 @@ export class ExamService {
 
             const sections = data.sections_questions.map(s => {
                 const items = this.getSectionItems(s)
+                items.forEach(item => {
+                    if(item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
+                        item.responses[0] = item.responses[0] ?? ''
+                    }
+
+                    // if(item.item_type == ItemType.MRQ) {
+                    //     item.options.forEach((option, optionIndex) => {
+                    //         item.responses[optionIndex] = item.responses[optionIndex] ?? ''
+                    //     })
+                    // }
+
+                    if(
+                        item.item_type == ItemType.CLOZE_DROPDOWN ||
+                        item.item_type == ItemType.CLOZE_RADIO ||
+                        item.item_type == ItemType.CLOZE_TEXT ||
+                        item.item_type == ItemType.CLOZE_TEXT_IMAGE ||
+                        item.item_type == ItemType.CLOZE_DROPDOWN_IMAGE
+                    ) {
+                        item.possible_responses?.forEach((option, optionIndex) => {
+                            item.responses[optionIndex] = item.responses[optionIndex] ?? ''
+                        })
+                    }
+                    
+                })
+
                 const section: StoreSection = { id: s.id, name: s.name, items }
                 return section
             })
@@ -550,10 +580,16 @@ export class ExamService {
     }
 
     endExam() {
+
         disableRestrictedActions()
         this.examEnded.set(true)
+
         if (this.examTimerSub$) {
             this.examTimerSub$.unsubscribe()
+        }
+
+        if(this.isProctoredExam()) {
+            this._proctorService.stopProctoring()
         }
 
         const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING)

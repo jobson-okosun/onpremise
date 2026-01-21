@@ -1,0 +1,38 @@
+<div class="w-full h-full flex items-center p-5">
+    <div class="w-full md:w-2/3 md:mx-auto lg:w-full">
+        @if(store().organizationAssets?.hasLogo) {
+            <img [src]="store().organizationAssets?.logo" class="mx-auto w-44 mb-20">
+        } @else {
+            <img src="EXPryLogoHor.png" class="mx-auto w-44 mb-20">
+        }
+
+        <div class="mb-2 text-center">Enter your login credentials to continue</div>
+        <div> 
+            <div class="flex flex-col gap-3">
+               <div>
+                    <input [formControl]="userId" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" placeholder="User ID">
+                    @if(userId.invalid && userId.touched) {
+                        @if(userId.hasError('required')) {
+                            <div class="text-red-500 text-sm mt-1">Please enter your User ID</div>
+                        }
+                    }
+               </div>
+                <div>
+                    <input [formControl]="examId" (keyup.enter)="login()" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" placeholder="Exam ID">
+                    @if(examId.invalid && examId.touched) {
+                        @if(examId.hasError('required')) {
+                            <div class="text-red-500 text-sm mt-1">Please enter your Exam ID</div>
+                        }
+                    }
+                </div>
+            </div>
+            @if(examId.hasError('serverError')) {
+                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ examId.errors?.['serverError'].msg }} </div>
+            }
+            <div class="my-10">
+                <a routerLink="../onboarding" class="btn w-full! rounded-full!">Continue</a>
+                <!-- <button type="button" [disabled]="isLoading() || !userId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button> -->
+            </div>
+        </div>
+    </div>
+</div>

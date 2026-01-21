@@ -6,6 +6,7 @@ import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
+import { ProctorService } from '../../services/proctor';
 import { DeliveryMethod, ItemType, StoreSection } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { mockStore } from '../../utils/constants';
@@ -30,6 +31,8 @@ import { ScientificCalculator } from '../scientific-calculator/scientific-calcul
 import { MultipleResponse } from '../item-types/multiple-response/multiple-response';
 import { TrueOrFalse } from '../item-types/true-or-false/true-or-false';
 import { YesOrNo } from '../item-types/yes-or-no/yes-or-no';
+import { ProctorPreview } from '../proctor-preview/proctor-preview';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-layout',
@@ -39,12 +42,17 @@ import { YesOrNo } from '../item-types/yes-or-no/yes-or-no';
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
     LabelImageWithDragAndDrop, ChoiceMatrix, MultipleResponse, TrueOrFalse, YesOrNo,
-    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator
+    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator, ProctorPreview
   ]
 })
 export default class Layout implements OnDestroy { 
   private _store = inject(Store)
   private _exam = inject(ExamService)
+  private _proctor = inject(ProctorService)
+  private _toast = inject(HotToastService)
+  
+  proctorDenied = computed(() => this._proctor.isDenied())
+  proctorError = computed(() => this._proctor.errorMessage())
   
   showCalculator = signal<null | string>(null)
   showItemTypesContainer = signal<boolean>(false)
@@ -115,8 +123,10 @@ export default class Layout implements OnDestroy {
     return name.length > 15 ? name.slice(0, 15).concat('...') : name
   })
 
+  isProctoredExam = computed(() => this._exam.isProctoredExam())
 
-  ngOnInit() {
+
+  async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
@@ -126,6 +136,15 @@ export default class Layout implements OnDestroy {
 
     if (!this.store().platformIsTauri) {
       fullscreen()
+    }
+
+    if(this.isProctoredExam()) {
+      const success = await this._proctor.initializeProctoring()
+      
+      if(!success) {
+        this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
+        return
+      }
     }
 
     this._exam.startExam()

@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-3 2xl:justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn">
+<div class="proctor-boundary flex flex-col gap-3 2xl:justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn">
     <!-- top -->
     <div>
         <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
@@ -371,3 +371,20 @@
     </div>
 }
 
+<!-- Proctor Preview - Floating Video -->
+<app-proctor-preview></app-proctor-preview>
+
+<!-- Proctor Permission Denied Modal -->
+<p-dialog [visible]="proctorDenied()" [modal]="true" [closable]="false" [draggable]="false" header="Camera & Microphone Required" [style]="{ width: '450px' }">
+    <div class="text-center p-4">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" class="text-red-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+        </div>
+        <p class="text-gray-600 mb-6">{{ proctorError() }}</p>
+        <button class="btn" (click)="logout()">Return to Login</button>
+    </div>
+</p-dialog>

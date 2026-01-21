@@ -1,0 +1,143 @@
+<div animate.enter="fade-in">
+<div class="py-3">
+    <div class="uppercase font-black text-xl text-primary">Device Compatibility Check</div>
+    <div class="mt-2">Test your camera to ensure video is working properly before starting the exam.</div>
+</div>
+
+@if (videoError()) {
+    <div class="text-red-500 text-sm bg-red-50 p-3 text-center mb-4">{{ videoError() }}</div>
+}
+
+<div class="rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" class="text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+            </svg>
+        </div>
+        <div>
+            <div class="font-bold text-lg">Camera Test</div>
+            <div class="text-sm text-gray-500">Ensure your camera is working properly</div>
+        </div>
+    </div>
+
+    <!-- Step 1: Allow Camera Access -->
+    <div class="mb-10">
+        <div class="text-sm font-bold text-gray-700 mb-2">Step 1: Allow camera access</div>
+        <div class="flex flex-col gap-2">
+            @if (hasVideoPermission()) {
+                <div class="flex flex-col gap-2">
+                    <span class="flex gap-1">
+                        <svg class="text-green-600 inline-block mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                        <div class="text-sm">Camera access granted</div>
+                    </span>
+                    <div class="flex gap-1 items-start">
+                        <svg class="text-green-600 inline-block mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                        <div class="w-full">
+                            <div class="mb-1">Select your camera</div>
+                            <select class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" (change)="selectVideoDevice($any($event.target).value)">
+                                @for (d of videoDevices(); track d.deviceId) {
+                                    <option [value]="d.deviceId" [selected]="d.deviceId === selectedVideoDeviceId()">{{ d.label || 'Camera' }}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            } @else {
+                <div class="flex flex-col gap-2">
+                    <button type="button" class="btn rounded-full! text-xs! px-4! py-2!" (click)="requestVideoPermission()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                            <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+                        </svg>
+                        Allow Camera Access
+                    </button>
+                    <span class="text-xs text-gray-500">Required to enable video preview</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Step 2: Preview Video -->
+    <div class="mb-10">
+        <div class="text-sm font-bold text-gray-700 mb-3">Step 2: Preview your camera </div>
+        <div class="rounded-md border border-gray-200 border-dashed p-5">
+            <div class="camera-box rounded-lg overflow-hidden bg-gray-100 mx-auto relative">
+                @if (!hasVideoPermission()) {
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                            <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+                            <line x1="2" y1="2" x2="22" y2="22"/>
+                        </svg>
+                        <span class="text-sm mt-2">Camera not enabled</span>
+                    </div>
+                }
+                <video #videoPreview class="w-full h-full object-cover" playsinline muted autoplay></video>
+            </div>
+
+            <div class="text-center mt-4">
+                @if (videoState() === 'preview') {
+                    <div class="flex items-center justify-center gap-2 text-primary font-medium">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Camera is live
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">Make sure you can see yourself clearly in the preview</div>
+                } @else if (videoState() === 'passed') {
+                    <div class="flex items-center justify-center gap-2 text-green-600 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"/>
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        Video test passed!
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">Your camera is working correctly</div>
+                } @else if (videoState() === 'error') {
+                    <div class="flex items-center justify-center gap-2 text-red-500 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        Camera error
+                    </div>
+                } @else {
+                    <div class="text-gray-500 text-sm">Allow camera access to see preview</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Confirm -->
+    <div class="text-sm font-bold text-gray-700 mb-3">Step 3: Confirm video works</div>
+    <div class="bg-gray-50 rounded-lg p-4">
+        <p class="text-sm text-gray-600 mb-3">Can you see yourself clearly in the video preview above?</p>
+        <div class="flex flex-wrap items-center gap-3">
+            <button 
+                type="button" 
+                class="btn rounded-full!" 
+                (click)="confirmVideoWorks()" 
+                [disabled]="videoState() !== 'preview'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                Yes, Video Works
+            </button>
+            @if (videoState() === 'passed') {
+                <span class="text-green-600 text-sm flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    Confirmed
+                </span>
+            }
+        </div>
+    </div>
+</div>
+</div>

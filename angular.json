@@ -74,6 +74,12 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "headers": {
+              "Cross-Origin-Opener-Policy": "same-origin",
+              "Cross-Origin-Embedder-Policy": "require-corp"
+            }
+          },
           "configurations": {
             "production": {
               "buildTarget": "onpremise:build:production"

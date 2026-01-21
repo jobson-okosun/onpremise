@@ -1,0 +1,206 @@
+<div animate.enter="fade-in">
+<div class="py-3">
+    <div class="uppercase font-black text-xl text-primary">Facial Authentication</div>
+    <div class="mt-2">We need to capture your photo to verify your identity before starting the exam.</div>
+</div>
+
+@if (errorMessage()) {
+    <div class="text-red-500 text-sm bg-red-50 p-3 text-center mb-4 rounded-lg">{{ errorMessage() }}</div>
+}
+
+<div class="rounded-xl border border-gray-200 p-5">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" class="text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+        </div>
+        <div>
+            <div class="font-bold text-lg">Identity Verification</div>
+            <div class="text-sm text-gray-500">Position your face within the frame</div>
+        </div>
+    </div>
+
+    <div class="max-w-[400px] relative mx-auto mb-6">
+        <!-- Face Guide Overlay -->
+        <div class="overflow-hidden rounded-md absolute inset-0 z-10 pointer-events-none">
+            <svg class="w-full h-full" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                <!-- Semi-transparent overlay -->
+                <defs>
+                    <mask id="faceMask">
+                        <rect width="100%" height="100%" fill="white"/>
+                        <circle cx="200" cy="150" r="100" fill="black"/>
+                    </mask>
+                </defs>
+                <rect width="100%" height="100%" fill="rgba(0,0,0,0.4)" mask="url(#faceMask)"/>
+                <!-- Face outline -->
+                <circle cx="200" cy="150" r="100" fill="none" stroke="white" stroke-width="2" stroke-dasharray="8 4"/>
+            </svg>
+        </div>
+
+        <!-- Video Preview -->
+        <div class="video-box rounded-xl overflow-hidden bg-gray-900 relative">
+            @if (captureState() === 'initializing') {
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-white bg-gray-800">
+                    <div class="loading-spinner mb-3"></div>
+                    <span class="text-sm">Initializing camera...</span>
+                </div>
+            }
+
+            @if (captureState() === 'error' && !hasVideoPermission()) {
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                        <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+                        <line x1="2" y1="2" x2="22" y2="22"/>
+                    </svg>
+                    <span class="text-sm mt-2">Camera not available</span>
+                </div>
+            }
+
+            <video 
+                #videoPreview 
+                class="w-full h-full object-cover" 
+                [class.hidden]="captureState() === 'captured'"
+                playsinline 
+                muted 
+                autoplay>
+            </video>
+
+            <!-- Captured Image Preview -->
+            @if (captureState() === 'captured' && capturedImageUrl()) {
+                <img [src]="capturedImageUrl()" class="w-full h-full object-cover" alt="Captured photo"/>
+            }
+
+            <!-- Countdown Overlay -->
+            @if (captureState() === 'countdown') {
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+                    <div class="countdown-circle">
+                        <span class="countdown-number">{{ countdown() }}</span>
+                    </div>
+                </div>
+            }
+
+            <!-- Capturing Flash Effect -->
+            @if (captureState() === 'capturing') {
+                <div class="absolute inset-0 bg-white animate-flash"></div>
+            }
+        </div>
+
+        <!-- Hidden canvas for capture -->
+        <canvas #captureCanvas class="hidden"></canvas>
+    </div>
+
+    <div class="text-center mb-6">
+        @switch (captureState()) {
+            @case ('initializing') {
+                <div class="text-gray-600 font-medium">Setting up camera...</div>
+                <div class="text-xs text-gray-500 mt-1">Please wait while we initialize your camera</div>
+            }
+            @case ('ready') {
+                <div class="text-gray-600 font-medium">Camera ready</div>
+                <div class="text-xs text-gray-500 mt-1">Position your face within the circle and click the button below</div>
+            }
+            @case ('countdown') {
+                <div class="text-primary font-medium">Get ready!</div>
+                <div class="text-xs text-gray-500 mt-1">Photo will be captured in {{ countdown() }} seconds. Look directly at the camera.</div>
+            }
+            @case ('capturing') {
+                <div class="text-primary font-medium">Capturing...</div>
+            }
+            @case ('captured') {
+                <div class="flex items-center justify-center gap-2 text-green-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    Photo captured!
+                </div>
+                <div class="text-xs text-gray-500 mt-1">Review your photo below. Make sure your face is clearly visible.</div>
+            }
+            @case ('error') {
+                <div class="flex items-center justify-center gap-2 text-red-500 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    Something went wrong
+                </div>
+                <div class="text-xs text-gray-500 mt-1">Please check camera permissions and try again</div>
+            }
+        }
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-3">
+        @if (captureState() === 'ready') {
+            <button type="button" class="btn rounded-full!" (click)="startCountdown()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Start Capture
+            </button>
+        }
+
+        @if (captureState() === 'captured') {
+            <button type="button" class="btn-outline rounded-full!" (click)="retakePhoto()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <path d="M1 4v6h6"/>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                </svg>
+                Retake Photo
+            </button>
+            <button type="button" class="btn rounded-full!" (click)="confirmPhoto()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                Confirm & Continue
+            </button>
+        }
+
+        @if (captureState() === 'error') {
+            <button type="button" class="btn rounded-full!" (click)="startCountdown()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <path d="M1 4v6h6"/>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                </svg>
+                Try Again
+            </button>
+        }
+
+        @if (captureState() === 'countdown') {
+            <button type="button" class="btn rounded-full!" (click)="capturePhoto()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Capture Now
+            </button>
+        }
+    </div>
+
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <div class="text-sm font-medium text-gray-800 mb-2">Tips for a good photo:</div>
+        <ul class="text-xs space-y-1">
+            <li class="flex items-start gap-2">
+                <span class="mt-0.5">•</span>
+                <span>Ensure your face is well-lit and clearly visible</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="mt-0.5">•</span>
+                <span>Remove glasses, hats, or anything covering your face</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="mt-0.5">•</span>
+                <span>Look directly at the camera with a neutral expression</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="mt-0.5">•</span>
+                <span>Position your face within the oval guide</span>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>

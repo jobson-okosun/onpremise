@@ -1,0 +1,70 @@
+.video-box {
+    width: 100%;
+    aspect-ratio: 4/3;
+    min-height: 280px;
+    background: #1a1a1a;
+}
+
+.face-guide-overlay {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.countdown-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(13, 132, 153, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-scale 1s ease-in-out infinite;
+}
+
+.countdown-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+
+@keyframes pulse-scale {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Flash Animation */
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.animate-flash {
+    animation: flash 0.3s ease-out;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

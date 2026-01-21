@@ -1,0 +1,76 @@
+<div class="bg-gray-50 h-dvh overflow-y-auto">
+    <div class="lg:w-4/5 2xl:w-4/6 mx-auto p-5 relative animate__animated animate__fadeIn min-h-dvh flex flex-col justify-between">
+        <div>
+            <div class="flex flex-col lg:flex-row lg:justify-between gap-5 mb-5">
+                <div>
+                    <div class="flex gap-4 mb-10">
+                        <div>
+                            <div class="bg-white border border-gray-200 rounded-md flex items-center justify-center p-1 min-h-16">
+                                @if(store().organizationAssets?.hasLogo) {
+                                    <img [src]="store().organizationAssets?.logo" class="w-16">
+                                } @else {
+                                    <img src="EXPryLogoHor.png" class="w-16">
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <div class="uppercase font-black text-2xl text-primary">2025 recruitment exam</div>
+                            <div class="mt-2">Complete the steps below to start your exam.</div>
+                        </div>
+                    </div>
+
+                    <app-progress-indicator></app-progress-indicator>
+                </div>
+
+                <div class="lg:max-w-[300px] flex items-start gap-3">
+                    @if(store().candidatePassport) {
+                        <span class="size-12 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <img [srcset]="store().candidatePassport" alt="" class="w-full object-cover object-center">
+                        </span>
+                    } @else {
+                        <span class="size-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <svg class="w-[100px] h-auto text-gray-500 translate-y-[15px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    }
+                    <div class="flex-1 overflow-hidden">
+                        <div class="font-semibold text-lg truncate">{{ store().loginData?.candidate_data?.name }}</div>
+                        <div class="text-sm">{{ store().loginData?.candidate_data?.login_field_value }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex flex-col p-5 rounded border border-gray-200 border-dashed bg-white mb-[30px]">
+                    <router-outlet></router-outlet>
+                </div>
+
+                @if (!isStartExamPage()) {
+                    <div>
+                        <div>
+                            <div class="flex items-center gap-3 lg:w-1/3">
+                                <button (click)="goToRoute('back')" type="button" class="btn-outline py-4! flex-1">Back</button>
+                                <button 
+                                    (click)="goToRoute('next')" 
+                                    type="button" 
+                                    class="btn py-4! flex-1"
+                                    [disabled]="!isCurrentStepCompleted()"
+                                    [class.opacity-50]="!isCurrentStepCompleted()"
+                                    [class.cursor-not-allowed]="!isCurrentStepCompleted()">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+        <!-- footer -->
+        <div class="mt-20 mb-5 text-sm text-gray-500">
+            &copy; {{ year }} Multilent softwares. All rights reserved.
+        </div>
+    </div>
+</div>
