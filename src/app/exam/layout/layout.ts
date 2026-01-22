@@ -138,14 +138,14 @@ export default class Layout implements OnDestroy {
       fullscreen()
     }
 
-    if(this.isProctoredExam()) {
+    // if(this.isProctoredExam()) {
       const success = await this._proctor.initializeProctoring()
       
       if(!success) {
         this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
         return
       }
-    }
+    // }
 
     this._exam.startExam()
   }

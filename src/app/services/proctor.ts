@@ -45,7 +45,7 @@ export class ProctorService {
 
     isActive = () => this._state() === 'active';
     isDenied = () => this._state() === 'denied';
-
+ 
     async initializeProctoring(): Promise<boolean> {
         if (this._state() === 'active') {
             return true;
@@ -62,12 +62,12 @@ export class ProctorService {
 
             // Start streaming to Tauri if in Tauri environment
             this.initializeStreamingPipeline(stream);
-            // if (this._store.store().platformIsTauri) {
-            //     console.log('Environment: Tauri............................')
-            //     this.initializeStreamingPipeline(stream);
-            // } else {
-            //     console.log('Environment: note Tauri............................')
-            // }
+            if (this._store.store().platformIsTauri) {
+                console.log('Environment: Tauri............................')
+                // this.initializeStreamingPipeline(stream);
+            } else {
+                console.log('Environment: note Tauri............................')
+            }
 
             return true;
 
