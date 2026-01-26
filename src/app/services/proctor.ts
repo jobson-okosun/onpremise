@@ -4,8 +4,8 @@ import { Store } from "../store/store";
 import { invoke } from "@tauri-apps/api/core";
 import { ProctorState } from "../store/model/media-models";
 
-const WIDTH = 640;
-const HEIGHT = 480;
+const WIDTH = 320;
+const HEIGHT = 320;
 const CHANNELS = 4;
 const FRAME_SIZE = WIDTH * HEIGHT * CHANNELS;
 const FRAME_COUNT = 4; 
@@ -56,6 +56,7 @@ export class ProctorService {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia(this._streamConstraints);
+            // console.log(stream.getVideoTracks()[0].getConstraints())
 
             this._stream.set(stream);
             this._state.set('active');
