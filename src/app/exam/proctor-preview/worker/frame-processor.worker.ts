@@ -54,6 +54,6 @@ async function processLoop() {
             console.error("Worker processLoop error:", e);
         }
 
-        await new Promise((r) => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 10));
     }
 }

@@ -38,7 +38,7 @@ export class App {
   ))
 
   ngOnInit() {
-    this._exam.formatLoginDataToStore(mockStore as any)
+    // this._exam.formatLoginDataToStore(mockStore as any)
     this._tauriService.updatePlatformType() 
     this._dataService.downloadOrganizationAssets()
     this._tauriService.initializeBatteryStatus()

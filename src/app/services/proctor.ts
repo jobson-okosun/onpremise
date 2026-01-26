@@ -60,14 +60,7 @@ export class ProctorService {
             this._stream.set(stream);
             this._state.set('active');
 
-            // Start streaming to Tauri if in Tauri environment
             this.initializeStreamingPipeline(stream);
-            if (this._store.store().platformIsTauri) {
-                console.log('Environment: Tauri............................')
-                // this.initializeStreamingPipeline(stream);
-            } else {
-                console.log('Environment: note Tauri............................')
-            }
 
             return true;
 
@@ -144,7 +137,6 @@ export class ProctorService {
                 if (e.data.type === 'PROCESS_FRAME') {
                     const { payload } = e.data;
                     try {
-                        console.log('invoking tauri process_frame command here............................')
                         await invoke('process_frame', payload);
                     } catch (err) {
                         console.error('Failed to invoke process_frame:', err);

@@ -132,7 +132,7 @@ export default class Layout implements OnDestroy {
 
     if (!this.store().loginData) {
       this._exam.formatLoginDataToStore(mockStore as any)
-    }
+    } 
 
     if (!this.store().platformIsTauri) {
       fullscreen()
