@@ -28,9 +28,9 @@
                         @if(item.dropBox) {
                             <span class="inline-flex gap-1 items-center rounded-full bg-gray-100 border border-gray-300 p-1 m-1 w-max">
                                 @for(resp of store().currentQuestion?.possible_responses?.[i]?.responses; track resp; let respIndex = $index) {
-                                    <button (click)="captureResponses(i, resp.label.trim())" class="inline-flex gap-1 items-center cursor-pointer rounded-full px-2 py-1.5 bg-white has-checked:bg-primary! has-checked:text-white! border border-transparent hover:border-primary">
+                                    <button (click)="captureResponses(i, resp.value.trim())" class="inline-flex gap-1 items-center cursor-pointer rounded-full px-2 py-1.5 bg-white has-checked:bg-primary! has-checked:text-white! border border-transparent hover:border-primary">
                                         <span class="font-bold">{{ alphabetList[respIndex].toLowerCase() }}</span>
-                                        <input type="radio" class="accent-primary hidden" [value]="resp.value" name="option{{i}}" (change)="captureResponses(i, resp.label.trim())" [checked]="store().currentQuestion?.responses?.[i] === resp.label.trim()" />
+                                        <input type="radio" class="accent-primary hidden" [value]="resp.value" name="option{{i}}" (change)="captureResponses(i, resp.value.trim())" [checked]="store().currentQuestion?.responses?.[i] === resp.value.trim()" />
                                         <span [style.fontSize.px]="fontSize()">{{ resp.label }}</span>
                                     </button>
                                 }
@@ -48,9 +48,9 @@
                         @if(item.dropBox) {
                             <div class="flex w-full items-center flex-wrap">
                                 @for(resp of store().currentQuestion?.possible_responses?.[i]?.responses; track resp; let respIndex = $index) {
-                                    <span (click)="captureResponses(i, resp.label.trim())" class="inline-flex gap-1 items-center cursor-pointer rounded-full px-2 py-1.5 bg-gray-100 m-1 has-checked:bg-primary! has-checked:text-white! border border-transparent hover:border-primary">
+                                    <span (click)="captureResponses(i, resp.value.trim())" class="inline-flex gap-1 items-center cursor-pointer rounded-full px-2 py-1.5 bg-gray-100 m-1 has-checked:bg-primary! has-checked:text-white! border border-transparent hover:border-primary">
                                         <span class="font-bold">{{ alphabetList[respIndex].toLowerCase() }}</span>
-                                        <input type="radio" class="accent-primary hidden" [value]="resp.value" name="option{{i}}" (change)="captureResponses(i, resp.label.trim())" [checked]="store().currentQuestion?.responses?.[i] === resp.label.trim()" />
+                                        <input type="radio" class="accent-primary hidden" [value]="resp.value" name="option{{i}}" (change)="captureResponses(i, resp.value.trim())" [checked]="store().currentQuestion?.responses?.[i] === resp.value.trim()" />
                                         <span [style.fontSize.px]="fontSize()" class="whitespace-nowrap">{{ resp.label }}</span>
                                     </span>
                                 }

@@ -30,7 +30,7 @@
                                 <select [style.fontSize.px]="fontSize()" #select class="rounded-full flex-1 border border-transparent outline-none ring-0 py-2 inline" #dropRef (change)="captureResponses(i, dropRef.value)">
                                     <option selected value="">Select answer</option>
                                     @for(resp of store().currentQuestion?.possible_responses?.[i]?.responses; track resp) {
-                                        <option [selected]="store().currentQuestion?.responses?.[i] === resp.label.trim()" [value]="resp.value"> {{ resp.label }} </option>
+                                        <option [selected]="store().currentQuestion?.responses?.[i] === resp.value.trim()" [value]="resp.value"> {{ resp.label }} </option>
                                     }
                                 </select>
                                 <!-- <span (click)="select.showPicker()"><i class="pi pi-angle-down"></i></span> -->
@@ -52,7 +52,7 @@
                                 <select [style.fontSize.px]="fontSize()" class="rounded-full flex-1 border border-transparent appearance-none outline-none ring-0 py-2 inline" #dropRef (change)="captureResponses(i, dropRef.value)">
                                     <option selected value="">Select answer</option>
                                     @for(resp of store().currentQuestion?.possible_responses?.[i]?.responses; track resp) {
-                                        <option [selected]="store().currentQuestion?.responses?.[i] === resp.label.trim()" [value]="resp.value"> {{ resp.label }} </option>
+                                        <option [selected]="store().currentQuestion?.responses?.[i] === resp.value.trim()" [value]="resp.value"> {{ resp.label }} </option>
                                     }
                                 </select>
                                 <i class="pi pi-angle-down"></i>
