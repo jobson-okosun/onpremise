@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { Paginator } from "../exam/paginator/paginator";
-import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateItem, ItemType } from "../store/model/types";
+import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateEndExamData, ICandidateItem, ItemType } from "../store/model/types";
 import { SingleChoice } from "../exam/item-types/single-choice/single-choice";
 import { ExamService } from "../services/exam";
 import { Store } from "../store/store";
@@ -325,6 +325,22 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
     })
 
     return autoSaveData;
+}
+
+export const formatExamResponseData =(data: ICandidateEndExamData): ICandidateEndExamData => {
+    const formattedSectionsMap = Object.fromEntries(
+        Object.entries(data.autosave.sections_map).map(
+            ([sectionKey, items]) => [ sectionKey, items.map((item) => {
+                const hasValidAnswer = Array.isArray(item.answers) && item.answers.some( (ans) => typeof ans === 'string' && ans.trim() !== '');
+                return { ...item, answers: hasValidAnswer ? item.answers : []};
+            })]
+        )
+    );
+
+    return {
+        ...data,
+        autosave: { ...data.autosave, sections_map: formattedSectionsMap }
+    };
 }
 
 export function blockContextMenuHandler(event: MouseEvent) {

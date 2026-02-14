@@ -8,6 +8,7 @@ import { Store } from "../store/store";
 import { APP_BRANDING } from "../utils/constants";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router } from "@angular/router";
+import { formatExamResponseData } from "../utils/helper";
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -76,7 +77,8 @@ export class DataService {
         const loginValue = this.store().loginData?.candidate_data.login_field_value
 
         payload = { ...payload, battery_status }
-        const endExamPayload: ICandidateEndExamData = { autosave: payload, timed_out: timedOut, is_drawing_writing: hasDrawingAndWriting };
+        let endExamPayload: ICandidateEndExamData = { autosave: payload, timed_out: timedOut, is_drawing_writing: hasDrawingAndWriting };
+        endExamPayload = formatExamResponseData(endExamPayload)
 
         return this._http.post<ICandidationEndExamResponse>(
             `${environment.developmentIP}/candidate/end_exam/assessment/${assessmentId}/login_value/${loginValue}`,
