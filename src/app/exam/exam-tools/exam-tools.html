@@ -2,7 +2,7 @@
     <div class="border border-gray-200 flex items-center gap-2 rounded-2xl w-max p-1 pl-3">
         <span class="text-base font-black">{{ minTimeSpent() }}</span>Min{{ minTimeSpent() !== 1 ? 's' : '' }} of
         <span class="bg-gray-100 flex items-center gap-1 rounded-2xl w-max px-3 py-1">
-            <span class=" font-black">{{ countDownTimer().min }}:{{ countDownTimer().sec }}</span>
+            <span class=" font-black">{{ countDownTimer().min }}:{{ countDownTimer().sec.toString().padStart(2, '0') }}</span>
             <i [class.animate-spin]="lastAutosaveTimeDifference() < 300" class="pi pi-clock hidden! lg:block!"></i>
         </span>
     </div> 

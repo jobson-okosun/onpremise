@@ -1049,6 +1049,7 @@ export class CanvasService {
                 type: 'shape',
                 shapeType: tool,
                 stroke: shape.stroke(),
+                color: shape.stroke(),
                 size: shape.strokeWidth(),
                 fill: shape.fill() ?? 'transparent',
             };

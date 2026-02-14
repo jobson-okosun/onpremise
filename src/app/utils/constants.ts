@@ -205,7 +205,7 @@ export const mockStore = {
               ],
               item_type: 'MRQ',
               responses: [],
-              max_responses: 2,
+              max_responses: 1,
               image_data: { image: '', width: null, height: null },
               drawing_writing_split_type: 'NONE',
               revisit: false,
@@ -690,7 +690,7 @@ export const mockStore = {
               "background_type": "IMAGE",
 
               "image_data": {
-                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 1026,
                 "height": 1083
               },
@@ -736,7 +736,7 @@ export const mockStore = {
               "background_type": "IMAGE",
 
               "image_data": {
-                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
@@ -855,7 +855,7 @@ export const mockStore = {
               "background_type": "IMAGE",
 
               "image_data": {
-                "image": "https://png.pngtree.com/png-vector/20231115/ourmid/pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },

@@ -65,7 +65,6 @@ export class Overview {
   }
 
   selectPage(page: number) {
-    console.log(this.paginator)
     this.paginator()?.selectPage(page)
   }
 }

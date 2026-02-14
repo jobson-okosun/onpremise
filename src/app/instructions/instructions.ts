@@ -36,4 +36,6 @@ export default class Instructions {
       this._router.navigate(['exam'])
     }
   });
+
+  hasOneSectionWithInstruction = computed(() => this.store().loginData?.sections_questions.some( item => item.section_settings.section_instruction))
 }

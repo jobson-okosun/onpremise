@@ -37,6 +37,13 @@ export default class Login {
   }
 
   login() {
+    const control = this.candidateId;
+    if (control.hasError('serverError')) {
+      const errors = { ...control.errors };
+      delete errors['serverError'];
+      control.setErrors(Object.keys(errors).length ? errors : null);
+    }
+
     if (this.candidateId.invalid) {
       this.candidateId.markAsTouched()
       return

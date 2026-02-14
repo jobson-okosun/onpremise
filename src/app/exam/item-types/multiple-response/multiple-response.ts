@@ -15,9 +15,15 @@ export class MultipleResponse {
   private _store = inject(Store);
   private _exam = inject(ExamService);
   private multipleResponseAnswers = linkedSignal(() => this._store.store().currentQuestion?.responses!);
-  protected maxResponses = computed(() => this.store().currentQuestion?.max_responses);
-  protected selectedAnswersCount = computed(() => this.store().currentQuestion?.responses.length);
-  protected isMaxResponsesReached = computed( () => this.maxResponses() === this.selectedAnswersCount());
+  protected maxResponses = computed(() => {
+    const max = this.store().currentQuestion?.max_responses;
+    return max == null ? undefined : max;
+  });
+  protected selectedAnswersCount = computed(() => this.store().currentQuestion!.responses.length);
+  protected isMaxResponsesReached = computed(() => {
+    return this.maxResponses() !== undefined && this.selectedAnswersCount() >= this.maxResponses()!;
+  });
+
 
   fontSize = model<number>();
   store = computed(() => this._store.store());
@@ -35,7 +41,7 @@ export class MultipleResponse {
 
     this.store().currentQuestion!.responses = this.multipleResponseAnswers();
     this.store().currentQuestion!.lastUpdated = new Date()
-    
+
     this._store.updateStore({ currentQuestion: this.store().currentQuestion });
   }
 }

@@ -32,24 +32,27 @@
             </div>
             @if(store().currentQuestion) {
             <div class="answer-space flex-1 flex flex-col gap-3 p-5 border-t border-gray-300 border-dashed overflow-y-auto">
-                <span class="text-xs italic text-gray-400 ml-4">NB: Maximum answer of {{maxResponses()}} can be selected</span>
+                @if(maxResponses()) {
+                    <span class="text-xs italic text-gray-400 ml-4">NB: Maximum answer of {{maxResponses()}} can be selected</span>
+                }
+
                 @for (option of store().currentQuestion!.options; track option.value; let i = $index) {
-                <div (click)="!(selectedAnswersCount()! >= maxResponses()! && !store().currentQuestion!.responses.includes(option.value)) && selectOption(option.value)"
+                <div (click)="!(isMaxResponsesReached() && !store().currentQuestion!.responses.includes(option.value))  && selectOption(option.value)"
                     class="p-4 bg-gray-50 has-checked:bg-primary! has-checked:text-white! flex items-center border border-transparent hover:border-blue-200 hover:bg-white rounded-lg cursor-pointer transition">
                     <div class="flex items-center gap-2">
 
-                        <span class="mx-2 font-semibold">
+                        <span class="mx-2 font-semibold" [style.fontSize.px]="fontSize()">
                             {{ alphabetList[i].toLowerCase() }}
                         </span>
 
                         <div class="flex items-center cursor-pointer">
                             <input type="checkbox" [value]="option.value"
                                 [checked]="store().currentQuestion!.responses.includes(option.value)"
-                                [disabled]="selectedAnswersCount()! >= maxResponses()! && !store().currentQuestion!.responses.includes(option.value)"
+                                [disabled]="isMaxResponsesReached() && !store().currentQuestion!.responses.includes(option.value)"
                                 class="hidden checked:inline-block w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-0 accent-primary cursor-pointer">
                             <label for="default-checkbox"
                                 class="select-none ms-2 text-sm font-medium text-heading cursor-pointer"
-                                [innerHTML]="option.label"></label>
+                                [innerHTML]="option.label" [style.fontSize.px]="fontSize()"></label>
                         </div>
 
                     </div>

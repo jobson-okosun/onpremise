@@ -60,6 +60,12 @@ export class ClassifyByMatching implements AfterViewInit {
     this.refresh.update(v => v + 1)
   })
 
+  onFontResizing = effect(() => {
+    if(this.fontSize()) {
+      this.ngAfterViewInit()
+    }
+  })
+
   ngAfterViewInit() {
     this.refresh.update(v => v + 1)
     window.addEventListener('resize', () => { this.refresh.update(v => v + 1) })

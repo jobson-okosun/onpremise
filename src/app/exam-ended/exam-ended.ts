@@ -1,7 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { HotToastService } from '@ngxpert/hot-toast';
 import { interval } from 'rxjs';
 import { Store } from '../store/store';
 
@@ -13,8 +11,6 @@ import { Store } from '../store/store';
 })
 export default class ExamEnded {
   private _store = inject(Store)
-  private _router = inject(Router)
-  private _toast = inject(HotToastService)
 
   store = computed(() => this._store.store())
   start = signal(60);

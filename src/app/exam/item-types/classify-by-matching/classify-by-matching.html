@@ -41,7 +41,7 @@
                         <div>
                             @for (item of leftItems(); track item; let i = $index) {
                                 <div #leftBox class="p-4 mb-4 bg-white rounded-xl border border-gray-200 relative">
-                                    <span [innerHTML]="item"></span>
+                                    <span [style.fontSize.px]="fontSize()" [innerHTML]="item"></span>
                                     <span
                                         class="absolute right-0 top-0 translate-x-2.5 h-full flex items-center justify-center">
                                         <span class="rounded-full border border-gray-200 bg-white size-6"></span>
@@ -54,7 +54,7 @@
                                 <div #rightBox cdkDropList [id]="'right-box-' + i" [cdkDropListConnectedTo]="getConnectedDropLists()" (cdkDropListDropped)="dropRightBox($event)" class="p-4 bg-white rounded-xl border border-gray-200 min-h-14 relative drag-item ">
                                     @if(right) {
                                         <div cdkDrag [cdkDragData]="right" class="cursor-move pl-3">
-                                            <span [innerHTML]="right.label"></span>
+                                            <span [style.fontSize.px]="fontSize()" [innerHTML]="right.label"></span>
                                         </div>
                                     } @else {
                                         <div class="text-gray-300 italic select-none">Drop here</div>
@@ -78,7 +78,7 @@
                             @for (opt of options(); track opt.value; let i = $index) {
                                 <div cdkDrag [cdkDragData]="opt" class="px-4 py-2 bg-white rounded-lg cursor-move select-none hover:border-primary border border-transparent">
                                     <span class="flex gap-1 items-center">
-                                        <span [innerHTML]="opt.label"></span>
+                                        <span [style.fontSize.px]="fontSize()" [innerHTML]="opt.label"></span>
                                     </span>
                                 </div>
                             }

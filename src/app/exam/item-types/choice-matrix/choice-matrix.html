@@ -30,7 +30,7 @@
                                 <tr>
                                     <th class="px-4 py-2 border border-gray-300"></th>
                                     @for(option of store().currentQuestion?.options; track option; let i = $index) {
-                                        <th class="px-4 py-2 border border-gray-300 text-center font-bold" scope="col" [innerHTML]="option.label">
+                                        <th class="px-4 py-2 border border-gray-300 text-center font-bold" scope="col" [innerHTML]="option.label" [style.fontSize.px]="fontSize()">
                                             {{ option.label }}
                                         </th>
                                     }
@@ -40,7 +40,7 @@
                             <tbody>
                                 @for(stem of store().currentQuestion?.stems; track stem; let i = $index) {
                                     <tr>
-                                        <td class="px-4 py-3 border border-gray-300 font-medium bg-white" [innerHTML]="stem">{{ stem }}</td>
+                                        <td class="px-4 py-3 border border-gray-300 font-medium bg-white" [innerHTML]="stem" [style.fontSize.px]="fontSize()">{{ stem }}</td>
                                         @for(option of store().currentQuestion?.options; track option; let j = $index) {
                                             <td class="px-4 py-2 border border-gray-300 text-center bg-white">
                                                 <input id="form-radio-{{ i }}-{{ j }}" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 accent-primary" name="stem_{{ i }}" value="{{ option.value }}" [checked]="store().currentQuestion!.responses[i] === option.value" (change)="captureResponses(option.value, $event, i)"/>

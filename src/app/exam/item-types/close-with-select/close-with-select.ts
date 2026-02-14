@@ -17,8 +17,13 @@ export class CloseWithSelect {
   fontSize = model(16);
   clozeRenderArray = signal<{ text: string; dropBox: boolean }[]>([]);
   alphabetList: typeof AlphabetList = AlphabetList;
-  
+  isMobile = signal(false)
+
   ngOnInit() {
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    console.log({ isMobile})
+    this.isMobile.set(isMobile)
+
     this.formatStimulus();
   }
 

@@ -36,11 +36,11 @@
                 <div (click)="selectOption(option.value)"
                     class="has-checked:bg-primary! has-checked:text-white! p-4 bg-gray-50 flex items-center border border-transparent hover:border-blue-200 hover:bg-white rounded-lg cursor-pointer transition">
                     <div class="flex items-center gap-2">
-                        <span class="mx-2 font-semibold">
+                        <span class="mx-2 font-semibold" [style.fontSize.px]="fontSize()">
                             {{ alphabetList[i].toLowerCase() }}
                         </span>
 
-                        <label class="flex items-center gap-2 cursor-pointer">
+                        <label class="flex items-center gap-2 cursor-pointer" [style.fontSize.px]="fontSize()">
                             <input [checked]="store().currentQuestion!.responses[0] == option.value" type="radio"
                                 name="choice" class="hidden accent-primary" [value]="option.value" />
                             <span class="cursor-pointer" [innerHTML]="option.label"></span>

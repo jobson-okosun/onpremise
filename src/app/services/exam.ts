@@ -135,6 +135,7 @@ export class ExamService {
         return Math.max(0, Math.floor(spent / 60));
     });
 
+
     hasValidResponses(responses: any[]) {
         return responses?.some(value => value !== undefined && value.toString().trim() !== "")
     };
@@ -209,16 +210,11 @@ export class ExamService {
 
             const sections = data.sections_questions.map(s => {
                 const items = this.getSectionItems(s)
+                
                 items.forEach(item => {
                     if(item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
                         item.responses[0] = item.responses[0] ?? ''
                     }
-
-                    // if(item.item_type == ItemType.MRQ) {
-                    //     item.options.forEach((option, optionIndex) => {
-                    //         item.responses[optionIndex] = item.responses[optionIndex] ?? ''
-                    //     })
-                    // }
 
                     if(
                         item.item_type == ItemType.CLOZE_DROPDOWN ||
@@ -310,6 +306,7 @@ export class ExamService {
                 return;
             }
 
+            this.examTimedOut.set(true)
             this.showSubmitExamModalOnExamEnd();
             return
         }
@@ -580,7 +577,6 @@ export class ExamService {
     }
 
     endExam() {
-
         disableRestrictedActions()
         this.examEnded.set(true)
 
@@ -658,7 +654,6 @@ export class ExamService {
     }
 
     showSubmitExamModalOnExamEnd() {
-        this.examTimedOut.set(true)
         this.examEnded.set(true)
 
         Swal.fire({

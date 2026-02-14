@@ -14,4 +14,5 @@ export default class Overview {
 
   store = computed(() => this._store.store())
   examDuration = computed(() => this.store().examDuration)
+  totalQuestions = computed(() => this.store().sections.reduce((s, item) => s + item.items.length, 0))
 }

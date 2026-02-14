@@ -1,4 +1,91 @@
-<div class="flex items-center h-full animate__animated animate__fadeIn">
+<div class="bg-gray-50 h-dvh overflow-y-auto">
+    <div class="lg:w-4/5 2xl:w-4/6 mx-auto p-5 relative animate__animated animate__fadeIn min-h-full flex flex-col justify-between">
+        <div>
+            <div class="flex flex-col lg:flex-row lg:justify-between gap-5 mb-10">
+                <div class="flex gap-4 lg:max-w-5/6">
+                    <div>
+                        <div class="bg-white border border-gray-200 rounded-md flex items-center justify-center p-1 min-h-16">
+                            @if(store().organizationAssets?.hasLogo) {
+                                <img [src]="store().organizationAssets?.logo" class="w-16">
+                            } @else {
+                                <img src="EXPryLogoHor.png" class="w-16">
+                            }
+                        </div>
+                    </div>
+                    <div>
+                        <div class="uppercase font-black text-2xl text-primary">{{ store().loginData?.assessment_data?.name }}</div>
+                        <div class="mt-2">{{ store().preloginData?.description }} </div>
+                    </div>
+                </div>
+
+                <div class="lg:max-w-[300px] flex items-start gap-3">
+                    @if(store().candidatePassport) {
+                        <span class="size-12 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <img [srcset]="store().candidatePassport" alt="" class="w-full object-cover object-center">
+                        </span>
+                    } @else {
+                        <span class="size-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <svg class="w-[100px] h-auto text-gray-500 translate-y-[15px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    }
+                    <div class="flex-1 overflow-hidden">
+                        <div class="font-semibold text-lg truncate">{{ store().loginData?.candidate_data?.name }}</div>
+                        <div class="text-sm">{{ store().loginData?.candidate_data?.login_field_value }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex flex-col p-5 rounded border border-gray-200 border-dashed bg-white mb-[30px]">
+                    <div>
+                        <div class="uppercase font-black text-xl text-primary">Exam Details</div>
+                        <div class="mt-2">Confirm the exam information below before continuing.</div>
+                    </div>
+
+                    <div class="flex flex-col gap-2 mt-5">
+                        <div><span class="font-semibold">Sections: </span> {{ store().sections.length }}</div>
+                        <div><span class="font-semibold">Questions: </span> {{ totalQuestions() }}</div>
+                        <div><span class="font-semibold">Exam Duration: </span> {{ examDuration() }} mins</div>
+                    </div>
+
+                    <div>
+                        <div class="font-bold text-base border-y border-gray-200 border-dashed py-3 mt-5 mb-5 uppercase">Sections</div>
+                        <div class="flex flex-col gap-2">
+                            @for(item of store().sections; track item; let i = $index) {
+                                <div class="flex items-center gap-4">
+                                    <span class="rounded-full bg-gray-50 border border-gray-200/60 size-10 xl:size-12 flex items-center justify-center">
+                                        {{ i + 1 }}
+                                    </span>
+                                    <span>{{ item.name }}</span>
+                                </div>
+                            } 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 lg:w-1/6">
+                    <a routerLink="../instruction" type="button" class="btn py-4! flex-1"> Continue </a>
+                </div>
+            </div>
+        </div>
+
+        @if(store().organizationAssets?.showBranding) {
+            <div class="mt-5 text-sm text-gray-400">
+                &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved.
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- <div class="flex items-center h-full animate__animated animate__fadeIn">
     <div class="w-full lg:w-4/6 2xl:w-1/2 mx-auto p-5">
         <div>
             <div class="flex items-center gap-3">
@@ -40,4 +127,4 @@
             </div> 
         </div>
     </div>
-</div>
+</div> -->

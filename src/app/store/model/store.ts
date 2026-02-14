@@ -3,7 +3,12 @@ import { BatteryStatus, IAssessmentPreLoginData, ICandidateItem, ICandidateLogin
 export class StoreDTO { 
     preloginData: null | IAssessmentPreLoginData
     candidatePassport: null | any
-    organizationAssets: null | { logo: null | string, hasLogo: boolean }
+    organizationAssets: null | { 
+        logo: null | string, 
+        hasLogo: boolean, 
+        currentYear: string,
+        showBranding: boolean 
+    }
     currentRoute: { title?: string, url?: string, queryParams?: { [key: string]: any } }
     loginData: null | ICandidateLoginResponse
     sections: StoreSection[]
@@ -28,7 +33,12 @@ export class StoreDTO {
 
     constructor() {
         this.preloginData = null
-        this.organizationAssets = null
+        this.organizationAssets = { 
+            logo: '',
+            hasLogo: false,
+            showBranding: true,
+            currentYear: new Date().getFullYear().toString()
+        },
         this.candidatePassport = null
         this.loginData = null
         this.sections = []

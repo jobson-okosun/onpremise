@@ -10,16 +10,24 @@
                     <div class="text-lg mt-3">{{ slides[currentIndex()].description }}</div>
                 </div>
 
-                <div class="flex gap-2 items-end justify-between w-full mt-10 lg:mt-0">
-                    @if(store().platformIsTauri) {
-                        <div class="border border-gray-200 rounded-2xl px-6 py-2 w-max">
-                            <span class="flex gap-2 items-center">
-                                <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
-                                <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
-                            </span>
+                <div class="mt-10 lg:mt-0 space-y-7">
+                    <div class="flex gap-2 items-end justify-between w-full">
+                        @if(store().platformIsTauri) {
+                            <div class="border border-gray-200 rounded-2xl px-6 py-2 w-max">
+                                <span class="flex gap-2 items-center">
+                                    <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
+                                    <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
+                                </span>
+                            </div>
+                        }
+                        <button type="button" [disabled]="isLoading()" (click)="fetchPreLoginData()" class="btn p-4!">Proceed to exam</button>
+                    </div>
+
+                    @if(store().organizationAssets?.showBranding) {
+                        <div class="text-sm text-gray-400">
+                            &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved.
                         </div>
                     }
-                    <button type="button" [disabled]="isLoading()" (click)="fetchPreLoginData()" class="btn p-3!">Proceed to exam</button>
                 </div>
             </div>
         </div>

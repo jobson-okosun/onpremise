@@ -69,8 +69,10 @@
 
 
         <!-- footer -->
-        <div class="mt-20 mb-5 text-sm text-gray-500">
-            &copy; {{ year }} Multilent softwares. All rights reserved.
-        </div>
+        @if(store().organizationAssets?.showBranding) {
+            <div class="mt-20 mb-5 text-sm text-gray-400">
+                &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved.
+            </div>
+        }
     </div>
 </div>

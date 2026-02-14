@@ -125,27 +125,27 @@ export default class Layout implements OnDestroy {
 
   isProctoredExam = computed(() => this._exam.isProctoredExam())
 
-
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    if (!this.store().loginData) {
-      this._exam.formatLoginDataToStore(mockStore as any)
-    } 
+    // if (!this.store().loginData) {
+    //   this._exam.formatLoginDataToStore(mockStore as any)
+    // } 
 
     if (!this.store().platformIsTauri) {
       fullscreen()
     }
 
-    // if(this.isProctoredExam()) {
+    const isProctoredExam = false
+    if(isProctoredExam) {
       const success = await this._proctor.initializeProctoring()
       
       if(!success) {
         this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
         return
       }
-    // }
+    }
 
     this._exam.startExam()
   }
@@ -189,12 +189,14 @@ export default class Layout implements OnDestroy {
   }
 
   confirm(): void {
+    this._exam.examTimedOut.set(false)
     this._exam.confirm()
   }
 
   endExam() {
     this._exam.examTimedOut.set(false)
-    this._exam.endExam()
+    this.closeEndExamSummaryModal()
+    this._exam.showSubmitExamModalOnExamEnd()
   }
 
   closeEndExamSummaryModal() {
@@ -258,6 +260,10 @@ export default class Layout implements OnDestroy {
     
     this._store.updateStore({ drawingAndWritingConfig: configUpdate })
     this.showItemTypesContainer.set(true)
+  }
+
+  showCloseAppWithPasswordModal() {
+    this._store.updateStore({ showCloseAppWithPasswordModal: true })
   }
 
   ngOnDestroy(): void {

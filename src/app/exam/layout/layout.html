@@ -325,7 +325,7 @@
       <div class="max-h-[300px] overflow-y-auto mt-4 text-left px-3 border-t border-gray-200 pt-4 space-y-4">
         <div class="flex flex-col gap-2">
           <span>Close candidate browser</span>
-          <button class="bg-red-100 text-red-700 text-sm px-3 py-1 rounded hover:bg-red-200 transition w-max">Close browser</button>
+          <button (click)="showCloseAppWithPasswordModal();showUserProfileModal=false" class="bg-red-100 text-red-700 text-sm px-3 py-1 rounded hover:bg-red-200 transition w-max">Close browser</button>
         </div>
       </div>
     }
