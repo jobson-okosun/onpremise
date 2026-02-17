@@ -41,7 +41,6 @@ export default class UsageGuide {
         next: async (value) => this.successfullPrelogin(value),
         error: (err: HttpErrorResponse) => {
           this._toast.error(err.error.error ?? 'Sorry! Unable to complete task')
-          // this.successfullPrelogin(preloginData as any)
         },
       });
   }
@@ -51,8 +50,8 @@ export default class UsageGuide {
       const isSecure = this.store().platformIsTauri
 
       if (!isSecure) {
-        this._toast.error('Exam can only run on secure browser')
-        // return
+        this._toast.error('This exam can only run on secure browser')
+        return
       }
     }
 

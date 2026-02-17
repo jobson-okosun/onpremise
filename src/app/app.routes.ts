@@ -6,7 +6,6 @@ import { OnboardingLayout } from './proctor-onboarding/onboarding-layout/onboard
 
 export const routes: Routes = [
     { path: '', redirectTo: 'usage-guide', pathMatch: 'full' },
-    // { path: '', redirectTo: 'exam', pathMatch: 'full' },
     { 
         path: 'proctored',
         children: [
@@ -36,7 +35,6 @@ export const routes: Routes = [
     { path: 'overview', canActivate: [isLoggedin], loadComponent: () => import('./overview/overview')},
     { path: 'instruction', canActivate: [isLoggedin], loadComponent: () => import('./instructions/instructions')},
     { path: 'exam', canActivate: [isLoggedin, examNotEnded], canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
-    // { path: 'exam', loadComponent: () => import('./exam/layout/layout')},
     { path: 'exam-ended', loadComponent: () => import('./exam-ended/exam-ended')}
 ];
   

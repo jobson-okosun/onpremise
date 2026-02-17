@@ -55,7 +55,7 @@ export class ExamService {
     lastAutosaveTimeDifference = signal(0)
     isProctoredExam = computed(() => {
         // this.store().preloginData?.delivery_method === DeliveryMethod.AUTO_PROCTORING
-        return true
+        return false
     })
 
     isAppPinned = effect(() => {
@@ -272,6 +272,10 @@ export class ExamService {
     startExam(startTime?: number) {
         this.examDuration.set(this.getExamDuration(startTime))
         this.autoSaveInterval.set(this.store().loginData!.assessment_data.auto_save_sec)
+        
+        this.examTimerSub$?.unsubscribe();
+        this.lastAutoSaveTime.set(new Date())
+        this.inactivityTimer.set(Date.now())
         this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() })
     } 
 

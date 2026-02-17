@@ -69,9 +69,7 @@ export default class Login {
         const control = this.candidateId
 
         control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
-        control.markAsTouched();
-        // this.onSuccessfullLogin(mockStore as any)
-      }
+        control.markAsTouched();      }
     })
   }
 

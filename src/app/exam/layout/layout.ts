@@ -137,8 +137,7 @@ export default class Layout implements OnDestroy {
       fullscreen()
     }
 
-    const isProctoredExam = false
-    if(isProctoredExam) {
+    if(this.isProctoredExam()) {
       const success = await this._proctor.initializeProctoring()
       
       if(!success) {
