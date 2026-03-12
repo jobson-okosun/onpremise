@@ -36,6 +36,7 @@ export class Overview {
   })
 
   activeTab = model(0)
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
 
   selectSection(section: any) {
     const { summary, ...rest } = section

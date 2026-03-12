@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    developmentIP: "https://bc53b6853385.ngrok.app/examalpha/onpremise",
+    developmentIP: "https://5b316593274e.ngrok.app/examalpha/onpremise",
 };

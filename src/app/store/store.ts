@@ -1,6 +1,6 @@
 import { Injectable, signal } from "@angular/core";
 import { StoreDTO } from './model/store'
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class Store { 
@@ -14,7 +14,7 @@ export class Store {
         }));
 
         if(!environment.production) {
-            console.log(this.getStore())
+            // console.log(this.getStore())
         }
     }
 

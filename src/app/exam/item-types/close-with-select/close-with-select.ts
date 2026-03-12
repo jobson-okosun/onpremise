@@ -21,7 +21,6 @@ export class CloseWithSelect {
 
   ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 767px)').matches
-    console.log({ isMobile})
     this.isMobile.set(isMobile)
 
     this.formatStimulus();

@@ -7,7 +7,7 @@ import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/proctor';
-import { DeliveryMethod, ItemType, StoreSection } from '../../store/model/types';
+import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { mockStore } from '../../utils/constants';
 import { fullscreen, useShortcut } from '../../utils/helper';
@@ -24,7 +24,7 @@ import { ClassifyByOrdering } from '../item-types/classify-by-ordering/classify-
 import { LabelImageWithText } from '../item-types/label-image-with-text/label-image-with-text';
 import { LabelImageWithDropdownselect } from '../item-types/label-image-with-dropdownselect/label-image-with-dropdownselect';
 import { LabelImageWithDragAndDrop } from '../item-types/label-image-with-drag-and-drop/label-image-with-drag-and-drop';
-import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix'; 
+import { ChoiceMatrix } from '../item-types/choice-matrix/choice-matrix';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { Calculator } from '../calculator/calculator';
 import { ScientificCalculator } from '../scientific-calculator/scientific-calculator';
@@ -33,6 +33,10 @@ import { TrueOrFalse } from '../item-types/true-or-false/true-or-false';
 import { YesOrNo } from '../item-types/yes-or-no/yes-or-no';
 import { ProctorPreview } from '../proctor-preview/proctor-preview';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { PopoverModule } from 'primeng/popover';
+import { Overview } from '../overview/overview';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-layout',
@@ -42,18 +46,20 @@ import { HotToastService } from '@ngxpert/hot-toast';
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
     LabelImageWithDragAndDrop, ChoiceMatrix, MultipleResponse, TrueOrFalse, YesOrNo,
-    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator, ProctorPreview
+    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator, ProctorPreview, PopoverModule, Overview
   ]
 })
-export default class Layout implements OnDestroy { 
+export default class Layout implements OnDestroy {
   private _store = inject(Store)
   private _exam = inject(ExamService)
   private _proctor = inject(ProctorService)
   private _toast = inject(HotToastService)
-  
+  private breakpointObserver = inject(BreakpointObserver);
+  private sub!: Subscription;
+
   proctorDenied = computed(() => this._proctor.isDenied())
   proctorError = computed(() => this._proctor.errorMessage())
-  
+
   showCalculator = signal<null | string>(null)
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
@@ -63,6 +69,7 @@ export default class Layout implements OnDestroy {
   questionFontSize = signal(16)
   itemTypes = signal(ItemType);
   deliveryMethods = signal(DeliveryMethod)
+  examTypes = Object.values(ExamType)
   paginator = viewChild(Paginator)
   standardChoice = viewChild(SingleChoice)
   multipleChoice = viewChild(MultipleResponse)
@@ -125,22 +132,24 @@ export default class Layout implements OnDestroy {
 
   isProctoredExam = computed(() => this._exam.isProctoredExam())
 
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
+
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
     // if (!this.store().loginData) {
     //   this._exam.formatLoginDataToStore(mockStore as any)
-    // } 
+    // }
 
     if (!this.store().platformIsTauri) {
       fullscreen()
     }
 
-    if(this.isProctoredExam()) {
+    if (this.isProctoredExam()) {
       const success = await this._proctor.initializeProctoring()
-      
-      if(!success) {
+
+      if (!success) {
         this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
         return
       }
@@ -151,12 +160,51 @@ export default class Layout implements OnDestroy {
 
   selectSection(section: StoreSection) {
     const currentSection = this.store().currentSection
-    if(currentSection?.id == section.id) {
+    if (currentSection?.id == section.id) {
       return
     }
-    
+
     const currentQuestion = section.items[0]
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
+  }
+
+  selectSectionInFullMode(section: StoreSection) {
+    const currentSection = this.store().currentSection
+    if (currentSection?.id == section.id) {
+      return
+    }
+
+    const currentQuestion = section.items[0]
+    section = this.store().sections.find( item => item.id == section.id) as StoreSection
+    this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
+  }
+
+  sectionNameInFullMode(section: StoreSection): string {
+    let str = section.name
+    if(this.screenWidth() > 1536) {
+       str =  section.name.length > 25 ? (section.name.slice(0,25) + '...') : section.name
+       return str
+    }
+
+    if(this.screenWidth() > 1280) {
+       str =  section.name.length > 20 ? (section.name.slice(0,20) + '...') : section.name
+       return str
+    }
+
+    str = section.name.length > 15 ? (section.name.slice(0,16) + '...') : section.name 
+    return str
+  }
+
+  screenWidth = signal<number>(window.innerWidth);
+
+  constructor() {
+    this.sub = this.breakpointObserver
+      .observe('(min-width: 1280px)')
+      .subscribe(() => {
+
+        const width = window.innerWidth;
+        this.screenWidth.set(width);
+      });
   }
 
   setFontSize(el: HTMLInputElement) {
@@ -251,12 +299,12 @@ export default class Layout implements OnDestroy {
 
   updateDrawingAndWritingLayoutConfigInStore() {
     const itemTypeContainer = document.getElementById('itemTypesContainer') as HTMLElement;
-    const configUpdate = { 
-      ...this.store().drawingAndWritingConfig, 
-      layoutFullModeWidth: itemTypeContainer.offsetWidth, 
+    const configUpdate = {
+      ...this.store().drawingAndWritingConfig,
+      layoutFullModeWidth: itemTypeContainer.offsetWidth,
       canvasContainerHeight: itemTypeContainer.offsetHeight - 54
     }
-    
+
     this._store.updateStore({ drawingAndWritingConfig: configUpdate })
     this.showItemTypesContainer.set(true)
   }
@@ -267,5 +315,6 @@ export default class Layout implements OnDestroy {
 
   ngOnDestroy(): void {
     this._exam.destroySubscription()
+    this.sub.unsubscribe();
   }
 }

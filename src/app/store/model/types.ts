@@ -70,6 +70,7 @@ export interface ICandidateAssessmentData {
   preserve_section_order: boolean;
   font_size: AssessmentFont;
   compensatory_time_value: number;
+  exam_type: ExamType
 }
 
 export interface ICandidateSectionQuestions {
@@ -266,8 +267,6 @@ export interface ILogOutParticipant {
   reason: string;
 }
 
-
-// Onboarding step configuration
 export type OnboardingStepId = 
     | 'details' 
     | 'system-check'
@@ -283,7 +282,7 @@ export interface OnboardingStep {
     label: string;
     icon: string;
     route: string;
-    requiresCompletion: boolean; // If true, user must complete an action before proceeding
+    requiresCompletion: boolean;
 }
 
 // Track completion status of each step
@@ -321,12 +320,19 @@ export const ALL_ONBOARDING_STEPS: OnboardingStep[] = [
 
 // Initial completion status - all false
 export const INITIAL_STEP_COMPLETION: StepCompletionStatus = {
-    'details': true, // Details is just viewing, always complete
+    'details': true,
     'system-check': false,
     'device-check-audio': false,
     'device-check-video': false,
     'facial': false,
-    'guidelines': true, // Just reading
-    'rules': true, // Just reading
-    'start': true, // Final step
+    'guidelines': true,
+    'rules': true,
+    'start': true
 };
+
+export enum ExamType {
+    EXAMALPHA = 'EXAMALPHA',
+    UTME = 'UTME',
+    MOCK = 'MOCK',
+    DUMMY = 'DUMMY'
+}

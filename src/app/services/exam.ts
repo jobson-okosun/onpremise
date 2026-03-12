@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { Store } from "../store/store";
-import { BlockType, ICandidateAutoSaveResponse, ICandidateItem, ICandidateLoginResponse, ICandidateSectionQuestions, ICandidationEndExamResponse, ItemType, StoreSection } from "../store/model/types";
+import { BlockType, ExamType, ICandidateAutoSaveResponse, ICandidateItem, ICandidateLoginResponse, ICandidateSectionQuestions, ICandidationEndExamResponse, ItemType, StoreSection } from "../store/model/types";
 import { StoreDTO } from "../store/model/store";
 import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
 import { DataService } from "./data";
@@ -57,6 +57,9 @@ export class ExamService {
         // this.store().preloginData?.delivery_method === DeliveryMethod.AUTO_PROCTORING
         return false
     })
+    examType = ExamType.DUMMY
+    isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType)
+
 
     isAppPinned = effect(() => {
         const isPinned = this.store().appIsPinned;
@@ -68,7 +71,7 @@ export class ExamService {
             if (this.examTimerSub$) {
                 this.examTimerSub$.unsubscribe();
             }
-            
+
             disableRestrictedActions();
             this.pinnedRestrictionApplied.set(true)
             this.lastUnpinnedTimeInMins.set(this.timeDisplay().min)
@@ -79,7 +82,7 @@ export class ExamService {
         if (this.pinnedRestrictionApplied()) {
             this.startExam(this.lastUnpinnedTimeInMins());
             enableRestrictedActions();
-            this.pinnedRestrictionApplied.set(false)    
+            this.pinnedRestrictionApplied.set(false)
         }
     })
 
@@ -134,6 +137,19 @@ export class ExamService {
         const spent = totalExamTime - remaining;
         return Math.max(0, Math.floor(spent / 60));
     });
+
+    spentTimeDisplay = computed(() => {
+        const totalExamSeconds = this.cummulativeExamDuration() * 60;
+        const remainingSeconds = this.examDuration();
+        const spentSeconds = totalExamSeconds - remainingSeconds;
+
+        const min = Math.floor(spentSeconds / 60);
+        const sec = spentSeconds % 60;
+
+        return `${min}:${sec.toString().padStart(2, '0')}`;
+    });
+
+    totalExamTime = computed(() => this.cummulativeExamDuration());
 
 
     hasValidResponses(responses: any[]) {
@@ -210,13 +226,13 @@ export class ExamService {
 
             const sections = data.sections_questions.map(s => {
                 const items = this.getSectionItems(s)
-                
+
                 items.forEach(item => {
-                    if(item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
+                    if (item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
                         item.responses[0] = item.responses[0] ?? ''
                     }
 
-                    if(
+                    if (
                         item.item_type == ItemType.CLOZE_DROPDOWN ||
                         item.item_type == ItemType.CLOZE_RADIO ||
                         item.item_type == ItemType.CLOZE_TEXT ||
@@ -227,7 +243,7 @@ export class ExamService {
                             item.responses[optionIndex] = item.responses[optionIndex] ?? ''
                         })
                     }
-                    
+
                 })
 
                 const section: StoreSection = { id: s.id, name: s.name, items }
@@ -272,12 +288,12 @@ export class ExamService {
     startExam(startTime?: number) {
         this.examDuration.set(this.getExamDuration(startTime))
         this.autoSaveInterval.set(this.store().loginData!.assessment_data.auto_save_sec)
-        
+
         this.examTimerSub$?.unsubscribe();
         this.lastAutoSaveTime.set(new Date())
         this.inactivityTimer.set(Date.now())
         this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() })
-    } 
+    }
 
     examTimerCallback() {
         if (this.examEnded()) {
@@ -561,7 +577,7 @@ export class ExamService {
 
     displayConectionLossModal(): void {
         Swal.close();
-        
+
         Swal.fire({
             title: 'Loss of Connection',
             text: 'You Have lost connection to the exam server, kindly contact admin for assisstance',
@@ -588,7 +604,7 @@ export class ExamService {
             this.examTimerSub$.unsubscribe()
         }
 
-        if(this.isProctoredExam()) {
+        if (this.isProctoredExam()) {
             this._proctorService.stopProctoring()
         }
 

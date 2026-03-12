@@ -31,24 +31,24 @@
                 </div>
             </div>
             @if(store().currentQuestion) {
-            <div class="flex-1 flex flex-col gap-3 overflow-y-auto p-5 border-t border-gray-300 border-dashed">
-                @for (option of store().currentQuestion!.options; track option.value; let i = $index) {
-                <div (click)="selectOption(option.value)"
-                    class="has-checked:bg-primary! has-checked:text-white! p-4 bg-gray-50 flex items-center border border-transparent hover:border-blue-200 hover:bg-white rounded-lg cursor-pointer transition">
-                    <div class="flex items-center gap-2">
-                        <span class="mx-2 font-semibold" [style.fontSize.px]="fontSize()">
-                            {{ alphabetList[i].toLowerCase() }}
-                        </span>
+                <div class="flex-1 flex flex-col gap-3 overflow-y-auto p-5 border-t border-gray-300 border-dashed">
+                    @for (option of store().currentQuestion!.options; track option.value; let i = $index) {
+                        <div (click)="selectOption(option.value)"
+                            class="has-checked:bg-primary! has-checked:text-white! p-4 bg-gray-50 flex items-center border border-transparent hover:border-blue-200 hover:bg-white rounded-lg cursor-pointer transition">
+                            <div class="flex items-center gap-2">
+                                <span class="mx-2 font-semibold" [style.fontSize.px]="fontSize()">
+                                    {{ alphabetList[i].toLowerCase() }}
+                                </span>
 
-                        <label class="flex items-center gap-2 cursor-pointer" [style.fontSize.px]="fontSize()">
-                            <input [checked]="store().currentQuestion!.responses[0] == option.value" type="radio"
-                                name="choice" class="hidden accent-primary" [value]="option.value" />
-                            <span class="cursor-pointer" [innerHTML]="option.label"></span>
-                        </label>
-                    </div>
+                                <label class="flex items-center gap-2 cursor-pointer" [style.fontSize.px]="fontSize()">
+                                    <input [checked]="store().currentQuestion!.responses[0] == option.value" type="radio"
+                                        name="choice" class="hidden accent-primary" [value]="option.value" />
+                                    <span class="cursor-pointer" [innerHTML]="option.label"></span>
+                                </label>
+                            </div>
+                        </div>
+                    }
                 </div>
-                }
-            </div>
             }
         </div>
     </div>

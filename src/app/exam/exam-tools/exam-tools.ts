@@ -26,6 +26,10 @@ export class ExamTools {
   resizeFont = output<any>()
   overViewActiveTab = signal(0)
 
+  spentTimeDisplay = computed(() => this._exam.spentTimeDisplay())
+  totalExamTime = computed(() => this._exam.totalExamTime())
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
+  
   fullscreen() {
     fullscreen()
   }

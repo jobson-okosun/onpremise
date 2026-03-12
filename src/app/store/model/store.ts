@@ -1,3 +1,4 @@
+import { APP_VERSION } from "../../utils/constants";
 import { BatteryStatus, IAssessmentPreLoginData, ICandidateItem, ICandidateLoginResponse, ICandidationEndExamResponse, StoreSection } from "./types";
 
 export class StoreDTO { 
@@ -8,8 +9,13 @@ export class StoreDTO {
         hasLogo: boolean, 
         currentYear: string,
         showBranding: boolean 
+        version: string
     }
-    currentRoute: { title?: string, url?: string, queryParams?: { [key: string]: any } }
+    currentRoute: { 
+        title?: string, 
+        url?: string, 
+        queryParams?: { [key: string]: any } 
+    }
     loginData: null | ICandidateLoginResponse
     sections: StoreSection[]
     currentSection: null | StoreSection
@@ -37,7 +43,8 @@ export class StoreDTO {
             logo: '',
             hasLogo: false,
             showBranding: true,
-            currentYear: new Date().getFullYear().toString()
+            currentYear: new Date().getFullYear().toString(),
+            version: APP_VERSION
         },
         this.candidatePassport = null
         this.loginData = null
@@ -56,13 +63,4 @@ export class StoreDTO {
             roughWorkMode: false
          }
     }
-}
-
-export interface StoreType {  
-    preloginData: null | IAssessmentPreLoginData,
-    organizationAssets: {
-        logo: null | string,
-        hasLogo: boolean
-    },
-    loginData: null | ICandidateLoginResponse
 }
