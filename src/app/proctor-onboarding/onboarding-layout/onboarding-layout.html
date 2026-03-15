@@ -9,7 +9,7 @@
                                 @if(store().organizationAssets?.hasLogo) {
                                     <img [src]="store().organizationAssets?.logo" class="w-16">
                                 } @else {
-                                    <img src="EXPryLogoHor.png" class="w-16">
+                                    <img [src]="store().organizationAssets?.defaultLogo"  class="w-16">
                                 }
                             </div>
                         </div>

@@ -8,14 +8,14 @@
     <div class="flex flex-1 justify-center items-center gap-1">
          @for(page of pages(); track page; let i = $index) {
             <button (click)="selectPage(page)"
-                class="rounded-full size-10 bg-red-50 text-red-500 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer font-medium hover:border-blue-300! outline-none!"
-                [class.bg-yellow-50!]="isRevisit(page) && isUnattempted(page)"
-                [class.text-yellow-600!]="isRevisit(page) && isUnattempted(page)"
+                class="rounded-full size-8 text-[13px] bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer font-medium hover:border-blue-400! outline-none!"
+                [class.bg-yellow-200!]="isRevisit(page) && isUnattempted(page)"
+                [class.text-yellow-800!]="isRevisit(page) && isUnattempted(page)"
                 
-                [class.ring-blue-300!]="isCurrent(page)"
+                [class.ring-blue-400!]="isCurrent(page)"
 
-                [class.bg-green-200!]="isAttempted(page)"
-                [class.text-green-700!]="isAttempted(page)"
+                [class.bg-green-300!]="isAttempted(page)"
+                [class.text-green-800!]="isAttempted(page)"
                 >
                 {{ page + 1 }}
             </button>

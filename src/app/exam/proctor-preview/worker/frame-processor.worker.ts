@@ -37,7 +37,7 @@ async function processLoop() {
 
             Atomics.store(workerMeta, 1, (readIndex + 1) % 4);
             
-            console.log('[Worker] Sending frame to main thread.......................');
+            // console.log('[Worker] Sending frame to main thread.......................');
 
             // Post message to main thread instead of calling invoke directly
             // The main thread will handle the Tauri invoke call

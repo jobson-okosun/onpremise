@@ -1,7 +1,6 @@
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, linkedSignal, signal } from "@angular/core";
 import { Store } from "../store/store";
-import { BlockType, ExamType, ICandidateAutoSaveResponse, ICandidateItem, ICandidateLoginResponse, ICandidateSectionQuestions, ICandidationEndExamResponse, ItemType, StoreSection } from "../store/model/types";
-import { StoreDTO } from "../store/model/store";
+import {ExamType, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
 import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
 import { DataService } from "./data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
@@ -10,6 +9,7 @@ import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
 import { TauriService } from "./tauri";
 import { ProctorService } from "./proctor";
+import { PostLogin } from "./post-login";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -19,20 +19,23 @@ export class ExamService {
     private _router = inject(Router)
     private _tauriService = inject(TauriService)
     private _proctorService = inject(ProctorService)
+    private _postLoginService = inject(PostLogin)
 
     examTimerSub$: Subscription;
     examSubmit$: Subscription;
+    screenWidth = signal<number>(window.innerWidth);
     itemTypes = signal(ItemType);
     examDuration = signal(0)
     canEndExam = signal(false);
     showUnattemptedModal = signal(false)
-    cummulativeExamDuration = signal(0)
+    cummulativeExamDuration = linkedSignal(() => this._postLoginService.cummulativeExamDuration())
     autoSaveInterval = signal(0)
     examEnded = signal(false)
     lastAutoSaveTime = signal(new Date())
     isAutosaveSaved = signal(false)
     lastAutoSaveTimeSec = signal(0);
     isAutoSaving = signal(false);
+    isAutoSaveSuccessful = signal(true);
     itemsLastSync = signal(0)
     connectionStatus = signal(true)
     isCandidateSuspended = signal(false)
@@ -53,14 +56,14 @@ export class ExamService {
     pinnedRestrictionApplied = signal(false)
     lastUnpinnedTimeInMins = signal(0)
     lastAutosaveTimeDifference = signal(0)
-    isProctoredExam = computed(() => {
-        // this.store().preloginData?.delivery_method === DeliveryMethod.AUTO_PROCTORING
-        return false
-    })
-    examType = ExamType.DUMMY
-    isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType)
+    isProctoredExam = computed(() => false)
+    examType = computed(() => this.store().preloginData?.exam_type)
+    isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
 
-
+    constructor() {
+        console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
+    }
+    
     isAppPinned = effect(() => {
         const isPinned = this.store().appIsPinned;
         if (!isPinned) {
@@ -168,115 +171,6 @@ export class ExamService {
         this._store.updateStore({ currentQuestion })
     }
 
-    getSectionItems(section: ICandidateSectionQuestions): ICandidateItem[] {
-        const items = section.question_blocks.flatMap(block => {
-
-            if (block.block_type === BlockType.SINGLE_QUESTIONS) {
-                return block.items.map(item => ({
-                    ...item,
-                    block_id: block.id,
-                    isPassageItem: false,
-                    roughWorkResponse: []
-                }));
-            }
-
-            if (block.block_type === BlockType.PASSAGES) {
-                return block.passages.flatMap(passage =>
-                    passage.items.map(item => ({
-                        ...item,
-                        block_id: block.id,
-                        passage_stimulus: passage.stimulus,
-                        isPassageItem: true,
-                        roughWorkResponse: []
-                    }))
-                );
-            }
-
-            return [];
-        });
-
-        return items
-    }
-
-    getCummulativeExamDuration(data: ICandidateLoginResponse): number {
-        let duration = 0;
-
-        const examTime = data?.assessment_data.duration_minutes;
-        const sections = data?.sections_questions
-
-
-        if (sections!.length > 1) {
-            const hasAtleastOneSectionWithDuration = sections!.some(section => section.section_settings.duration_in_minutes > 0)
-            const cummulativeDuration = sections!.reduce((sum, section) => sum + section.section_settings.duration_in_minutes, 0)
-
-            duration = (hasAtleastOneSectionWithDuration ? cummulativeDuration : examTime) as number
-
-        } else {
-            const firstSectionDuration = sections![0].section_settings.duration_in_minutes;
-            duration = (firstSectionDuration > 0 ? firstSectionDuration : examTime) as number;
-        }
-
-        // duration = duration * 60
-        this.cummulativeExamDuration.set(duration)
-        return duration;
-    }
-
-    formatLoginDataToStore(data: ICandidateLoginResponse): Promise<void> {
-        return new Promise((resolve) => {
-
-            const sections = data.sections_questions.map(s => {
-                const items = this.getSectionItems(s)
-
-                items.forEach(item => {
-                    if (item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
-                        item.responses[0] = item.responses[0] ?? ''
-                    }
-
-                    if (
-                        item.item_type == ItemType.CLOZE_DROPDOWN ||
-                        item.item_type == ItemType.CLOZE_RADIO ||
-                        item.item_type == ItemType.CLOZE_TEXT ||
-                        item.item_type == ItemType.CLOZE_TEXT_IMAGE ||
-                        item.item_type == ItemType.CLOZE_DROPDOWN_IMAGE
-                    ) {
-                        item.possible_responses?.forEach((option, optionIndex) => {
-                            item.responses[optionIndex] = item.responses[optionIndex] ?? ''
-                        })
-                    }
-
-                })
-
-                const section: StoreSection = { id: s.id, name: s.name, items }
-                return section
-            })
-
-            const currentSection = sections[0]
-            const currentQuestion = currentSection.items[0]
-            const currentQuestionIndex = 0
-            const examDuration = this.getCummulativeExamDuration(data)
-
-            data.sections_questions = data.sections_questions.map(s => {
-                const { question_blocks, ...rest } = s
-                return { ...rest } as any
-            })
-
-            let store = new StoreDTO()
-            const update = {
-                ...store,
-                ...this.store(),
-                loginData: data,
-                sections,
-                currentSection,
-                currentQuestion,
-                currentQuestionIndex,
-                examDuration
-            }
-
-            this._store.updateStore(update)
-            resolve()
-        })
-    }
-
     getExamDuration(startTime?: number) {
         const isFirstLogin = this.store().loginData!.candidate_data.login_times.length == 0
         const minsLeft = this.store().loginData!.candidate_data.minutes_left * 60
@@ -304,14 +198,14 @@ export class ExamService {
         const autoSaveTimeDiff = (currentTime.getTime() - this.lastAutoSaveTime().getTime()) / 1000;
         this.lastAutosaveTimeDifference.set(autoSaveTimeDiff)
 
-        if (~~autoSaveTimeDiff == 120) {
-            if (this.connectionAlertShown()) {
-                return
-            }
+        // if (~~autoSaveTimeDiff == 120) {
+        //     if (this.connectionAlertShown()) {
+        //         return
+        //     }
 
-            this._toast.error('You have lost connection! Contact admin immediately')
-            this.connectionAlertShown.set(true)
-        }
+        //     this._toast.error('You have lost connection! Contact admin immediately')
+        //     this.connectionAlertShown.set(true)
+        // }
 
         if (autoSaveTimeDiff >= 300) {
             if (this.examTimerSub$) {
@@ -363,11 +257,15 @@ export class ExamService {
         const payload = generatePayLoadForAutoSave(this, this._store)
         const syncStart = Date.now();
         this.isAutoSaving.set(true)
+        this.isAutoSaveSuccessful.set(false)
 
         this._dataService.autoSave(payload)
             .pipe(finalize(() => this.isAutoSaving.set(false)))
             .subscribe({
-                next: (res) => this.autosaveSuccess(res as any, syncStart),
+                next: (res) => {
+                    this.autosaveSuccess(res as any, syncStart)
+                    this.isAutoSaveSuccessful.set(true)
+                },
                 error: () => {
                     this.autosaveFailed()
                 }
@@ -377,9 +275,15 @@ export class ExamService {
     autosaveFailed() {
         this.isAutosaveSaved.set(false)
         this.connectionStatus.set(false)
+        this._toast.error('Your network is disconnected. Contact the administrator', { dismissible: true})
     }
 
     autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any) {
+        if(!autosaveData) {
+            this.autosaveFailed()
+            return
+        }
+
         this.isAutosaveSaved.set(autosaveData.auto_saved)
         this.lastAutoSaveTime.set(new Date())
         this.itemsLastSync.set(syncTime)

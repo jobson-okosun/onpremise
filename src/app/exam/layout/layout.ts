@@ -9,8 +9,8 @@ import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/proctor';
 import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
-import { mockStore } from '../../utils/constants';
-import { fullscreen, useShortcut } from '../../utils/helper';
+import { loginData } from '../../utils/constants';
+import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
 import { NgClass } from '@angular/common';
 import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-dropdown';
 import { CloseWithText } from '../item-types/close-with-text/close-with-text';
@@ -37,6 +37,8 @@ import { PopoverModule } from 'primeng/popover';
 import { Overview } from '../overview/overview';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
+import { PostLogin } from '../../services/post-login';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-layout',
@@ -54,12 +56,14 @@ export default class Layout implements OnDestroy {
   private _exam = inject(ExamService)
   private _proctor = inject(ProctorService)
   private _toast = inject(HotToastService)
+  private _postLoginService = inject(PostLogin)
   private breakpointObserver = inject(BreakpointObserver);
   private sub!: Subscription;
 
   proctorDenied = computed(() => this._proctor.isDenied())
   proctorError = computed(() => this._proctor.errorMessage())
-
+  lastPressTime = signal(0);
+  threshold = signal(2000); // 2 sec
   showCalculator = signal<null | string>(null)
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
@@ -131,15 +135,19 @@ export default class Layout implements OnDestroy {
   })
 
   isProctoredExam = computed(() => this._exam.isProctoredExam())
-
   isExamAlpha = computed(() => this._exam.isExamAlpha())
+  isAutoSaving = computed(() => this._exam.isAutoSaving())
+  isAutoSaveSuccessful = computed(() => this._exam.isAutoSaveSuccessful())
+  connectionStatus = computed(() => this._exam.connectionStatus())
+  screenWidth = computed(() => this._exam.screenWidth())
+  canEndExam = computed(() => this._exam.canEndExam())
 
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
     // if (!this.store().loginData) {
-    //   this._exam.formatLoginDataToStore(mockStore as any)
+    //   this._postLoginService.formatLoginDataToStore(loginData as any)
     // }
 
     if (!this.store().platformIsTauri) {
@@ -154,6 +162,9 @@ export default class Layout implements OnDestroy {
         return
       }
     }
+
+    this.disableContextMenu()
+    this.disableCopyAndPaste()    
 
     this._exam.startExam()
   }
@@ -175,27 +186,25 @@ export default class Layout implements OnDestroy {
     }
 
     const currentQuestion = section.items[0]
-    section = this.store().sections.find( item => item.id == section.id) as StoreSection
+    section = this.store().sections.find(item => item.id == section.id) as StoreSection
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
   }
 
   sectionNameInFullMode(section: StoreSection): string {
     let str = section.name
-    if(this.screenWidth() > 1536) {
-       str =  section.name.length > 25 ? (section.name.slice(0,25) + '...') : section.name
-       return str
+    if (this.screenWidth() > 1536) {
+      str = section.name.length > 25 ? (section.name.slice(0, 25) + '...') : section.name
+      return str
     }
 
-    if(this.screenWidth() > 1280) {
-       str =  section.name.length > 20 ? (section.name.slice(0,20) + '...') : section.name
-       return str
+    if (this.screenWidth() > 1280) {
+      str = section.name.length > 20 ? (section.name.slice(0, 20) + '...') : section.name
+      return str
     }
 
-    str = section.name.length > 15 ? (section.name.slice(0,16) + '...') : section.name 
+    str = section.name.length > 15 ? (section.name.slice(0, 16) + '...') : section.name
     return str
   }
-
-  screenWidth = signal<number>(window.innerWidth);
 
   constructor() {
     this.sub = this.breakpointObserver
@@ -203,7 +212,7 @@ export default class Layout implements OnDestroy {
       .subscribe(() => {
 
         const width = window.innerWidth;
-        this.screenWidth.set(width);
+        this._exam.screenWidth.set(width);
       });
   }
 
@@ -250,7 +259,7 @@ export default class Layout implements OnDestroy {
     this._exam.showUnattemptedModal.set(false)
   }
 
-  @HostListener('document:keypress', ['$event'])
+  @HostListener('window:keypress', ['$event'])
   onKeyPress(event: KeyboardEvent) {
     const globalModalIsOpened = document.querySelector('.root-modal')
     if (globalModalIsOpened) {
@@ -260,6 +269,17 @@ export default class Layout implements OnDestroy {
     const target = event.target as HTMLElement
     if (target.classList.contains('close-item')) {
       return
+    }
+
+    if (event.key.toLowerCase() === 's') {
+      const currentTime = Date.now();
+      if (currentTime - this.lastPressTime() < this.threshold()) {
+        if (this.canEndExam()) {
+          this._exam.showUnattemptedModal.set(true)
+        }
+      }
+
+      this.lastPressTime.set(currentTime);
     }
 
     if (!this.store().currentQuestion) {
@@ -311,6 +331,23 @@ export default class Layout implements OnDestroy {
 
   showCloseAppWithPasswordModal() {
     this._store.updateStore({ showCloseAppWithPasswordModal: true })
+  }
+
+  disableContextMenu() {
+    if (environment.production) {
+      document.addEventListener('contextmenu', blockContextMenuHandler);
+    }
+  }
+
+  disableCopyAndPaste() {
+    document.addEventListener('keydown', (e) => {
+      const isCtrl = e.ctrlKey || e.metaKey;
+
+      if (isCtrl && ['a', 'c'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        this._toast.warning('Command not allowed', { position: 'bottom-right' })
+      }
+    });
   }
 
   ngOnDestroy(): void {

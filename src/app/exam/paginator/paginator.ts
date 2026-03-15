@@ -17,7 +17,43 @@ export class Paginator {
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex)
   currentSection = computed(() => this.store().currentSection)
   totalQuestions = computed(() => this.store().currentSection?.items.length ?? 0)
-  pageWindow = computed(() => (this.isMobile() ? 5 : 15));
+  // pageWindow = computed(() => (this.isMobile() ? 5 : 15));
+  screenWidth = computed(() => this._exam.screenWidth())
+  pageWindow = computed(() => {
+    let num = 0
+    if (this.screenWidth() >= 1700) {
+      num = 30
+    } else if (this.screenWidth() >= 1652) {
+      num = 27
+    } else if (this.screenWidth() >= 1536) {
+      num = 25
+    } else if (this.screenWidth() >= 1440) {
+      num = 21
+    } else if (this.screenWidth() >= 1280) {
+      num = 19
+    } else if (this.screenWidth() >= 1104) {
+      num = 14
+    } else if (this.screenWidth() >= 1080) {
+      num = 16
+    } else if (this.screenWidth() >= 1024) {
+      num = 12
+    } else if (this.screenWidth() >= 820) {
+      num = 17
+    } else if (this.screenWidth() >= 768) {
+      num = 17
+    } else if (this.screenWidth() >= 640) {
+      num = 14
+    } else if (this.screenWidth() >= 428) {
+      num = 8
+    } else if (this.screenWidth() >= 320) {
+      num = 5
+    } else {
+      num = 5
+    }
+
+    return num
+  });
+
   onSelect = output<number>()
   currentSectionSummary = computed(() => this._exam.currentSectionSummary())
 

@@ -6,6 +6,7 @@ export interface IAssessmentPreLoginData {
   unique_id: string;
   passport_location: string;
   delivery_method: DeliveryMethod;
+  exam_type: ExamType
 }
 
 export enum DeliveryMethod {

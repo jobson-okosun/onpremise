@@ -37,6 +37,9 @@ export class Overview {
 
   activeTab = model(0)
   isExamAlpha = computed(() => this._exam.isExamAlpha())
+  hasAttempted = computed(() => this.currentSection()?.items.some((_, page) => this.isAttempted(page)));
+  hasUnattempted = computed(() => this.currentSection()?.items.some((_, page) => this.isUnattempted(page)));
+  hasRevisits = computed(() => this.currentSection()?.items.some((_, page) => this.isRevisit(page)));
 
   selectSection(section: any) {
     const { summary, ...rest } = section

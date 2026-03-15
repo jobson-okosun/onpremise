@@ -1,4 +1,4 @@
-<div class="proctor-boundary flex flex-col gap-3 2xl:justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn">
+<div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
     <!-- top -->
     <div>
         <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
@@ -15,7 +15,7 @@
  
                     <div class="items-center gap-2 hidden lg:flex">
                         @if(store().candidatePassport) {
-                            <span (click)="showUserProfileModal = true"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <span (click)="showUserProfileModal = true"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200">
                                 <img [src]="store().candidatePassport" alt="" class="{{ passportSize }}">
                             </span>
                         } @else {
@@ -40,33 +40,39 @@
                         </button>
                     }
 
-                    <!-- <button (click)="sectionsList.toggle($event)" class="lg:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
+                    <button (click)="sectionsList.toggle($event)" class="sm:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
                         <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
                         <i class="pi pi-angle-down"></i>
-                    </button> -->
+                    </button>
                 </div>
 
                 @if(!isExamAlpha()) {
                     <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
                         <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
-                            @for(item of overviewSections(); track item) {
+                            @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
                                 <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
-                                    <div [class.bg-gray-100]="store().currentSection?.id == item.id" class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded">
+                                    <div 
+                                        [class.bg-primary!]="store().currentSection?.id == item.id"
+                                        [class.text-white!]="store().currentSection?.id == item.id"
+                                        [class.rounded-l-2xl!] = "first"
+                                        [class.rounded-r-2xl!] = "last"
+                                        class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
+
                                         <div 
                                             [class.font-bold!]="store().currentSection?.id == item.id" 
-                                            [class.text-primary!]="store().currentSection?.id == item.id" 
                                             class="text-sm font-medium select-none text-start">
                                             {{ sectionNameInFullMode(item) }}
                                         </div>
                                             
-                                        <div class="flex items-center justify-between gap-2">
+                                        <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
                                             <div class="text-xs font-normal lowercase select-none text-start">
                                                 <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
                                             </div>
-                                            <div class="w-2/4 min-w-[70px]">
+                                            <div 
+                                                class="w-full xl:w-2/4 xl:min-w-[70px]">
                                                 <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
                                                     <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
-                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="item?.summary?.progress"></div>
+                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -75,12 +81,10 @@
                             }
                         </div>
                     </div>
-                } 
-                
-                <!-- @if(this.screenWidth() > 1536) {
+                } @else {
                     <div class="uppercase font-bold">{{ examName() }}</div>
-                } -->
-
+                }
+                
                 <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
             </div>
             <div class="flex w-full gap-3 p-2 items-center justify-between text-sm">
@@ -111,7 +115,7 @@
                     <div class="flex flex-col items-center justify-center">
                         <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
                         <div class="flex gap-2 items-center">
-                            <span class="rounded-full size-2.5 bg-yellow-600"></span>
+                            <span class="rounded-full size-2.5 bg-yellow-500"></span>
                             <span class="text-xs">Revisit</span>
                         </div>
                     </div>
@@ -202,8 +206,8 @@
 
     <!-- bottom -->
     <div>
-        <div class="flex flex-col md:flex-row gap-3 md:items-center justify-between bg-transparent rounded-md">
-            <div class="flex gap-3">
+        <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
+            <div class="flex justify-between items-center md:justify-between gap-3">
                 @if(store().currentQuestionIndex > 0) {
                     <button (click)="prev()" class="btn gap-3!">
                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -259,6 +263,46 @@
                 </button>
 
             </div>
+
+            <div class="text-xs flex justify-center">
+                @if(isAutoSaving()) {
+                    <div class="flex gap-2 items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 2V5.13219C20 5.42605 19.6328 5.55908 19.4447 5.33333C17.6146 3.2875 14.955 2 11.9949 2C6.47485 2 2 6.47715 2 12C2 15.9582 4.29852 19.3793 7.63298 21" />
+                            <path d="M12.2653 22.0001C11.7984 22.0001 11.3389 21.9688 10.8889 21.9084M21.7346 8.66675C21.847 9.06394 21.9352 9.46536 22 9.86901M21.9654 13.5381C21.8951 13.9381 21.8036 14.3343 21.6915 14.7245M20.1671 17.9963C19.9288 18.3497 19.6704 18.69 19.3929 19.0147M16.5714 21.3607C16.2177 21.5632 15.8496 21.7464 15.4677 21.9084" />
+                        </svg>
+
+                        <span>Saving progress...</span>
+                    </div>
+                }
+
+                @if(isAutoSaveSuccessful() && !isAutoSaving() && connectionStatus()) {
+                    <div class="flex gap-2 items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.4776 9.01106C17.485 9.01102 17.4925 9.01101 17.5 9.01101C19.9853 9.01101 22 11.0294 22 13.5193C22 15.8398 20.25 17.7508 18 18M17.4776 9.01106C17.4924 8.84606 17.5 8.67896 17.5 8.51009C17.5 5.46695 15.0376 3 12 3C9.12324 3 6.76233 5.21267 6.52042 8.03192M17.4776 9.01106C17.3753 10.1476 16.9286 11.1846 16.2428 12.0165M6.52042 8.03192C3.98398 8.27373 2 10.4139 2 13.0183C2 15.4417 3.71776 17.4632 6 17.9273M6.52042 8.03192C6.67826 8.01687 6.83823 8.00917 7 8.00917C8.12582 8.00917 9.16474 8.38194 10.0005 9.01101" />
+                            <path d="M12 13L12 21M12 13C11.2998 13 9.99153 14.9943 9.5 15.5M12 13C12.7002 13 14.0085 14.9943 14.5 15.5" />
+                        </svg>
+
+                        <span>Progress saved.</span>
+                    </div>
+                }
+
+                @if(!connectionStatus() && !isAutoSaving()) {
+                    <div class="flex gap-2 items-center">
+                        <svg class="stroke-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8.5 14.5C9.62137 13.3944 10.9643 12.887 12.5 13.0212" />
+                            <path d="M18.5 11.5C17.0073 10.1794 15.2848 9.27433 13.5 9.00012" />
+                            <path d="M5.5 11.4999C6.59299 10.5891 7.778 9.91296 9 9.49989" />
+                            <path d="M22 8.49989C18.0717 5.18273 13.7362 3.92879 9.5 4.73808" />
+                            <path d="M2 8.5C3.22409 7.46632 4.5 6.5 5.5 6" />
+                            <circle cx="12" cy="18" r="1.5" />
+                            <path d="M2 2L22 22" />
+                        </svg>
+
+                        <span class="text-red-500">Progress not saved.</span>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -307,7 +351,7 @@
 
 </p-dialog>
 
-<p-dialog [visible]="showUnattemptedModal()" [modal]="true" [closable]="false" [draggable]="false" [resizable]="false" [style]="{ width: '600px' }" header="You are attempting to end exam?" class="p-0">
+<p-dialog [visible]="showUnattemptedModal()" [modal]="true" [closable]="false" [focusOnShow]="false" [draggable]="false" [resizable]="false" [style]="{ width: '600px' }" header="You are attempting to end exam?" class="p-0">
   <div class="text-center p-6">
     <p class="text-gray-500">Certain questions are unanswered or not revisited</p>
 
@@ -330,10 +374,10 @@
                     <div class="flex flex-wrap gap-2 py-3 animate-fadeIn">
                         @for (item of section.summary?.unattempted; track item; let page = $index) {
                             <button  class="text-sm size-10 rounded-full"
-                            [class.bg-yellow-50]="isRevisit(item, section)"
+                            [class.bg-yellow-200]="isRevisit(item, section)"
                             [class.text-yellow-600]="isRevisit(item, section)"
 
-                            [class.bg-red-50]="isUnattempted(item, section)"
+                            [class.bg-red-200]="isUnattempted(item, section)"
                             [class.text-red-500]="isUnattempted(item, section)"
                             > {{ item + 1 }}</button>
                         }

@@ -1,4 +1,4 @@
-import { APP_VERSION } from "../../utils/constants";
+import { APP_BRANDING, APP_VERSION } from "../../utils/constants";
 import { BatteryStatus, IAssessmentPreLoginData, ICandidateItem, ICandidateLoginResponse, ICandidationEndExamResponse, StoreSection } from "./types";
 
 export class StoreDTO { 
@@ -7,6 +7,7 @@ export class StoreDTO {
     organizationAssets: null | { 
         logo: null | string, 
         hasLogo: boolean, 
+        defaultLogo: string,
         currentYear: string,
         showBranding: boolean 
         version: string
@@ -42,6 +43,7 @@ export class StoreDTO {
         this.organizationAssets = { 
             logo: '',
             hasLogo: false,
+            defaultLogo: APP_BRANDING.logo,
             showBranding: true,
             currentYear: new Date().getFullYear().toString(),
             version: APP_VERSION

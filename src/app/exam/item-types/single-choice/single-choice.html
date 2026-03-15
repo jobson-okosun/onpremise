@@ -8,7 +8,7 @@
                     <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
                 </div>
             </div>
-            <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
+            <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed select-none">
                 @if(store().currentQuestion?.passage_stimulus) {
                     <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
                 }

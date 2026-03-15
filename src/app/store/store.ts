@@ -13,7 +13,7 @@ export class Store {
             ...state
         }));
 
-        if(!environment.production) {
+        if(environment.production == false) {
             // console.log(this.getStore())
         }
     }

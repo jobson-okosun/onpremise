@@ -31,10 +31,13 @@
                 </div>
             </div>
         </div>
+      
         <div class="order-first lg:order-last h-[300px] md:h-[600px] lg:h-full w-full lg:w-1/2 p-3">
             <div class="relative h-full bg-primary rounded-3xl p-5 flex items-center justify-center ">
-                <div class="w-full lg:w-[70%] 2xl:w-[60%] animate__animated h-full flex items-center justify-center overflow-hidden" [class]="[slides[currentIndex()].animation]">
-                    <img [src]="slides[currentIndex()].image" class="object-scale-down object-center">
+                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl animate__animated" [ngClass]="slides[currentIndex()].animation">
+                <div class="rounded-2xl overflow-hidden bg-white/30 xl:w-[80%] 2xl:w-[75%] p-5 border border-white shadow-2xl shadow-white/40">
+                    <img [src]="slides[currentIndex()].image" class="object-scale-down object-center rounded-2xl">
+                </div>
                 </div>
                 <div class="flex items-center lg:items-end justify-between w-full absolute bottom-0 right-0 p-0 lg:p-5 translate-y-[55px] lg:translate-0">
                     <div class="flex items-center gap-2">

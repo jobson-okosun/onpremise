@@ -11,7 +11,7 @@
 
     @if(!currentSectionSummary()?.summary?.attempted?.includes(currentQuestionIndex())) {
         @if(currentSectionSummary()?.summary?.revisits?.includes(currentQuestionIndex())) {
-            <button (click)="revisit()" class="bg-amber-50 flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-amber-200 text-sm hover:border-primary cursor-pointer">
+            <button (click)="revisit()" class="bg-amber-200 flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-amber-300 text-sm hover:border-primary cursor-pointer">
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                 </svg>
@@ -58,7 +58,7 @@
     Close
   </button>
 
-    <div class="mb-8 p-6">
+    <div class="mb-8 p-6 select-none">
         @if(currentQuestion()?.passage_stimulus) {
             <div [innerHTML]="currentQuestion()?.passage_stimulus"></div>
         }

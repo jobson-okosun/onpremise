@@ -1,14 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Store } from '../../store/store';
-import { HttpErrorResponse } from '@angular/common/http';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
-import { DataService } from '../../services/data';
-import { ExamService } from '../../services/exam';
-import { HotToastService } from '@ngxpert/hot-toast';
-import { toSignal } from '@angular/core/rxjs-interop';
-
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
@@ -17,11 +10,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export default class Login {
   private _store = inject(Store)
-  private _exam = inject(ExamService)
-  private _dataService = inject(DataService)
-  private _router = inject(Router)
-  private _route = inject(ActivatedRoute)
-  private _toast = inject(HotToastService)
 
   patchForm = effect(() => {
     const params = this._store.store().currentRoute?.queryParams || {}

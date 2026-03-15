@@ -6,10 +6,9 @@ import { DataService } from '../services/data';
 import { finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ExamService } from '../services/exam';
-import { mockStore } from '../utils/constants';
 import { TauriService } from '../services/tauri';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { PostLogin } from '../services/post-login';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +18,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 })
 export default class Login {
   private _store = inject(Store)
-  private _exam = inject(ExamService)
+  private _postLoginService = inject(PostLogin)
   private _dataService = inject(DataService)
   private _router = inject(Router)
   private _tauriService = inject(TauriService)
@@ -69,12 +68,13 @@ export default class Login {
         const control = this.candidateId
 
         control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
-        control.markAsTouched();      }
+        control.markAsTouched();     
+      }
     })
   }
 
   onSuccessfullLogin(value: ICandidateLoginResponse) {
-    this._exam.formatLoginDataToStore(value).then(async () => {
+    this._postLoginService.formatLoginDataToStore(value).then(async () => {
       await this._dataService.downloadParticipantPassport()
 
       if (this.store().preloginData?.delivery_method == this.deliveryMethods().ON_PREMISE_SECURE_BROWSER) {

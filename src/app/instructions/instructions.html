@@ -7,7 +7,7 @@
                         @if(store().organizationAssets?.hasLogo) {
                             <img [src]="store().organizationAssets?.logo" class="w-16">
                         } @else {
-                            <img src="EXPryLogoHor.png" class="w-16">
+                            <img [src]="store().organizationAssets?.defaultLogo"  class="w-16">
                         }
                     </div>
                 </div>
@@ -19,8 +19,8 @@
 
             <div class="lg:max-w-[300px] flex items-start gap-3">
                 @if(store().candidatePassport) {
-                    <span class="size-12 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
-                        <img [srcset]="store().candidatePassport" alt="" class="w-full object-cover object-center">
+                    <span class="size-12 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border bordder-gray-200">
+                        <img [src]="store().candidatePassport" alt="" class="w-full object-cover object-center">
                     </span>
                 } @else {
                     <span class="size-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">

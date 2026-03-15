@@ -1,18 +1,18 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { preloginData, SLIDES } from '../utils/constants';
+import { SLIDES } from '../utils/constants';
 import { DataService } from '../services/data';
 import { finalize } from 'rxjs';
 import { DeliveryMethod, IAssessmentPreLoginData, Slide } from '../store/model/types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { TauriService } from '../services/tauri';
 import { AuthService } from '../services/auth';
 import { Router } from '@angular/router';
 import { Store } from '../store/store';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-usage-guide',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './usage-guide.html',
   styleUrl: './usage-guide.css',
 })
@@ -51,7 +51,7 @@ export default class UsageGuide {
 
       if (!isSecure) {
         this._toast.error('This exam can only run on secure browser')
-        // return
+        return
       }
     }
 
@@ -68,6 +68,6 @@ export default class UsageGuide {
   }
 
   startAutoSlide(): void {
-    setInterval(() => this.nextSlide(), 3000);
+    setInterval(() => this.nextSlide(), 8000);
   }
 }

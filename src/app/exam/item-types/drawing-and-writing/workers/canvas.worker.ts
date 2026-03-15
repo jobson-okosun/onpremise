@@ -17,14 +17,6 @@ function deltaEncode(points: number[]): number[] {
   return deltas;
 }
 
-// helper: rectangle -> flat points (closed polygon)
-function rectToPoints(x: number, y: number, width: number, height: number): number[] {
-  const x2 = x + width;
-  const y2 = y + height;
-  // order: top-left, top-right, bottom-right, bottom-left, back to top-left
-  return [x, y, x2, y, x2, y2, x, y2, x, y];
-}
-
 // helper: approximate circle as polygon with `segments` vertices (closed)
 function circleToPoints(cx: number, cy: number, radius: number, segments = 24): number[] {
   const pts: number[] = [];
@@ -71,7 +63,6 @@ addEventListener('message', ({ data }) => {
   if (data.type === 'SHAPE_POINTER_UP') {
     const shape = data.shape;
 
-    console.log('Worker received shape:', shape);
     postMessage({ type: 'SHAPE_COMPLETE', shape });
     return;
   }

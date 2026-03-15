@@ -5,12 +5,12 @@ import { fullscreen } from '../../utils/helper';
 import { ExamService } from '../../services/exam';
 import { Store } from '../../store/store';
 import { Menu } from 'primeng/menu';
-
+import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-exam-tools',
   templateUrl: './exam-tools.html',
   styleUrl: './exam-tools.css',
-  imports: [PopoverModule, Overview,Menu], 
+  imports: [PopoverModule, Overview,Menu, TooltipModule], 
 })
 export class ExamTools {
   private _store = inject(Store)

@@ -47,7 +47,6 @@ export class DataService {
     }
 
     pingServer(payload: Ping): Observable<Pong> {
-        console.log(this.currentUrl())
         return this._http.post<any>(`${environment.developmentIP}/candidate/heartbeat`, payload, { withCredentials: true });
     }
 

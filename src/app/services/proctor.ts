@@ -56,7 +56,6 @@ export class ProctorService {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia(this._streamConstraints);
-            // console.log(stream.getVideoTracks()[0].getConstraints())
 
             this._stream.set(stream);
             this._state.set('active');

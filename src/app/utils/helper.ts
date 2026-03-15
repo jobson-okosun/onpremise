@@ -42,173 +42,59 @@ export function fullscreen() {
     });
 }
 
-export function useShortcut(keyPressed: string, currentQuestionNumber: number, paginatorComponent: Paginator, sectionItemsLength: number, currentQuestion: ICandidateItem, component: Component,): void {
-    const itemTypes = ItemType
+export function useShortcut(keyPressed: string, currentQuestionNumber: number, paginatorComponent: Paginator, sectionItemsLength: number, currentQuestion: ICandidateItem, component: Component): void {
 
-    if (currentQuestionNumber != 0) {
-        switch (keyPressed.toLowerCase()) {
-            case 'p':
-                paginatorComponent.prev();
-                break;
-        }
+    const key = keyPressed.toLowerCase();
+    const itemTypes = ItemType;
+
+    if (key === 'p' && currentQuestionNumber !== 0) {
+        paginatorComponent.prev();
+        return;
     }
-    if (currentQuestionNumber + 1 != sectionItemsLength) {
-        switch (keyPressed.toLowerCase()) {
-            case 'n':
-                paginatorComponent.next();
-                break;
-        }
+
+    if (key === 'n' && currentQuestionNumber + 1 !== sectionItemsLength) {
+        paginatorComponent.next();
+        return;
     }
 
     if (!component) {
         return
-    }
+    };
+
+    const letters = 'abcdefghijk';
+    const index = letters.indexOf(key);
+
+    if (index === -1) {
+        return
+    };
+
+    const value = currentQuestion.options[index]?.value;
+
+    if (value == null || value == undefined) {
+        console.log('Shorcut rejected: Option is out of range........................................')
+        return
+    };
 
     if (currentQuestion.item_type === itemTypes.MRQ) {
-        if (!component) return
 
-        const ref = component as MultipleResponse
-        if(currentQuestion.responses.length == currentQuestion.max_responses) {
-            return
+        if (currentQuestion.responses.length === currentQuestion.max_responses) {
+            return;
         }
 
-        switch (keyPressed.toLowerCase()) {
-            case `a`:
-                ref.selectOption(
-                    currentQuestion.options[0].value
-                );
-                break;
-            case 'b':
-                ref.selectOption(
-                    currentQuestion.options[1].value
-                );
-                break;
-            case 'c':
-                ref.selectOption(
-                    currentQuestion.options[2].value
-                );
-                break;
-            case 'd':
-                ref.selectOption(
-                    currentQuestion.options[3].value
-                );
-                break;
-            case 'e':
-                ref.selectOption(
-                    currentQuestion.options[4]?.value
-                );
-                break;
-            case 'f':
-                ref.selectOption(
-                    currentQuestion.options[5]?.value
-                );
-                break;
-            case 'g':
-                ref.selectOption(
-                    currentQuestion.options[6]?.value
-                );
-                break;
-            case 'h':
-                ref.selectOption(
-                    currentQuestion.options[7]?.value
-                );
-                break;
-            case 'i':
-                ref.selectOption(
-                    currentQuestion.options[8]?.value
-                );
-                break;
-            case 'j':
-                ref.selectOption(
-                    currentQuestion.options[9]?.value
-                );
-                break;
-            case 'k':
-                ref.selectOption(
-                    currentQuestion.options[10]?.value
-                );
-                break;
-        }
+        const ref = component as MultipleResponse;
+        ref.selectOption(value);
+
     } else if (currentQuestion.item_type === itemTypes.MCQ) {
-        if (!component) return
 
-        const ref = component as SingleChoice
+        const ref = component as SingleChoice;
+        ref.selectOption(value);
 
-        switch (keyPressed.toLowerCase()) {
-            case `a`:
-                ref.selectOption(
-                    currentQuestion.options[0].value
-                );
-
-                break;
-            case 'b':
-                ref.selectOption(
-                    currentQuestion.options[1].value
-                );
-                break;
-            case 'c':
-                ref.selectOption(
-                    currentQuestion.options[2].value
-                );
-                break;
-            case 'd':
-                ref.selectOption(
-                    currentQuestion.options[3].value
-                );
-                break;
-            case 'e':
-                ref.selectOption(
-                    currentQuestion.options[4]?.value
-                );
-                break;
-            case 'f':
-                ref.selectOption(
-                    currentQuestion.options[5]?.value
-                );
-                break;
-            case 'g':
-                ref.selectOption(
-                    currentQuestion.options[6]?.value
-                );
-                break;
-            case 'h':
-                ref.selectOption(
-                    currentQuestion.options[7]?.value
-                );
-                break;
-            case 'i':
-                ref.selectOption(
-                    currentQuestion.options[8]?.value
-                );
-                break;
-            case 'j':
-                ref.selectOption(
-                    currentQuestion.options[9]?.value
-                );
-                break;
-            case 'k':
-                ref.selectOption(
-                    currentQuestion.options[10]?.value
-                );
-                break;
-        }
     } else if (currentQuestion.item_type === itemTypes.TRUE_FALSE || currentQuestion.item_type === itemTypes.YES_NO) {
-        if (!component) return
 
-        const ref = component as YesOrNo | TrueOrFalse
+        if (index > 1) return;
 
-        switch (keyPressed.toLowerCase()) {
-            case `a`:
-                ref.selectOption(
-                    currentQuestion.options[0].value
-                );
-                break;
-            case 'b':
-                ref.selectOption(
-                    currentQuestion.options[1].value
-                );
-                break;
-        }
+        const ref = component as YesOrNo | TrueOrFalse;
+        ref.selectOption(value);
     }
 }
 
@@ -327,12 +213,13 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
     return autoSaveData;
 }
 
-export const formatExamResponseData =(data: ICandidateEndExamData): ICandidateEndExamData => {
+export const formatExamResponseData = (data: ICandidateEndExamData): ICandidateEndExamData => {
     const formattedSectionsMap = Object.fromEntries(
         Object.entries(data.autosave.sections_map).map(
-            ([sectionKey, items]) => [ sectionKey, items.map((item) => {
-                const hasValidAnswer = Array.isArray(item.answers) && item.answers.some( (ans) => typeof ans === 'string' && ans.trim() !== '');
-                return { ...item, answers: hasValidAnswer ? item.answers : []};
+            ([sectionKey, items]) => [sectionKey, items.map((item) => {
+                const hasValidAnswer = Array.isArray(item.answers) && item.answers.some((ans) => typeof ans === 'string' && ans.trim() !== '');
+
+                return { ...item, answers: hasValidAnswer ? item.answers : [] };
             })]
         )
     );

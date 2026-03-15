@@ -3,7 +3,7 @@
         @if(store().organizationAssets?.hasLogo) {
             <img [src]="store().organizationAssets?.logo" class="mx-auto w-44 mb-20">
         } @else {
-            <img src="EXPryLogoHor.png" class="mx-auto w-44 mb-20">
+            <img [src]="store().organizationAssets?.defaultLogo"  class="mx-auto w-44 mb-20">
         }
 
         <div class="mb-2 text-center">Enter your login credentials to continue</div>

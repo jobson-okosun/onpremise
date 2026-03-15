@@ -18,7 +18,6 @@ export class OnboardingLayout {
   year = new Date().getFullYear();
   progressIndicator = viewChild(ProgressIndicator);
 
-
   private currentUrl = toSignal(
     this._router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -30,7 +29,6 @@ export class OnboardingLayout {
   store = computed(() => this._store.store())
   isStartExamPage = computed(() => this.currentUrl().includes('/start-exam'))
   
-  // Expose step completion status for the template
   isCurrentStepCompleted = computed(() => {
     return this.progressIndicator()?.isCurrentStepCompleted() ?? true;
   });
