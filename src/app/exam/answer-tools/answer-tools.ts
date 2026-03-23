@@ -19,6 +19,7 @@ export class AnswerTools {
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex)
   currentSectionSummary = computed(() => this._exam.currentSectionSummary())
   showClearAnwer = input(true)
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
 
   wordCount = computed(() => {
     const str = this.store().currentQuestion?.responses[0] ?? ''

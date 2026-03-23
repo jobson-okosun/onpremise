@@ -9,6 +9,7 @@
         </button>
     }
 
+
     @if(!currentSectionSummary()?.summary?.attempted?.includes(currentQuestionIndex())) {
         @if(currentSectionSummary()?.summary?.revisits?.includes(currentQuestionIndex())) {
             <button (click)="revisit()" class="bg-amber-200 flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-amber-300 text-sm hover:border-primary cursor-pointer">
@@ -18,7 +19,7 @@
                 <span>Revisit</span>
             </button>
         } @else {
-            <button (click)="revisit()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
+            <button [class.hidden]="!isExamAlpha()" (click)="revisit()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
                 <span class="hidden lg:inline">Revisit later</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none" stroke="#3c3c3c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8.76938 2.5C8.4973 2.59728 8.23058 2.70543 7.96979 2.8239M5.42501 4.46566C5.19851 4.66428 4.98106 4.87255 4.77334 5.08979M3.03178 7.56476C2.84599 7.93804 2.68313 8.32421 2.54498 8.72152M2.01608 11.3914C1.99387 11.7808 1.99471 12.1778 2.01835 12.5673M2.56845 15.2658C2.70147 15.6396 2.85641 16.0035 3.03178 16.3558M4.69086 18.7435C4.93508 19.005 5.19323 19.2539 5.46415 19.4891M7.77635 21.0064C8.17073 21.1954 8.57927 21.3606 9 21.5" />
@@ -28,6 +29,7 @@
             </button>
         }
     }
+    
 
     <button (click)="showIntructionDrawer.set(!showIntructionDrawer())" class="rounded-full size-10 flex items-center justify-center transition duration-150 bg-white border border-transparent hover:border-primary cursor-pointer">
         <svg class="w-6 h-6 text-[#4a4a4a]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">

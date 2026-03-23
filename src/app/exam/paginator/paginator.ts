@@ -22,11 +22,11 @@ export class Paginator {
   pageWindow = computed(() => {
     let num = 0
     if (this.screenWidth() >= 1700) {
-      num = 30
+      num = 35
     } else if (this.screenWidth() >= 1652) {
-      num = 27
+      num = 32
     } else if (this.screenWidth() >= 1536) {
-      num = 25
+      num = 30
     } else if (this.screenWidth() >= 1440) {
       num = 21
     } else if (this.screenWidth() >= 1280) {

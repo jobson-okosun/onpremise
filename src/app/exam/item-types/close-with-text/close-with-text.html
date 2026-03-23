@@ -4,7 +4,8 @@
             <div class="py-1 pr-2">
                 <div class="border-l-4 border-primary flex justify-between items-center">
                     <div class="font-bold text-sm px-3">
-                        Question {{ store().currentQuestionIndex + 1 }}
+                        <div class="text-primary">{{ store().currentSection?.name }}</div>
+                        <div>Question {{ store().currentQuestionIndex + 1 }}</div>
                     </div>
                     <div class="flex gap-3">
                         <app-answer-tools></app-answer-tools>

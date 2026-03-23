@@ -29,6 +29,7 @@ export class QuestionTools {
   showToggleLayoutButton = input<boolean>(false)
   showQuestionModal = signal<boolean>(false)
   showQuestionModalButton = model<boolean>(true)
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
 
   revisit() {
     this._exam.addQuestionForRevisit()

@@ -5,7 +5,10 @@
         <div class="rounded-md bg-white h-full flex flex-col">
             <div class="py-1 pr-2">
                 <div class="border-l-4 border-primary flex justify-between items-center">
-                    <div class="font-bold text-sm px-3">Question {{ currentQuestionIndex() + 1 }}</div>
+                    <div class="font-bold text-sm px-3">
+                        <div class="text-primary">{{ store().currentSection?.name }}</div>
+                        <div>Question {{ store().currentQuestionIndex + 1 }}</div>
+                    </div>
                     <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
                 </div>
             </div>
