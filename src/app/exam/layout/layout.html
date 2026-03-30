@@ -112,13 +112,15 @@
                             <span class="text-xs">Unanswered</span>
                         </div>
                     </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
-                        <div class="flex gap-2 items-center">
-                            <span class="rounded-full size-2.5 bg-yellow-500"></span>
-                            <span class="text-xs">Revisit</span>
+                    @if(isExamAlpha()) {
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                            <div class="flex gap-2 items-center">
+                                <span class="rounded-full size-2.5 bg-yellow-500"></span>
+                                <span class="text-xs">Revisit</span>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -353,7 +355,13 @@
 
 <p-dialog [visible]="showUnattemptedModal()" [modal]="true" [closable]="false" [focusOnShow]="false" [draggable]="false" [resizable]="false" [style]="{ width: '600px' }" header="You are attempting to end exam?" class="p-0">
   <div class="text-center p-6">
-    <p class="text-gray-500">Certain questions are unanswered or not revisited</p>
+    <p class="text-gray-500">
+        Certain questions are unanswered 
+
+        @if(isExamAlpha()) {
+            or not revisited
+        }
+    </p>
 
     <div class="my-6 max-h-[400px] overflow-y-auto space-y-4">
         @for (section of overviewSections(); track $index; let i = $index) {
@@ -478,10 +486,8 @@
     </div>
 }
 
-<!-- Proctor Preview - Floating Video -->
 <app-proctor-preview></app-proctor-preview>
 
-<!-- Proctor Permission Denied Modal -->
 <p-dialog [visible]="proctorDenied()" [modal]="true" [closable]="false" [draggable]="false" header="Camera & Microphone Required" [style]="{ width: '450px' }">
     <div class="text-center p-4">
         <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">

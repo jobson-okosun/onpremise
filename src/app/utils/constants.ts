@@ -1,5 +1,5 @@
 
-export const APP_VERSION = '0.5.6'
+export const APP_VERSION = '0.5.8'
 export const APP_BRANDING = {
   // logo: 'EXPryLogoHor.png'
   logo: 'jamb-logo.jpg',

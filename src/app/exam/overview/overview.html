@@ -33,6 +33,7 @@
                     (click)="activeTab.set(i)"  
                     [class.bg-primary!] = "activeTab() == i"
                     [class.text-white!] = "activeTab() == i"
+                    [class.hidden!]="(item == 'revisit') && !isExamAlpha()"
                     class="p-2 rounded-2xl text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 transition capitalize">{{ item }}</button>
                 }
             </div>
