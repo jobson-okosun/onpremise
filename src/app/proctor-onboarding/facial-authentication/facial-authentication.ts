@@ -55,6 +55,7 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
       if (current <= 1) {
         this.clearCountdown();
         this.capturePhoto();
+        this.confirmPhoto();
       } else {
         this.countdown.set(current - 1);
       }

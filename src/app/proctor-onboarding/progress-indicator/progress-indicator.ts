@@ -50,7 +50,6 @@ export class ProgressIndicator implements OnInit {
   currentStep = signal<number>(0);
   maxStepReached = signal<number>(0);
 
-  // Computed: check if current step is completed (for enabling/disabling next button)
   isCurrentStepCompleted = computed(() => {
     const steps = this.steps();
     const currentIndex = this.currentStep();
@@ -61,16 +60,21 @@ export class ProgressIndicator implements OnInit {
     
     const currentStepConfig = steps[currentIndex];
     
-    // If step doesn't require completion, it's always "completed"
     if (!currentStepConfig.requiresCompletion) {
       return true;
     }
     
-    // Use the service to check completion status
     return this._onboardingService.isStepCompleted(currentStepConfig.id);
   });
 
-  // Check if a specific step is completed
+  reachableStepCount = computed(() => {
+    const maxVisited = this.maxStepReached();
+    const current = this.currentStep();
+    const isCompleted = this.isCurrentStepCompleted();
+    
+    return Math.max(maxVisited, isCompleted ? current + 1 : current);
+  });
+
   isStepCompleted(stepId: OnboardingStepId): boolean {
     return this._onboardingService.isStepCompleted(stepId);
   }
@@ -94,11 +98,13 @@ export class ProgressIndicator implements OnInit {
     
     if (stepIndex !== -1) {
       this.currentStep.set(stepIndex);
-      this.maxStepReached.set(stepIndex);
+      // Sync maxStepReached with current position on load
+      if (stepIndex > this.maxStepReached()) {
+        this.maxStepReached.set(stepIndex);
+      }
     }
   }
 
-  // Get current step ID
   getCurrentStepId(): OnboardingStepId | null {
     const steps = this.steps();
     const currentIndex = this.currentStep();
@@ -109,30 +115,34 @@ export class ProgressIndicator implements OnInit {
     const currentIndex = this.currentStep();
     const steps = this.steps();
 
-    if (currentIndex === 0 && arg === 'back') {
-      return;
-    }
-
-    // Prevent moving forward if current step is not completed
-    if (arg === 'next' && !this.isCurrentStepCompleted()) {
-      return;
-    }
-
+    // Determine target index
     const newStep =
       arg === 'next' ? currentIndex + 1 :
       arg === 'back' ? currentIndex - 1 :
       typeof arg === 'number' ? arg :
       currentIndex;
 
+    // Bounds check
     if (newStep < 0 || newStep >= steps.length) {
       return;
     }
 
+    // Restriction check
+    if (newStep > this.reachableStepCount()) {
+      return;
+    }
+
+    // Additional check for 'next' specifically (though covered by reachableStepCount)
+    if (arg === 'next' && !this.isCurrentStepCompleted()) {
+      return;
+    }
+
+    // Update history
     if (newStep > this.maxStepReached()) {
       this.maxStepReached.set(newStep);
     }
 
-    // Navigate using the route from the step configuration
+    // Navigate
     this._router.navigate([steps[newStep].route]);
     this.currentStep.set(newStep);
   }

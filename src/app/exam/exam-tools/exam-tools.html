@@ -27,9 +27,11 @@
             </span>
         </div> 
     }
+    
+    @let showSubmitButton = canEndExam() && countDownTimer().min >= 1;
 
-    @if(canEndExam() && countDownTimer().min >= 1){
-        <button (click)="endExam()" type="button" class="animate__animated animate__fadeIn hmd:flex! btn rounded-sm! bg-red-700! hover:bg-red-800! px-3!">Submit Exam</button>
+    @if(showSubmitButton){
+        <button (click)="endExam()" type="button" class="animate__animated animate__fadeIn btn rounded-sm! bg-red-700! hover:bg-red-800! px-3!">Submit Exam</button>
     }
 
     <button pTooltip="Connection status" tooltipPosition="left" type="button" class="rounded-full size-10 flex items-center justify-center hover:bg-gray-100 transition duration-150">

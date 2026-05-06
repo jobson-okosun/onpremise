@@ -8,7 +8,7 @@ import { HotToastService } from "@ngxpert/hot-toast";
 import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
 import { TauriService } from "./tauri";
-import { ProctorService } from "./proctor";
+import { ProctorService } from "./ai-proctoring/proctor";
 import { PostLogin } from "./post-login";
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +18,6 @@ export class ExamService {
     private _toast = inject(HotToastService)
     private _router = inject(Router)
     private _tauriService = inject(TauriService)
-    private _proctorService = inject(ProctorService)
     private _postLoginService = inject(PostLogin)
 
     examTimerSub$: Subscription;
@@ -57,8 +56,12 @@ export class ExamService {
     lastUnpinnedTimeInMins = signal(0)
     lastAutosaveTimeDifference = signal(0)
     isProctoredExam = computed(() => false)
-    examType = computed(() => this.store().preloginData?.exam_type)
+
+    examType = computed(() => this.store().preloginData?.exam_type ?? ExamType.EXAMALPHA)
     isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
+    proctoredExamDeliveryType = computed(() => 'LIVE_PROCTORING')
+    isLiveProctoring = computed(() => false)
+    isAIProctoring = computed(() => true)
 
     constructor() {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
@@ -153,7 +156,6 @@ export class ExamService {
     });
 
     totalExamTime = computed(() => this.cummulativeExamDuration());
-
 
     hasValidResponses(responses: any[]) {
         return responses?.some(value => value !== undefined && value.toString().trim() !== "")
@@ -506,10 +508,6 @@ export class ExamService {
 
         if (this.examTimerSub$) {
             this.examTimerSub$.unsubscribe()
-        }
-
-        if (this.isProctoredExam()) {
-            this._proctorService.stopProctoring()
         }
 
         const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING)

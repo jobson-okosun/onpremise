@@ -6,7 +6,7 @@ import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
-import { ProctorService } from '../../services/proctor';
+import { ProctorService } from '../../services/ai-proctoring/proctor';
 import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { loginData } from '../../utils/constants';
@@ -39,10 +39,11 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
+import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.html',
+  templateUrl: './layout.html', 
   styleUrl: './layout.css',
   imports: [
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
@@ -53,15 +54,20 @@ import { environment } from '../../../environments/environment';
 })
 export default class Layout implements OnDestroy {
   private _store = inject(Store)
-  private _exam = inject(ExamService)
+  private _exam = inject(ExamService)  
   private _proctor = inject(ProctorService)
   private _toast = inject(HotToastService)
   private _postLoginService = inject(PostLogin)
+  private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private sub!: Subscription;
 
   proctorDenied = computed(() => this._proctor.isDenied())
   proctorError = computed(() => this._proctor.errorMessage())
+  isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
+  speakMessage = computed(() => this._liveProctoring.speakMessage())
+
+
   lastPressTime = signal(0);
   threshold = signal(2000); // 2 sec
   showCalculator = signal<null | string>(null)
@@ -127,14 +133,17 @@ export default class Layout implements OnDestroy {
   examName = computed(() => {
     const name = this.store().loginData?.assessment_data.name ?? ''
     return name.length > 21 ? name.slice(0, 21).concat('...') : name
-  })
+  })  
 
   candidateName = computed(() => {
     const name = this.store().loginData?.candidate_data?.name! ?? ''
     return name.length > 15 ? name.slice(0, 15).concat('...') : name
   })
 
-  isProctoredExam = computed(() => this._exam.isProctoredExam())
+  isLiveProctoring = computed(() => this._exam.isLiveProctoring())
+  isAIProctoring = computed(() => this._exam.isAIProctoring())
+  isProctoredExam = computed(() => this.isLiveProctoring() || this.isAIProctoring())
+
   isExamAlpha = computed(() => this._exam.isExamAlpha())
   isAutoSaving = computed(() => this._exam.isAutoSaving())
   isAutoSaveSuccessful = computed(() => this._exam.isAutoSaveSuccessful())
@@ -146,20 +155,29 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    // if (!this.store().loginData) {
-    //   this._postLoginService.formatLoginDataToStore(loginData as any)
-    // }
+    if (!this.store().loginData) {
+      this._postLoginService.formatLoginDataToStore(loginData as any)
+    }
 
     if (!this.store().platformIsTauri) {
       fullscreen()
     }
 
     if (this.isProctoredExam()) {
-      const success = await this._proctor.initializeProctoring()
+      if (this.isLiveProctoring()) {
+        this._liveProctoring.initialize({
+          roomId: this.store().loginData?.candidate_data?.login_field_value!,
+          candidateName: this.store().loginData?.candidate_data?.name!
+        })
+      }
+      
+      if (this.isAIProctoring()) {
+        const success = await this._proctor.initializeProctoring()
 
-      if (!success) {
-        this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
-        return
+        if (!success) {
+          this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
+          return
+        }
       }
     }
 

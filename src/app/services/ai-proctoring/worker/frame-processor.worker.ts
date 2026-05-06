@@ -1,25 +1,31 @@
 /// <reference lib="webworker" />
 
+import { IFrameProcessor } from "../model/model";
+
 let workerFrames: Uint8Array;
 let workerMeta: Int32Array;
 let workerWidth = 0;
 let workerHeight = 0;
 let workerFrameSize = 0;
-let workerDto: { candidate_id: string; exam_id: string };
+let workerFrameCount = 4; // Default fallback
 
-onmessage = (e: MessageEvent<{
-    frameSAB: SharedArrayBuffer;
-    metaSAB: SharedArrayBuffer;
-    width: number;
-    height: number;
-    dto: { candidate_id: string; exam_id: string };
-}>) => {
+let candidate = {};
+
+onmessage = (e: MessageEvent<IFrameProcessor>) => {
     workerFrames = new Uint8Array(e.data.frameSAB);
     workerMeta = new Int32Array(e.data.metaSAB);
     workerWidth = e.data.width;
     workerHeight = e.data.height;
     workerFrameSize = workerWidth * workerHeight * 4;
-    workerDto = e.data.dto;
+
+    workerFrames = new Uint8Array(e.data.frameSAB);
+    workerMeta = new Int32Array(e.data.metaSAB);
+    workerWidth = e.data.width;
+    workerHeight = e.data.height;
+    workerFrameSize = workerWidth * workerHeight * 4;
+    workerFrameCount = e.data.frameCount || 10;
+
+    candidate = e.data.candidate
 
     processLoop();
 };
@@ -35,25 +41,27 @@ async function processLoop() {
             // COPY ONLY ONE FRAME (bounded cost)
             const frame = workerFrames.slice(offset, offset + workerFrameSize);
 
-            Atomics.store(workerMeta, 1, (readIndex + 1) % 4);
-            
+            Atomics.store(workerMeta, 1, (readIndex + 1) % workerFrameCount);
+
             // console.log('[Worker] Sending frame to main thread.......................');
 
             // Post message to main thread instead of calling invoke directly
-            // The main thread will handle the Tauri invoke call
             postMessage({
                 type: "PROCESS_FRAME",
                 payload: {
                     width: workerWidth,
                     height: workerHeight,
                     data: Array.from(frame),
-                    dto: workerDto
+                    dto: {
+                        ...candidate,
+                        audio_stream: [],
+                    }
                 }
-            });
+            }, [frame.buffer] as any);
         } catch (e) {
             console.error("Worker processLoop error:", e);
         }
 
-        await new Promise((r) => setTimeout(r, 10));
+        await new Promise((r) => setTimeout(r, 333));
     }
 }

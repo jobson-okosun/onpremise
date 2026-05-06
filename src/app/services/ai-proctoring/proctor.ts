@@ -1,24 +1,43 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { TauriService } from "./tauri";
-import { Store } from "../store/store";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import { TauriService } from "../tauri";
+import { Store } from "../../store/store";
 import { invoke } from "@tauri-apps/api/core";
-import { ProctorState } from "../store/model/media-models";
+import { ProctorState } from "../../store/model/media-models";
 
 const WIDTH = 320;
 const HEIGHT = 320;
 const CHANNELS = 4;
 const FRAME_SIZE = WIDTH * HEIGHT * CHANNELS;
-const FRAME_COUNT = 4; 
+const FRAME_COUNT = 10;
 
 @Injectable({ providedIn: 'root' })
 export class ProctorService {
     private _tauri = inject(TauriService);
     private _store = inject(Store);
 
+    store = computed(() => this._store.store())
+    candidateInfo = computed(() => {
+        const store = this.store();
+
+        if (!store.loginData || !store.preloginData) return undefined;
+
+        return {
+            candidate_id: store.loginData.candidate_data?.id ?? '',
+            batch_id: '',
+            exam_id: store.preloginData?.id ?? ''
+        };
+    });
+
     private _state = signal<ProctorState>('idle');
     private _errorMessage = signal<string>('');
     private _stream = signal<MediaStream | null>(null);
     private _isStreaming = signal<boolean>(false);
+
+    // ─── AUDIO STATE ──
+    private _audioContext: AudioContext | null = null;
+    private _audioBuffer: Int16Array[] = [];
+    private _audioInterval: any = null;
+    private _audioWorkletNode: AudioWorkletNode | null = null;
 
     private _frameSAB: SharedArrayBuffer | null = null;
     private _metaSAB: SharedArrayBuffer | null = null;
@@ -35,7 +54,7 @@ export class ProctorService {
             height: { ideal: HEIGHT },
             facingMode: 'user'
         },
-        audio: false
+        audio: { sampleRate: 16000, channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl  : true }
     };
 
     state = this._state.asReadonly();
@@ -45,7 +64,7 @@ export class ProctorService {
 
     isActive = () => this._state() === 'active';
     isDenied = () => this._state() === 'denied';
- 
+
     async initializeProctoring(): Promise<boolean> {
         if (this._state() === 'active') {
             return true;
@@ -66,7 +85,7 @@ export class ProctorService {
 
         } catch (error: any) {
             console.error('Proctor initialization failed:', error);
-            
+
             if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
                 this._state.set('denied');
                 this._errorMessage.set('Camera and microphone access is required for this proctored exam. Please grant permissions and refresh the page.');
@@ -111,25 +130,18 @@ export class ProctorService {
 
             // Initialize worker
             this._worker = new Worker(
-                new URL('../exam/proctor-preview/worker/frame-processor.worker', import.meta.url),
+                new URL('./worker/frame-processor.worker', import.meta.url),
                 { type: 'module' }
             );
-
-            // Get candidate and assessment IDs from store
-            const storeData = this._store.getStore();
-            const candidateId = storeData.loginData?.candidate_data?.id ?? '';
-            const assessmentId = storeData.preloginData?.id ?? '';
-
+            
             // Send SharedArrayBuffer data and DTO to worker
             this._worker.postMessage({
                 frameSAB: this._frameSAB,
                 metaSAB: this._metaSAB,
                 width: WIDTH,
                 height: HEIGHT,
-                dto: {
-                    candidate_id: candidateId,
-                    exam_id: assessmentId,
-                }
+                frameCount: FRAME_COUNT,
+                candidate: this.candidateInfo()
             });
 
             // Handle worker messages - invoke Tauri from main thread
@@ -153,9 +165,114 @@ export class ProctorService {
             this._isStreaming.set(true);
             console.log('Proctor streaming pipeline initialized');
 
+            this.initializeAudioPipeline(stream);
+
         } catch (error) {
             console.error('Failed to initialize streaming pipeline:', error);
         }
+    }
+
+    private async initializeAudioPipeline(stream: MediaStream): Promise<void> {
+        try {
+            this._audioContext = new AudioContext({ sampleRate: 16000 });
+
+            const workletCode = `
+            class AudioProcessor extends AudioWorkletProcessor {
+                constructor() {
+                    super();
+                    this.buffer = [];
+                }
+
+                process(inputs) {
+                    const input = inputs[0];
+                    if (!input || !input[0]) return true;
+
+                    const channel = input[0];
+
+                    // Send raw Float32 chunk to main thread
+                    this.port.postMessage(channel);
+
+                    return true;
+                }
+            }
+            registerProcessor('audio-processor', AudioProcessor);
+        `;
+
+            const blob = new Blob([workletCode], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+
+            await this._audioContext.audioWorklet.addModule(url);
+            URL.revokeObjectURL(url);
+
+            const source = this._audioContext.createMediaStreamSource(stream);
+
+            this._audioWorkletNode = new AudioWorkletNode(this._audioContext, 'audio-processor');
+
+            // ─── RECEIVE AUDIO CHUNKS ───
+            this._audioWorkletNode.port.onmessage = (event) => {
+                const float32 = event.data;
+
+                const pcm16 = this.float32ToInt16(float32);
+
+                this._audioBuffer.push(pcm16);
+
+                // NEW: prevent unbounded memory growth: If user speaks continuously, buffer can grow too fast.
+                if (this._audioBuffer.length > 50) {
+                    this._audioBuffer.shift();
+                }
+            };
+
+            source.connect(this._audioWorkletNode);
+
+            this._audioInterval = setInterval(async () => {
+                clearInterval(this._audioInterval);
+
+                if (!this._audioBuffer.length) return; 
+
+                const chunks = this._audioBuffer.splice(0);
+
+                const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
+                const merged = new Int16Array(totalLength);
+
+                let offset = 0;
+                for (const chunk of chunks) {
+                    merged.set(chunk, offset);
+                    offset += chunk.length;
+                }
+
+                const audioBytes = Array.from(new Uint8Array(merged.buffer));
+
+                try {
+                    await invoke('process_frame', {
+                        width: 0,
+                        height: 0,
+                        data: [],
+                        dto: {
+                            ...this.candidateInfo()!,
+                            audio_stream: audioBytes
+                        }
+                    });
+
+                } catch (err) {
+                    console.error('Audio send failed:', err);
+                }
+
+            }, 30);
+
+        } catch (err) {
+            console.error('Audio init failed:', err);
+        }
+    }
+
+    private float32ToInt16(float32: Float32Array): Int16Array {
+        const int16 = new Int16Array(float32.length);
+
+        for (let i = 0; i < float32.length; i++) {
+            const s = Math.max(-1, Math.min(1, float32[i]));
+            int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+
+        return int16;
     }
 
     private startCaptureLoop(): void {
@@ -166,7 +283,7 @@ export class ProctorService {
 
             // Draw current frame to canvas
             this._canvasCtx.drawImage(this._videoElement, 0, 0, WIDTH, HEIGHT);
-            
+
             // Get pixel data
             const imageData = this._canvasCtx.getImageData(0, 0, WIDTH, HEIGHT);
 
@@ -224,9 +341,5 @@ export class ProctorService {
 
         this._state.set('idle');
         this._errorMessage.set('');
-    }
-
-    getVideoTrack(): MediaStreamTrack | null {
-        return this._stream()?.getVideoTracks()[0] ?? null;
     }
 }

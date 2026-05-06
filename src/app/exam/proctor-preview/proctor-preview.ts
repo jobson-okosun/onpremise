@@ -1,8 +1,10 @@
 import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { ProctorService } from '../../services/proctor';
+import { ProctorService } from '../../services/ai-proctoring/proctor';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
+import { ExamService } from '../../services/exam';
 
 export interface ChatMessage {
   id: string;
@@ -19,6 +21,8 @@ export interface ChatMessage {
 })
 export class ProctorPreview {
   private _proctor = inject(ProctorService);
+  private _liveProctoring = inject(LiveProctoringService);
+  private _exam = inject(ExamService);
   
   videoElement = viewChild<ElementRef<HTMLVideoElement>>('videoEl');
   chatContainer = viewChild<ElementRef<HTMLDivElement>>('chatMessagesContainer');
@@ -28,9 +32,21 @@ export class ProctorPreview {
   chatMessage = signal('');
   messages = signal<ChatMessage[]>([]);
   unreadCount = signal(0);
+  isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
   
-  stream = computed(() => this._proctor.stream());
-  isActive = computed(() => this._proctor.isActive());
+  stream = computed(() => {
+    if (this._exam.isLiveProctoring()) {
+      return this._liveProctoring.stream();
+    }
+    return this._proctor.stream();
+  });
+
+  isActive = computed(() => {
+    if (this._exam.isLiveProctoring()) {
+      return !!this._liveProctoring.stream();
+    }
+    return this._proctor.isActive();
+  });
 
   constructor() {
     effect(() => {

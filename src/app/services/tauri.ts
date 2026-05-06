@@ -25,11 +25,7 @@ export class TauriService {
         if(!this.isAndroid()) {
             return
         }
-        
-        // if(location.href.includes('admin')){
-        //     return
-        // }
-
+    
         this.isAppPinned();
     });
 

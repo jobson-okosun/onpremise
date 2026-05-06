@@ -33,12 +33,12 @@
 
                     <div class="lg:hidden uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
 
-                    @if(isExamAlpha()) {
+                    <!-- @if(isExamAlpha()) {
                         <button (click)="sectionsList.toggle($event)" class="hidden sm:flex bg-gray-100 items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
                             <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
                             <i class="pi pi-angle-down"></i>
                         </button>
-                    }
+                    } -->
 
                     <button (click)="sectionsList.toggle($event)" class="sm:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
                         <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
@@ -46,7 +46,7 @@
                     </button>
                 </div>
 
-                @if(!isExamAlpha()) {
+                <!-- @if(!isExamAlpha()) { -->
                     <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
                         <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
                             @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
@@ -81,9 +81,9 @@
                             }
                         </div>
                     </div>
-                } @else {
-                    <div class="uppercase font-bold">{{ examName() }}</div>
-                }
+                <!-- } @else { -->
+                    <!-- <div class="uppercase font-bold">{{ examName() }}</div> -->
+                <!-- } -->
                 
                 <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
             </div>
@@ -145,11 +145,11 @@
 
             @if(store().currentQuestion?.item_type === itemTypes().YES_NO) {
                 <app-yes-or-no [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no>
-            }
+            }  
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                <!-- <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown> -->
-                 <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
+                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
+                 <!-- <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> -->
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
@@ -308,6 +308,7 @@
         </div>
     </div>
 </div>
+
 
 <p-popover #examprogress>
     <app-overview [activeTab]="0"></app-overview>

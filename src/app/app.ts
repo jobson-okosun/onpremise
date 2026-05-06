@@ -46,13 +46,13 @@ export class App {
     currentRoute = { ...currentRoute, queryParams }
 
     this._store.updateStore({ currentRoute })
-  }
+  } 
 
   isAdminUrl() {
     return location.href.includes('admin')
   }
 
-  pinApp() {
+  pinApp() { 
     this._tauriService.pinApplication()
   }
 

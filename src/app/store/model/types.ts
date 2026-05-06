@@ -313,7 +313,7 @@ export const ALL_ONBOARDING_STEPS: OnboardingStep[] = [
     { id: 'system-check', label: 'System', icon: 'monitor', route: '/proctored/onboarding/system-check', requiresCompletion: true },
     { id: 'device-check-audio', label: 'Audio', icon: 'mic', route: '/proctored/onboarding/device-check/audio', requiresCompletion: true },
     { id: 'device-check-video', label: 'Video', icon: 'camera', route: '/proctored/onboarding/device-check/video', requiresCompletion: true },
-    { id: 'facial', label: 'Photo', icon: 'user', route: '/proctored/onboarding/facial-biometric', requiresCompletion: true },
+    // { id: 'facial', label: 'Photo', icon: 'user', route: '/proctored/onboarding/facial-biometric', requiresCompletion: true },
     { id: 'guidelines', label: 'Guidelines', icon: 'book', route: '/proctored/onboarding/guidelines', requiresCompletion: false },
     { id: 'rules', label: 'Rules', icon: 'clipboard', route: '/proctored/onboarding/rules', requiresCompletion: false },
     { id: 'start', label: 'Start', icon: 'play', route: '/proctored/onboarding/start-exam', requiresCompletion: false },

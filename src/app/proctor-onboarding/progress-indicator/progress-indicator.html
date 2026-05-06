@@ -5,7 +5,8 @@
             class="step-item"
             [class.active]="i === currentStep()"
             [class.completed]="i < currentStep()"
-            [class.disabled]="i > maxStepReached()"
+            [class.disabled]="i > reachableStepCount()"
+            [disabled]="i > reachableStepCount()"
             (click)="moveStep(i)"
             [attr.aria-label]="step.label">
             <span class="step-icon">

@@ -16,29 +16,33 @@ export class Calculator {
 
   getLastOperand(): string {
     const exp = this.display();
+
     let pos = Math.max(
       exp.lastIndexOf('+'),
       exp.lastIndexOf('-'),
       exp.lastIndexOf('*'),
       exp.lastIndexOf('/')
     );
+
     return exp.substring(pos + 1);
   }
 
   append(value: string) {
-    const exp = this.display();
+    let exp = this.display();
     const last = exp.slice(-1);
+    const lastOperand = this.getLastOperand();
 
     // 1. Prevent multiple decimals in a single operand
     if (value === '.') {
-      const lastOperand = this.getLastOperand();
       if (lastOperand.includes('.')) return;
     }
 
-    // 2. Prevent leading zero
-    if (value === '0') {
-      if (exp === '') return; // cannot start with zero
-      if (this.isOperator(last)) return; // cannot place zero directly after operator
+    // 2. Handle leading zero cases
+    if (lastOperand === '0') {
+      if (value === '0') return;
+      if (value !== '.' && !this.isOperator(value)) {
+        exp = exp.slice(0, -1);
+      }
     }
 
     // 3. Prevent double operators
