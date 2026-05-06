@@ -7,6 +7,7 @@ import { Dialog } from 'primeng/dialog';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,10 @@ export class App {
   ))
 
   ngOnInit() {
+    if(environment.production == false) {
+      this._router.navigate(['/exam'])
+    }
+    
     this._tauriService.updatePlatformType() 
     this._dataService.downloadOrganizationAssets()
     this._tauriService.initializeBatteryStatus()
