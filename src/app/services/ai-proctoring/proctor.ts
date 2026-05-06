@@ -169,7 +169,7 @@ export class ProctorService {
             console.error('Failed to initialize streaming pipeline:', error);
         }
     }
-
+  
     private async initializeAudioPipeline(stream: MediaStream): Promise<void> {
         try {
             if (!stream.getAudioTracks().length) {
@@ -212,6 +212,8 @@ export class ProctorService {
             );
 
             this._audioWorkletNode.port.onmessage = async (event) => {
+                if(!this._isStreaming()) return;
+
                 const float32 = event.data;
 
                 const pcm16 = this.float32ToInt16(float32);
@@ -230,7 +232,7 @@ export class ProctorService {
                     });
 
                 } catch (err) {
-                    console.error('Audio send failed:', err);
+                    console.error('Audio send failed:');
                 }
             };
 
