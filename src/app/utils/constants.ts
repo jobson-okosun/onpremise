@@ -259,7 +259,7 @@ export const loginData = {
     "name": "Unified Tertiary Entrance Exam",
     "start_exam_instruction": "Read the instructions carefully before answering.",
     "end_exam_instruction": "Ensure you have reviewed your answers before submitting.",
-    "duration_minutes": 120,
+    "duration_minutes": 120, 
     "display_all_sections_at_once": false,
     "instruction_read_time_sec": 120,
     "warn_end_of_reading_time_sec": 30,
