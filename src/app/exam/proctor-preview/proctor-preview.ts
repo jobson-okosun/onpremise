@@ -54,6 +54,7 @@ export class ProctorPreview {
       const stream = this.stream();
       
       if (video && stream) {
+        video.muted = true;
         video.srcObject = stream;
       }
     });

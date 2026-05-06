@@ -35,8 +35,6 @@ export class ProctorService {
 
     // ─── AUDIO STATE ──
     private _audioContext: AudioContext | null = null;
-    private _audioBuffer: Int16Array[] = [];
-    private _audioInterval: any = null;
     private _audioWorkletNode: AudioWorkletNode | null = null;
 
     private _frameSAB: SharedArrayBuffer | null = null;
@@ -54,7 +52,7 @@ export class ProctorService {
             height: { ideal: HEIGHT },
             facingMode: 'user'
         },
-        audio: { sampleRate: 16000, channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl  : true }
+        audio: { sampleRate: 16000, channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: true }
     };
 
     state = this._state.asReadonly();
@@ -120,7 +118,7 @@ export class ProctorService {
             this._videoElement.autoplay = true;
             this._videoElement.playsInline = true;
             this._videoElement.muted = true;
-            this._videoElement.srcObject = stream;
+            this._videoElement.srcObject = new MediaStream(stream.getVideoTracks());
 
             // Create canvas for pixel extraction
             this._canvas = document.createElement('canvas');
@@ -133,7 +131,7 @@ export class ProctorService {
                 new URL('./worker/frame-processor.worker', import.meta.url),
                 { type: 'module' }
             );
-            
+
             // Send SharedArrayBuffer data and DTO to worker
             this._worker.postMessage({
                 frameSAB: this._frameSAB,
@@ -174,29 +172,27 @@ export class ProctorService {
 
     private async initializeAudioPipeline(stream: MediaStream): Promise<void> {
         try {
-            this._audioContext = new AudioContext({ sampleRate: 16000 });
-
-            const workletCode = `
-            class AudioProcessor extends AudioWorkletProcessor {
-                constructor() {
-                    super();
-                    this.buffer = [];
-                }
-
-                process(inputs) {
-                    const input = inputs[0];
-                    if (!input || !input[0]) return true;
-
-                    const channel = input[0];
-
-                    // Send raw Float32 chunk to main thread
-                    this.port.postMessage(channel);
-
-                    return true;
-                }
+            if (!stream.getAudioTracks().length) {
+                console.warn("No audio track available - skipping audio pipeline");
+                return;
             }
-            registerProcessor('audio-processor', AudioProcessor);
-        `;
+
+            this._audioContext = new AudioContext({ sampleRate: 16000 });
+            const workletCode = `
+                class AudioProcessor extends AudioWorkletProcessor {
+                    process(inputs) {
+                        const input = inputs[0];
+                        if (!input || !input[0]) return true;
+
+                        const channel = input[0];
+
+                        this.port.postMessage(channel);
+
+                        return true;
+                    }
+                }
+                registerProcessor('audio-processor', AudioProcessor);
+                `;
 
             const blob = new Blob([workletCode], { type: 'application/javascript' });
             const url = URL.createObjectURL(blob);
@@ -206,41 +202,21 @@ export class ProctorService {
 
             const source = this._audioContext.createMediaStreamSource(stream);
 
-            this._audioWorkletNode = new AudioWorkletNode(this._audioContext, 'audio-processor');
+            const gain = this._audioContext.createGain();
+            gain.gain.value = 3.0;
 
-            // ─── RECEIVE AUDIO CHUNKS ───
-            this._audioWorkletNode.port.onmessage = (event) => {
+
+            this._audioWorkletNode = new AudioWorkletNode(
+                this._audioContext,
+                'audio-processor'
+            );
+
+            this._audioWorkletNode.port.onmessage = async (event) => {
                 const float32 = event.data;
 
                 const pcm16 = this.float32ToInt16(float32);
 
-                this._audioBuffer.push(pcm16);
-
-                // NEW: prevent unbounded memory growth: If user speaks continuously, buffer can grow too fast.
-                if (this._audioBuffer.length > 50) {
-                    this._audioBuffer.shift();
-                }
-            };
-
-            source.connect(this._audioWorkletNode);
-
-            this._audioInterval = setInterval(async () => {
-                clearInterval(this._audioInterval);
-
-                if (!this._audioBuffer.length) return; 
-
-                const chunks = this._audioBuffer.splice(0);
-
-                const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
-                const merged = new Int16Array(totalLength);
-
-                let offset = 0;
-                for (const chunk of chunks) {
-                    merged.set(chunk, offset);
-                    offset += chunk.length;
-                }
-
-                const audioBytes = Array.from(new Uint8Array(merged.buffer));
+                const audioBytes = Array.from(new Uint8Array(pcm16.buffer));
 
                 try {
                     await invoke('process_frame', {
@@ -256,13 +232,107 @@ export class ProctorService {
                 } catch (err) {
                     console.error('Audio send failed:', err);
                 }
+            };
 
-            }, 30);
+            source.connect(gain);
+            gain.connect(this._audioWorkletNode);
 
         } catch (err) {
             console.error('Audio init failed:', err);
         }
     }
+
+    // private async initializeAudioPipeline(stream: MediaStream): Promise<void> {
+    //     try {
+    //         this._audioContext = new AudioContext({ sampleRate: 16000 });
+
+    //         const workletCode = `
+    //         class AudioProcessor extends AudioWorkletProcessor {
+    //             constructor() {
+    //                 super();
+    //                 this.buffer = [];
+    //             }
+
+    //             process(inputs) {
+    //                 const input = inputs[0];
+    //                 if (!input || !input[0]) return true;
+
+    //                 const channel = input[0];
+
+    //                 // Send raw Float32 chunk to main thread
+    //                 this.port.postMessage(channel);
+
+    //                 return true;
+    //             }
+    //         }
+    //         registerProcessor('audio-processor', AudioProcessor);
+    //     `;
+
+    //         const blob = new Blob([workletCode], { type: 'application/javascript' });
+    //         const url = URL.createObjectURL(blob);
+
+    //         await this._audioContext.audioWorklet.addModule(url);
+    //         URL.revokeObjectURL(url);
+
+    //         const source = this._audioContext.createMediaStreamSource(stream);
+
+    //         this._audioWorkletNode = new AudioWorkletNode(this._audioContext, 'audio-processor');
+
+    //         // ─── RECEIVE AUDIO CHUNKS ───
+    //         this._audioWorkletNode.port.onmessage = (event) => {
+    //             const float32 = event.data;
+
+    //             const pcm16 = this.float32ToInt16(float32);
+
+    //             this._audioBuffer.push(pcm16);
+
+    //             // NEW: prevent unbounded memory growth: If user speaks continuously, buffer can grow too fast.
+    //             if (this._audioBuffer.length > 50) {
+    //                 this._audioBuffer.shift();
+    //             }
+    //         };
+
+    //         source.connect(this._audioWorkletNode);
+
+    //         this._audioInterval = setInterval(async () => {
+    //             clearInterval(this._audioInterval);
+
+    //             if (!this._audioBuffer.length) return; 
+
+    //             const chunks = this._audioBuffer.splice(0);
+
+    //             const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
+    //             const merged = new Int16Array(totalLength);
+
+    //             let offset = 0;
+    //             for (const chunk of chunks) {
+    //                 merged.set(chunk, offset);
+    //                 offset += chunk.length;
+    //             }
+
+    //             const audioBytes = Array.from(new Uint8Array(merged.buffer));
+
+    //             try {
+    //                 await invoke('process_frame', {
+    //                     width: 0,
+    //                     height: 0,
+    //                     data: [],
+    //                     dto: {
+    //                         ...this.candidateInfo()!,
+    //                         audio_stream: audioBytes
+    //                     }
+    //                 });
+
+    //             } catch (err) {
+    //                 console.error('Audio send failed:', err);
+    //             }
+
+    //         }, 30);
+
+    //     } catch (err) {
+    //         console.error('Audio init failed:', err);
+    //     }
+    // }
 
     private float32ToInt16(float32: Float32Array): Int16Array {
         const int16 = new Int16Array(float32.length);
