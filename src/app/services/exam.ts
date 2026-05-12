@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, linkedSignal, signal } from "@angular/core";
 import { Store } from "../store/store";
-import {ExamType, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
+import { DeliveryMethod, ExamType, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
 import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
 import { DataService } from "./data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
@@ -8,7 +8,7 @@ import { HotToastService } from "@ngxpert/hot-toast";
 import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
 import { TauriService } from "./tauri";
-import { ProctorService } from "./ai-proctoring/proctor";
+import { ProctorService } from "./auto-proctoring/proctor";
 import { PostLogin } from "./post-login";
 
 @Injectable({ providedIn: 'root' })
@@ -19,6 +19,7 @@ export class ExamService {
     private _router = inject(Router)
     private _tauriService = inject(TauriService)
     private _postLoginService = inject(PostLogin)
+    private _autoProctoringService = inject(ProctorService);
 
     examTimerSub$: Subscription;
     examSubmit$: Subscription;
@@ -55,18 +56,19 @@ export class ExamService {
     pinnedRestrictionApplied = signal(false)
     lastUnpinnedTimeInMins = signal(0)
     lastAutosaveTimeDifference = signal(0)
-    isProctoredExam = computed(() => false)
-
+    
     examType = computed(() => this.store().preloginData?.exam_type ?? ExamType.EXAMALPHA)
     isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
-    proctoredExamDeliveryType = computed(() => 'LIVE_PROCTORING')
-    isLiveProctoring = computed(() => false)
-    isAIProctoring = computed(() => true)
+
+    proctoredExamDeliveryType = computed(() => DeliveryMethod.AUTO_PROCTORING)
+    isAutoProctoring = computed(() => this.proctoredExamDeliveryType() == DeliveryMethod.AUTO_PROCTORING)
+    isLiveProctoring = computed(() => this.proctoredExamDeliveryType() == DeliveryMethod.LIVE_PROCTORING)
+    isProctoredExam = computed(() => this.isLiveProctoring() || this.isAutoProctoring())
 
     constructor() {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
     }
-    
+
     isAppPinned = effect(() => {
         const isPinned = this.store().appIsPinned;
         if (!isPinned) {
@@ -277,11 +279,11 @@ export class ExamService {
     autosaveFailed() {
         this.isAutosaveSaved.set(false)
         this.connectionStatus.set(false)
-        this._toast.error('Your network is disconnected. Contact the administrator', { dismissible: true})
+        this._toast.error('Your network is disconnected. Contact the administrator', { dismissible: true })
     }
 
     autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any) {
-        if(!autosaveData) {
+        if (!autosaveData) {
             this.autosaveFailed()
             return
         }
@@ -510,6 +512,8 @@ export class ExamService {
             this.examTimerSub$.unsubscribe()
         }
 
+        this.cleanUpProctoring()
+
         const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING)
         const payload = hasDrawingAndWriting ? generatePayLoadForAutoSave(this, this._store) : generatePayLoadWithAllData(this, this._store)
 
@@ -604,6 +608,12 @@ export class ExamService {
 
         if (this.examSubmit$) {
             this.examSubmit$.unsubscribe();
+        }
+    }
+
+    cleanUpProctoring() {
+        if (this.isAutoProctoring()) {
+            this._autoProctoringService.cleanUpProctoring()
         }
     }
 }

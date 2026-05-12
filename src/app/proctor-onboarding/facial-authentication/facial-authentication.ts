@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { MediaService } from '../../services/media';
-import { OnboardingService } from '../../services/onboarding';
+import { OnboardingService } from '../../services/system-check/onboarding';
 import { CaptureState } from '../../store/model/media-models';
 
 @Component({
@@ -82,7 +82,6 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
     }
 
     try {
-      // Set canvas dimensions to match video
       canvas.width = videoEl.videoWidth || 640;
       canvas.height = videoEl.videoHeight || 480;
 
@@ -91,12 +90,10 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
         throw new Error('Unable to get canvas context');
       }
 
-      // Draw current video frame to canvas
       ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
       canvas.toBlob((blob) => {
         if (blob) {
-          // Clean up previous URL
           if (this.capturedImageUrl()) {
             URL.revokeObjectURL(this.capturedImageUrl()!);
           }
@@ -130,53 +127,8 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
   }
 
   confirmPhoto() {
+    // verify photo here
+    console.log('confirmPhoto');
     this._onboardingService.markStepCompleted('facial');
   }
-
-
-
-
-  // private async initializeCamera_() {
-  //   this.captureState.set('initializing');
-  //   this.errorMessage.set(null);
-
-  //   if (this._mediaService.hasVideoPermission()) {
-  //     // Reuse existing stream or get a new one
-  //     if (!this._mediaService._videoStream()) {
-  //       await this._mediaService.requestVideoPermission();
-  //     }
-
-  //     await this.startVideoPreview();
-  //   } else {
-  //     // Try to get permission (edge case - user might have revoked)
-  //     try {
-  //       await this._mediaService.requestVideoPermission();
-
-  //       if (this._mediaService.hasVideoPermission()) {
-  //         await this.startVideoPreview();
-  //       } else {
-  //         this.captureState.set('error');
-  //         this.errorMessage.set('Camera permission is required for facial authentication. Please go back and complete the video check first.');
-  //       }
-
-  //     } catch {
-  //       this.captureState.set('error');
-  //       this.errorMessage.set('Unable to access camera. Please ensure camera permissions are granted.');
-  //     }
-  //   }
-  // }
-
-  // private async startVideoPreview() {
-  //   // Wait for view to be ready
-  //   await new Promise(resolve => setTimeout(resolve, 100));
-
-  //   const videoEl = this.videoPreview()?.nativeElement;
-  //   if (videoEl) {
-  //     this._mediaService.setVideoElement(videoEl);
-  //     this.captureState.set('ready');
-  //   } else {
-  //     this.captureState.set('error');
-  //     this.errorMessage.set('Unable to initialize video preview.');
-  //   }
-  // }
 }

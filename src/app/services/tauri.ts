@@ -22,15 +22,15 @@ export class TauriService {
             return
         }
 
-        if(!this.isAndroid()) {
+        if (!this.isAndroid()) {
             return
         }
-    
+
         this.isAppPinned();
     });
 
     isTauri(): boolean {
-        return !!(window as any).__TAURI_INTERNALS__; 
+        return !!(window as any).__TAURI_INTERNALS__;
     }
 
     async importTauriApis(): Promise<void> {
@@ -57,6 +57,10 @@ export class TauriService {
         platformIsTauri = await this.verifyTauriEnvironment()
 
         if (platformIsTauri) {
+            if (!this.isTauri()) {
+                return
+            }
+
             this.listenForInfrigement()
         }
         this._store.updateStore({ platformIsTauri })
@@ -67,9 +71,9 @@ export class TauriService {
         try {
             const result = await this.tauriInvoke()('is_tauri_app');
             return !!result;
-        } catch (error) { 
+        } catch (error) {
             return false
-         }
+        }
     }
 
     initializeBatteryStatus() {
@@ -118,9 +122,6 @@ export class TauriService {
     }
 
     async listenForInfrigement() {
-        if (!this.isTauri()) {
-            return
-        }
 
         try {
             const unlisten = await this.tauriListen()('infrigment::discovered', (event: any) => {

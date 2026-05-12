@@ -104,9 +104,9 @@
         <button 
             type="button" 
             class="btn py-4! px-10! rounded-full! text-lg font-semibold" 
-            [disabled]="!canStartExam()"
-            [class.opacity-50]="!canStartExam()"
-            [class.cursor-not-allowed]="!canStartExam()"
+            [disabled]="!canStartExam() && !allowNavigation()"
+            [class.opacity-50]="!canStartExam() && !allowNavigation()"
+            [class.cursor-not-allowed]="!canStartExam() && !allowNavigation()"
             (click)="startExam()">
             <span class="flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

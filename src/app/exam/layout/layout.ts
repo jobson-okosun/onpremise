@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, HostListener, inject, linkedSignal, OnDestroy, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, HostListener, inject, linkedSignal, OnDestroy, signal, TemplateRef, viewChild } from '@angular/core';
 import { DrawingAndWriting } from '../item-types/drawing-and-writing/drawing-and-writing';
 import { ExamTools } from '../exam-tools/exam-tools';
 import { Paginator } from '../paginator/paginator';
@@ -6,10 +6,9 @@ import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
-import { ProctorService } from '../../services/ai-proctoring/proctor';
+import { ProctorService } from '../../services/auto-proctoring/proctor';
 import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
-import { loginData } from '../../utils/constants';
 import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
 import { NgClass } from '@angular/common';
 import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-dropdown';
@@ -40,11 +39,12 @@ import { Subscription } from 'rxjs';
 import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.html', 
-  styleUrl: './layout.css',
+  templateUrl: './layout.html',
+  styleUrl: './layout.css', 
   imports: [
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
@@ -54,25 +54,24 @@ import { LiveProctoringService } from '../../services/live-proctoring/live-proct
 })
 export default class Layout implements OnDestroy {
   private _store = inject(Store)
-  private _exam = inject(ExamService)  
-  private _proctor = inject(ProctorService)
+  private _exam = inject(ExamService)
+  private _autoProctorService = inject(ProctorService)
   private _toast = inject(HotToastService)
   private _postLoginService = inject(PostLogin)
+  private _authService = inject(AuthService)
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private sub!: Subscription;
 
-  proctorDenied = computed(() => this._proctor.isDenied())
-  proctorError = computed(() => this._proctor.errorMessage())
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
   speakMessage = computed(() => this._liveProctoring.speakMessage())
 
-
   lastPressTime = signal(0);
-  threshold = signal(2000); // 2 sec
+  threshold = signal(2000);
   showCalculator = signal<null | string>(null)
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
+  infractionToastTemplate = viewChild<TemplateRef<HTMLDivElement>>('infractionToastTemplate');
   showUserProfileModal: boolean = false;
   expandedPane = signal<number | null>(0);
   isMobile = signal(true)
@@ -133,7 +132,7 @@ export default class Layout implements OnDestroy {
   examName = computed(() => {
     const name = this.store().loginData?.assessment_data.name ?? ''
     return name.length > 21 ? name.slice(0, 21).concat('...') : name
-  })  
+  })
 
   candidateName = computed(() => {
     const name = this.store().loginData?.candidate_data?.name! ?? ''
@@ -141,8 +140,8 @@ export default class Layout implements OnDestroy {
   })
 
   isLiveProctoring = computed(() => this._exam.isLiveProctoring())
-  isAIProctoring = computed(() => this._exam.isAIProctoring())
-  isProctoredExam = computed(() => this.isLiveProctoring() || this.isAIProctoring())
+  isAutoProctoring = computed(() => this._exam.isAutoProctoring())
+  isProctoredExam = computed(() => this._exam.isProctoredExam())
 
   isExamAlpha = computed(() => this._exam.isExamAlpha())
   isAutoSaving = computed(() => this._exam.isAutoSaving())
@@ -155,9 +154,10 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    if (!this.store().loginData) {
-      this._postLoginService.formatLoginDataToStore(loginData as any)
-    }
+    // if (!this.store().loginData) {
+    //   this._authService.setPreLoginData(preloginData as any);
+    //   this._postLoginService.formatLoginDataToStore(loginData as any)
+    // }
 
     if (!this.store().platformIsTauri) {
       fullscreen()
@@ -170,19 +170,19 @@ export default class Layout implements OnDestroy {
           candidateName: this.store().loginData?.candidate_data?.name!
         })
       }
-      
-      if (this.isAIProctoring()) {
-        const success = await this._proctor.initializeProctoring()
+
+      if (this.isAutoProctoring()) {
+        const success = await this._autoProctorService.initializeProctoring()
 
         if (!success) {
-          this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 15000 })
+          this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 150000, dismissible: true })
           return
         }
       }
     }
 
     this.disableContextMenu()
-    this.disableCopyAndPaste()    
+    this.disableCopyAndPaste()
 
     this._exam.startExam()
   }
@@ -222,7 +222,7 @@ export default class Layout implements OnDestroy {
 
     str = section.name.length > 15 ? (section.name.slice(0, 16) + '...') : section.name
     return str
-  }
+  } 
 
   constructor() {
     this.sub = this.breakpointObserver
@@ -232,6 +232,13 @@ export default class Layout implements OnDestroy {
         const width = window.innerWidth;
         this._exam.screenWidth.set(width);
       });
+
+    effect(() => {
+      const el = this.infractionToastTemplate();
+      if (el) {
+        this._autoProctorService.infractionTemplateRef.set(el)
+      }
+    });
   }
 
   setFontSize(el: HTMLInputElement) {
@@ -371,5 +378,12 @@ export default class Layout implements OnDestroy {
   ngOnDestroy(): void {
     this._exam.destroySubscription()
     this.sub.unsubscribe();
+    this._exam.cleanUpProctoring()
+  }
+
+  handleAutoProctorEvent(msg: any) {
+    if(msg.type === 'video_streaming_stopped') {
+      this._toast.warning('Video streaming stopped', { duration: 150000, dismissible: true })
+    }
   }
 }

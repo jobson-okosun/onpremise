@@ -7,6 +7,7 @@ export interface IAssessmentPreLoginData {
   passport_location: string;
   delivery_method: DeliveryMethod;
   exam_type: ExamType
+  batch_id?: string;
 }
 
 export enum DeliveryMethod {
@@ -22,6 +23,7 @@ export interface ICandidateLoginDTO {
   login_value: string;
   assessment_id: string;
   unique_id: string;
+  exam_id: string;
 }
 
 export interface Slide {
@@ -197,14 +199,14 @@ export interface StoreSection {
 }
 
 export interface Ping {
-    message: string,
-    timestamp?: string, 
+  message: string,
+  timestamp?: string,
 }
 
 export interface Pong {
-    message: String,
-    timestamp: string,
-    server_status: String,
+  message: String,
+  timestamp: string,
+  server_status: String,
 }
 
 export interface BatteryStatus {
@@ -268,72 +270,140 @@ export interface ILogOutParticipant {
   reason: string;
 }
 
-export type OnboardingStepId = 
-    | 'details' 
-    | 'system-check'
-    | 'device-check-audio' 
-    | 'device-check-video' 
-    | 'facial' 
-    | 'guidelines' 
-    | 'rules' 
-    | 'start';
+export type OnboardingStepId =
+  | 'details'
+  | 'system-check'
+  | 'device-check-audio'
+  | 'device-check-video'
+  | 'facial'
+  | 'guidelines'
+  | 'rules'
+  | 'start';
 
 export interface OnboardingStep {
-    id: OnboardingStepId;
-    label: string;
-    icon: string;
-    route: string;
-    requiresCompletion: boolean;
+  id: OnboardingStepId;
+  label: string;
+  icon: string;
+  route: string;
+  requiresCompletion: boolean;
 }
 
-// Track completion status of each step
 export type StepCompletionStatus = Record<OnboardingStepId, boolean>;
 
 export interface OnboardingSettings {
-    requireSystemCheck: boolean;
-    requireAudioCheck: boolean;
-    requireVideoCheck: boolean;
-    requireFacialAuth: boolean;
-    showGuidelines: boolean;
-    showRules: boolean;
+  requireSystemCheck: boolean;
+  requireAudioCheck: boolean;
+  requireVideoCheck: boolean;
+  requireFacialAuth: boolean;
+  showGuidelines: boolean;
+  showRules: boolean;
 }
 
-// Default settings (all features enabled)
 export const DEFAULT_ONBOARDING_SETTINGS: OnboardingSettings = {
-    requireSystemCheck: true,
-    requireAudioCheck: true,
-    requireVideoCheck: true,
-    requireFacialAuth: true,
-    showGuidelines: true,
-    showRules: true,
+  requireSystemCheck: true,
+  requireAudioCheck: true,
+  requireVideoCheck: true,
+  requireFacialAuth: true,
+  showGuidelines: true,
+  showRules: true,
 };
 
 export const ALL_ONBOARDING_STEPS: OnboardingStep[] = [
-    { id: 'details', label: 'Details', icon: 'info', route: '/proctored/onboarding/overview', requiresCompletion: false },
-    { id: 'system-check', label: 'System', icon: 'monitor', route: '/proctored/onboarding/system-check', requiresCompletion: true },
-    { id: 'device-check-audio', label: 'Audio', icon: 'mic', route: '/proctored/onboarding/device-check/audio', requiresCompletion: true },
-    { id: 'device-check-video', label: 'Video', icon: 'camera', route: '/proctored/onboarding/device-check/video', requiresCompletion: true },
-    // { id: 'facial', label: 'Photo', icon: 'user', route: '/proctored/onboarding/facial-biometric', requiresCompletion: true },
-    { id: 'guidelines', label: 'Guidelines', icon: 'book', route: '/proctored/onboarding/guidelines', requiresCompletion: false },
-    { id: 'rules', label: 'Rules', icon: 'clipboard', route: '/proctored/onboarding/rules', requiresCompletion: false },
-    { id: 'start', label: 'Start', icon: 'play', route: '/proctored/onboarding/start-exam', requiresCompletion: false },
+  { id: 'details', label: 'Details', icon: 'info', route: '/proctored/onboarding/overview', requiresCompletion: false },
+  { id: 'system-check', label: 'System', icon: 'monitor', route: '/proctored/onboarding/system-check', requiresCompletion: true },
+  { id: 'device-check-audio', label: 'Audio', icon: 'mic', route: '/proctored/onboarding/device-check/audio', requiresCompletion: true },
+  { id: 'device-check-video', label: 'Video', icon: 'camera', route: '/proctored/onboarding/device-check/video', requiresCompletion: true },
+  // { id: 'facial', label: 'Photo', icon: 'user', route: '/proctored/onboarding/facial-biometric', requiresCompletion: true },
+  { id: 'guidelines', label: 'Guidelines', icon: 'book', route: '/proctored/onboarding/guidelines', requiresCompletion: false },
+  { id: 'rules', label: 'Rules', icon: 'clipboard', route: '/proctored/onboarding/rules', requiresCompletion: false },
+  { id: 'start', label: 'Start', icon: 'play', route: '/proctored/onboarding/start-exam', requiresCompletion: false },
 ];
 
-// Initial completion status - all false
 export const INITIAL_STEP_COMPLETION: StepCompletionStatus = {
-    'details': true,
-    'system-check': false,
-    'device-check-audio': false,
-    'device-check-video': false,
-    'facial': false,
-    'guidelines': true,
-    'rules': true,
-    'start': true
+  'details': true,
+  'system-check': false,
+  'device-check-audio': false,
+  'device-check-video': false,
+  'facial': false,
+  'guidelines': true,
+  'rules': true,
+  'start': true
 };
 
 export enum ExamType {
-    EXAMALPHA = 'EXAMALPHA',
-    UTME = 'UTME',
-    MOCK = 'MOCK',
-    DUMMY = 'DUMMY'
+  EXAMALPHA = 'EXAMALPHA',
+  UTME = 'UTME',
+  MOCK = 'MOCK',
+  DUMMY = 'DUMMY'
+}
+
+export interface CandidateInfractionEntry {
+  id: string;
+  label: string;
+  strikes: number;
+  time: string;
+  timestamp: string;
+  type: "INFRINGMENT" | "INFO" | "WARNING";
+  maxStrikeReached?: boolean;
+  frameId?: number;
+  savedFramePath?: string;
+  color: string
+}
+
+export const INFRACTION_LABELS = {
+  0: "Unspecified",
+  1: "Looking Away",
+  2: "Face Not Centered",
+  3: "Multiple Faces",
+  4: "Face Mismatch",
+  5: "Face Not Detected",
+  6: "Mobile Phone Detected",
+  7: "Book Detected",
+  8: "Headphone Detected",
+  9: "External Keyboard",
+  10: "External Mouse",
+  11: "Calculator Detected",
+  12: "Prohibited Object",
+  13: "Talking Detected",
+  14: "Background Voices",
+  15: "App Minimisation",
+  16: "Screenshot Detected",
+  17: "Screen Sharing",
+  18: "External Screen",
+  19: "Screen Recording",
+  20: "Copy/Paste Attempt",
+  21: "VPN Detected",
+  22: "Proxy Detected",
+  23: "Network Instability",
+  24: "Camera Disabled",
+  25: "Microphone Disabled",
+};
+
+export const INFRACTION_COLORS = {
+  0: "blue-500",
+  1: "yellow-500",
+  2: "yellow-500",
+  3: "red-500",
+  4: "red-500",
+  5: "red-500",
+  6: "red-500",
+  7: "red-500",
+  8: "red-500",
+  9: "red-500",
+  10: "red-500",
+  11: "red-500",
+  12: "red-500",
+  13: "yellow-500",
+  14: "yellow-500",
+  15: "red-500",
+  16: "red-500",
+  17: "red-500",
+  18: "red-500",
+  19: "red-500",
+  20: "red-500",
+  21: "red-500",
+  22: "red-500",
+  23: "red-500",
+  24: "red-500",
+  25: "red-500",
 }

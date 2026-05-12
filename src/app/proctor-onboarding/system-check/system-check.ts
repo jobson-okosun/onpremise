@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { SystemCheckService, CheckStatus } from '../../services/system-check';
-import { OnboardingService } from '../../services/onboarding';
+import { OnboardingService } from '../../services/system-check/onboarding';
+import { CheckStatus, SystemCheckService } from '../../services/system-check/system-check';
 
 @Component({
     selector: 'app-system-check',

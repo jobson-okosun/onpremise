@@ -27,8 +27,8 @@ export default class Login {
   showLogin = signal(false)
   isLoading = signal(false)
   deliveryMethods = signal(DeliveryMethod)
-  candidateId = new FormControl('', Validators.required)
   store = computed(() => this._store.store())
+  candidateId = new FormControl('', Validators.required)
 
   ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 1024px)').matches
@@ -50,11 +50,15 @@ export default class Login {
 
     const preLoginData = this.store().preloginData;
     if (!preLoginData) {
-      this._router.navigate(['overview'])
+      this._router.navigate(['/usage-guide'])
       return
     }
 
-    const payload: ICandidateLoginDTO = { assessment_id: preLoginData.id, login_value: this.candidateId.value, unique_id: preLoginData.unique_id} as any;
+    const payload: Omit<ICandidateLoginDTO, 'exam_id'> = { 
+      assessment_id: preLoginData.id, 
+      login_value: this.candidateId.value!, 
+      unique_id: preLoginData.unique_id
+    }
 
     this.isLoading.set(true)
     this._dataService.login(payload)

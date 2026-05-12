@@ -1,10 +1,7 @@
 @if (isActive()) {
     <div class="fixed bottom-16 left-3 flex items-end gap-1 z-50 cursor-grab active:cursor-grabbing" cdkDrag cdkDragBoundary=".proctor-boundary">
-        
-        <!-- Video Container -->
         <div class="relative rounded-full bg-gray-800 shadow-lg overflow-hidden transition-all duration-300" [class]="isMinimized() ? 'size-[50px]' : 'size-[100px]'">
             
-            <!-- Recording Indicator -->
             <div class="absolute top-1.5 right-1/2 translate-x-1/2 flex items-center gap-1 z-10 bg-black/50 px-1.5 py-0.5 rounded-full">
                 <span class="size-2 bg-red-500 rounded-full animate-pulse"></span>
 
@@ -13,22 +10,19 @@
                 }
             </div>
 
-            <!-- Video Preview -->
-            @if (!isMinimized()) {
-                <div class="w-full h-full rounded-full overflow-hidden">
-                    <video #videoEl autoplay playsinline muted class="w-full h-full object-cover -scale-x-100"></video>
-                </div>
-            } @else {
-                <div class="w-full h-full flex items-center justify-center text-white/80">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
-                        <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
-                    </svg>
-                </div>
-            }
+            <div [class.hidden]="isMinimized()" class="w-full h-full rounded-full overflow-hidden">
+                <video id="webcam" #videoEl autoplay playsinline muted class="w-full h-full object-cover -scale-x-100"></video>
+            </div>
+
+            <div [class.hidden]="!isMinimized()" class="w-full h-full flex items-center justify-center text-white/80">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.618v6.764a1 1 0 0 1-1.447.894L15 14v-4z"/>
+                    <rect x="3" y="6" width="12" height="12" rx="2" ry="2"/>
+                </svg>
+            </div>
+            
         </div>
 
-        <!-- Minimize/Expand Button -->
         <div class="flex flex-col gap-2">
             @if(isTargetSpeaking()) {
                 <button class="relative size-7 rounded-sm bg-gray-50 border border-gray-200 flex items-center justify-center cursor-pointer transition-all duration-200 shrink-0"
@@ -41,7 +35,6 @@
                 </button>
             }
             
-            <!-- Chat Button -->
             <button 
                 class="relative size-7 rounded-sm bg-gray-50 border border-gray-200 flex items-center justify-center cursor-pointer transition-all duration-200 shrink-0"
                 (click)="toggleChat()"
@@ -83,7 +76,6 @@
     <!-- Chatbox -->
     @if (isChatOpen()) {
         <div class="fixed bottom-16 left-24 w-80 h-96 bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <!-- Chat Header -->
             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
                 <div class="flex items-center gap-2">
                     <div class="size-2 bg-green-500 rounded-full"></div>
@@ -99,7 +91,6 @@
                 </button>
             </div>
 
-            <!-- Chat Messages -->
             <div #chatMessagesContainer class="flex-1 overflow-y-auto p-3 space-y-3">
                 @if (messages().length === 0) {
                     <div class="h-full flex flex-col items-center justify-center text-gray-400 text-sm">
@@ -127,7 +118,6 @@
                 }
             </div>
 
-            <!-- Chat Input -->
             <div class="p-3 border-t border-gray-200">
                 <div class="flex items-end gap-2">
                     <textarea 
@@ -151,3 +141,5 @@
         </div>
     }
 }
+
+<canvas id="capture-canvas"></canvas>

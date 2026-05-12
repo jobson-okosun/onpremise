@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Store } from '../../store/store';
 import { Router } from '@angular/router';
-import { OnboardingService } from '../../services/onboarding';
+import { OnboardingService } from '../../services/system-check/onboarding';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-proctored-start-exam-step',
@@ -13,6 +14,7 @@ export default class ProctoredStartExamStep {
   private _store = inject(Store);
   private _router = inject(Router);
   private _onboardingService = inject(OnboardingService);
+  allowNavigation = signal(!environment.production);
 
   store = computed(() => this._store.store());
   examDuration = computed(() => this.store().examDuration);
@@ -24,7 +26,7 @@ export default class ProctoredStartExamStep {
   completionStatus = computed(() => this._onboardingService.completionStatus());
 
   startExam() {
-    if (this.canStartExam()) {
+    if (this.canStartExam() || this.allowNavigation()) {
       this._router.navigate(['/exam']);
     }
   }

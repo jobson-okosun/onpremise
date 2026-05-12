@@ -1,6 +1,6 @@
 import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { ProctorService } from '../../services/ai-proctoring/proctor';
+import { ProctorService } from '../../services/auto-proctoring/proctor';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
@@ -38,6 +38,7 @@ export class ProctorPreview {
     if (this._exam.isLiveProctoring()) {
       return this._liveProctoring.stream();
     }
+
     return this._proctor.stream();
   });
 
@@ -45,7 +46,8 @@ export class ProctorPreview {
     if (this._exam.isLiveProctoring()) {
       return !!this._liveProctoring.stream();
     }
-    return this._proctor.isActive();
+
+    return !!this._proctor.stream()
   });
 
   constructor() {
@@ -68,7 +70,6 @@ export class ProctorPreview {
     this.isChatOpen.update(v => !v);
     if (this.isChatOpen()) {
       this.unreadCount.set(0);
-      // Scroll to bottom after opening
       setTimeout(() => this.scrollToBottom(), 100);
     }
   }
@@ -87,8 +88,6 @@ export class ProctorPreview {
     this.messages.update(msgs => [...msgs, newMessage]);
     this.chatMessage.set('');
     this.scrollToBottom();
-
-    // TODO: Send message to proctor via backend
   }
 
   receiveMessage(text: string) {

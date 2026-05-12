@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild, ElementRef, effect } from '@angular/core';
 import { ProgressIndicator } from '../progress-indicator/progress-indicator';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '../../store/store';
@@ -17,6 +17,18 @@ export class OnboardingLayout {
 
   year = new Date().getFullYear();
   progressIndicator = viewChild(ProgressIndicator);
+  scrollContainer = viewChild<ElementRef>('scrollContainer');
+
+  constructor() {
+    effect(() => {
+      this.currentUrl();
+      
+      const element = this.scrollContainer()?.nativeElement;
+      if (element) {
+        element.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  }
 
   private currentUrl = toSignal(
     this._router.events.pipe(

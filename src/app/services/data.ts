@@ -50,7 +50,7 @@ export class DataService {
         return this._http.post<any>(`${environment.developmentIP}/candidate/heartbeat`, payload, { withCredentials: true });
     }
 
-    login(payload: ICandidateLoginDTO): Observable<ICandidateLoginResponse> {
+    login(payload: Partial<ICandidateLoginDTO>): Observable<ICandidateLoginResponse> {
         return this._http.post<ICandidateLoginResponse>(`${environment.developmentIP}/auth/candidate_login`, payload);
     }
 
@@ -70,7 +70,7 @@ export class DataService {
         return this._http.post<ICandidateAutoSaveResponse>(autoSaveUrl, payload).pipe(finalize(() => this.isAutoSavePendingResolve.set(false)));
     }
 
-    endExam(payload: ICandidateAutoSave, timedOut: boolean, hasDrawingAndWriting:boolean): Observable<ICandidationEndExamResponse> {
+    endExam(payload: ICandidateAutoSave, timedOut: boolean, hasDrawingAndWriting: boolean): Observable<ICandidationEndExamResponse> {
         const battery_status = this.store().batteryStatus
         const assessmentId = this.store().preloginData?.id
         const loginValue = this.store().loginData?.candidate_data.login_field_value
@@ -84,7 +84,6 @@ export class DataService {
             endExamPayload
         );
     }
-
 
     async downloadOrganizationAssets() {
         const hasNoBranding = { organizationAssets: { ...this.store().organizationAssets, logo: APP_BRANDING.logo, hasLogo: false } }
@@ -127,5 +126,129 @@ export class DataService {
             this._store.updateStore({ candidatePassport: safImgUrl })
 
         } catch (e) { }
+    }
+
+    async runNetworkCheck() {
+        const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+        await sleep(Math.random() * 5_000);
+
+        let download, upload, latency;
+
+        try {
+            upload = await this._checkUploadSpeed().catch(() => 0);
+
+            [download, latency] = await Promise.all([
+                this._checkDownloadSpeed().catch(() => 0),
+                this._checkLatency(5).catch(() => ({ avg: 999, min: 999, max: 999, jitter: 999, samples: [] })),
+            ]);
+
+        } catch (err) {
+            return {
+                passed: false,
+                download: { mbps: 0, passed: false },
+                upload: { mbps: 0, passed: false },
+                latency: { avg: 999, passed: false },
+            };
+        }
+
+        const result = {
+            download: {
+                mbps: +download.toFixed(2),
+                // passed: download >= 1,
+                passed: download >= 0.6,
+            },
+            upload: {
+                mbps: +upload.toFixed(2),
+                // passed: upload >= 2,
+                passed: upload >= 0.6,
+            },
+            latency: {
+                avg: +latency.avg.toFixed(0),
+                min: +latency.min.toFixed(0),
+                max: +latency.max.toFixed(0),
+                jitter: +latency.jitter.toFixed(0),
+                // passed: latency.avg <= 150 && latency.jitter <= 30,
+                passed: latency.avg <= 600 && latency.jitter <= 200,
+            },
+            passed: false,
+        };
+
+        result.passed = result.download.passed && result.upload.passed && result.latency.passed;
+        return result;
+    }
+
+    private async _checkDownloadSpeed() {
+        const SIZE_MB = 2.04;
+
+        const url = environment.NETWORK_CHECK.DOWNLOAD
+        const start = performance.now();
+
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.body) return 0;
+
+        const reader = response.body.getReader();
+        while (true) {
+            const { done } = await reader.read();
+            if (done) break;
+        }
+
+        const duration = (performance.now() - start) / 1000;
+
+        return (SIZE_MB * 8) / duration;
+    }
+
+    private async _checkUploadSpeed() {
+        const SIZE_MB = 1;
+        const totalBytes = SIZE_MB * 1024 * 1024;
+        const bytes = new Uint8Array(totalBytes);
+        const CHUNK_SIZE = 65536;
+
+        for (let offset = 0; offset < totalBytes; offset += CHUNK_SIZE) {
+            crypto.getRandomValues(
+                bytes.subarray(
+                    offset,
+                    Math.min(offset + CHUNK_SIZE, totalBytes)
+                )
+            );
+        }
+
+        const url = environment.NETWORK_CHECK.UPLOAD;
+        const start = performance.now();
+
+        const res = await fetch(url, {
+            method: "POST",
+            body: bytes,
+            cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Upload failed");
+
+        const duration = (performance.now() - start) / 1000;
+
+        return (SIZE_MB * 8) / duration;
+    }
+
+    private async _checkLatency(samples = 5) {
+        const rtts = [];
+        const url = environment.NETWORK_CHECK.LATENCY;
+        const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+        for (let i = 0; i < samples; i++) {
+            const start = performance.now();
+            try {
+                await fetch(url, { method: "HEAD", cache: "no-store" });
+                rtts.push(performance.now() - start);
+            } catch (e) {
+                await fetch(url, { method: "GET", cache: "no-store" });
+                rtts.push(performance.now() - start);
+            }
+            if (i < samples - 1) await sleep(200);
+        }
+
+        const avg = rtts.reduce((a, b) => a + b, 0) / rtts.length;
+        const min = Math.min(...rtts);
+        const max = Math.max(...rtts);
+        const jitter = rtts.reduce((a, b) => a + Math.abs(b - avg), 0) / rtts.length;
+
+        return { avg, min, max, jitter };
     }
 }

@@ -10,7 +10,7 @@
         <div> 
             <div class="flex flex-col gap-3">
                <div>
-                    <input [formControl]="userId" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" placeholder="User ID">
+                    <input [formControl]="userId" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" [placeholder]="store().preloginData?.login_field ?? 'USER ID'">
                     @if(userId.invalid && userId.touched) {
                         @if(userId.hasError('required')) {
                             <div class="text-red-500 text-sm mt-1">Please enter your User ID</div>
@@ -26,12 +26,13 @@
                     }
                 </div>
             </div>
-            @if(examId.hasError('serverError')) {
-                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ examId.errors?.['serverError'].msg }} </div>
+
+            @if(userId.hasError('serverError')) {
+                <div class="text-red-500 text-sm bg-red-50 p-3 text-center mt-2">{{ userId.errors?.['serverError'].msg }} </div>
             }
+
             <div class="my-10">
-                <a routerLink="../onboarding" class="btn w-full! rounded-full!">Continue</a>
-                <!-- <button type="button" [disabled]="isLoading() || !userId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button> -->
+                <button type="button" [disabled]="isLoading() || !userId.value || !examId.value" (click)="login()" class="btn w-full! rounded-full! py-3! disabled:opacity-40">Continue</button>
             </div>
         </div>
     </div>

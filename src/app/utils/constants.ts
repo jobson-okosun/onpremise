@@ -1,8 +1,9 @@
+import { SystemCheckItem } from "../services/system-check/system-check";
 
 export const APP_VERSION = '0.5.8'
 export const APP_BRANDING = {
-  // logo: 'EXPryLogoHor.png'
-  logo: 'jamb-logo.jpg',
+  logo: 'EXPryLogoHor.png'
+  // logo: 'jamb-logo.jpg',
 }
 export const DRAWING_AND_WRITING_BRUSH_COLORS = ['#000000', '#007aff', '#34c759']
 export const SLIDES = [
@@ -95,87 +96,59 @@ export const SLIDES = [
     description: 'Use keyboard shortcuts to navigate and select options efficiently.',
     image: 'guide/10.png',
     animation: 'animate__fadeIn'
-  },
-
-  // {
-  //   title: 'Measuring Tools?',
-  //   description: 'Click the tools button to pick tools for measurement. e.g Ruler and Protractor',
-  //   image: 'onboarding/tools.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Need Graph for question?',
-  //   description: 'Select grid on paper style dropdown when you click the button',
-  //   image: 'onboarding/paper.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'Ready to submit exam?',
-  //   description: 'Click the submit button to finally submit your exam',
-  //   image: 'guide/12.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Good connection',
-  //   description: 'You connection is good! keep watch for changes',
-  //   image: 'onboarding/goodconn.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'Connection warning',
-  //   description: 'Connection loss notification. report to admin immediately',
-  //   image: 'onboarding/conn2mins.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'View Question',
-  //   description: 'Click the view question button to view in larger mode',
-  //   image: 'onboarding/question.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Read instruction',
-  //   description: 'Click the instructions icon to read both th sections and exam instructions',
-  //   image: 'onboarding/instruction.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'Layout',
-  //   description: 'Click to toggle full writing mode. Provides more spaces for writing',
-  //   image: 'onboarding/layout.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Pen-Writing',
-  //   description: 'Click the pen icon to enable writing on the writing space',
-  //   image: 'onboarding/pen.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'Erase Writing',
-  //   description: 'Click the eraser icon to help you erase your writings',
-  //   image: 'onboarding/eraser.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Clear writing page',
-  //   description: 'Want to clear a page? click the button. use with caution',
-  //   image: 'onboarding/clear.png',
-  //   animation: 'animate__slideInDown'
-  // },
-  // {
-  //   title: 'Multiple pages per question',
-  //   description: 'Need more pages to write? click the icon to upto 7 pages',
-  //   image: 'onboarding/addpage.png',
-  //   animation: 'animate__fadeIn'
-  // },
-  // {
-  //   title: 'Delete page',
-  //   description: 'Need to delete a page, select the page and click the delete button',
-  //   image: 'onboarding/deletepage.png',
-  //   animation: 'animate__slideInDown'
-  // },
+  }
 ];
+export const SYSTEM_DEFAULT_CHECKS: SystemCheckItem[] = [
+  {
+    id: 'internet',
+    label: 'Internet Connection',
+    description: 'Checking if you are connected to the internet...',
+    status: 'pending',
+    critical: true,
+  },
+  {
+    id: 'webrtc',
+    label: 'Video Streaming',
+    description: 'Checking if video streaming is supported...',
+    status: 'pending',
+    critical: true,
+  },
+  {
+    id: 'mediaDevices',
+    label: 'Camera & Microphone',
+    description: 'Checking if camera and microphone are available...',
+    status: 'pending',
+    critical: true,
+  },
+  {
+    id: 'speed',
+    label: 'Download Speed',
+    description: 'Checking your download speed...',
+    status: 'pending',
+    critical: false,
+  },
+  {
+    id: 'upload',
+    label: 'Upload Speed',
+    description: 'Checking your upload speed...',
+    status: 'pending',
+    critical: true,
+  },
+  {
+    id: 'latency',
+    label: 'Response Time (Latency)',
+    description: 'Checking how fast your connection responds...',
+    status: 'pending',
+    critical: false,
+  },
+  {
+    id: 'screen',
+    label: 'Screen Size',
+    description: 'Checking your display size...',
+    status: 'pending',
+    critical: false,
+  },
+]
 
 
 
@@ -259,7 +232,7 @@ export const loginData = {
     "name": "Unified Tertiary Entrance Exam",
     "start_exam_instruction": "Read the instructions carefully before answering.",
     "end_exam_instruction": "Ensure you have reviewed your answers before submitting.",
-    "duration_minutes": 120, 
+    "duration_minutes": 120,
     "display_all_sections_at_once": false,
     "instruction_read_time_sec": 120,
     "warn_end_of_reading_time_sec": 30,

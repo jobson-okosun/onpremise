@@ -56,6 +56,12 @@ export default class UsageGuide {
     }
 
     this._authService.setPreLoginData(res);
+    
+    if (res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+      this._router.navigate(['proctored'])
+      return;
+    }
+
     this._router.navigate(['welcome']);
   }
 

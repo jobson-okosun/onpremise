@@ -8,12 +8,14 @@ export const routes: Routes = [
     { path: '', redirectTo: 'usage-guide', pathMatch: 'full' },
     { 
         path: 'proctored',
+        canActivate: [hasActiveExam],
         children: [
             { path: '', redirectTo: 'auth', pathMatch: 'full' },
             { path: 'auth', loadComponent: () => import('./proctor-onboarding/authentication/authentication')},
             { path: 'auth/login', loadComponent: () => import('./proctor-onboarding/login/login')},
             { 
                 path: 'onboarding', 
+                canActivate: [isLoggedin],
                 component: OnboardingLayout, 
                 children: [
                     { path: '', redirectTo: 'overview', pathMatch: 'full' },
@@ -34,8 +36,8 @@ export const routes: Routes = [
     { path: 'login', canActivate: [hasActiveExam], loadComponent: () => import('./login/login')},
     { path: 'overview', canActivate: [isLoggedin], loadComponent: () => import('./overview/overview')},
     { path: 'instruction', canActivate: [isLoggedin], loadComponent: () => import('./instructions/instructions')},
-    // { path: 'exam', canActivate: [isLoggedin, examNotEnded], canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
-    { path: 'exam', loadComponent: () => import('./exam/layout/layout')},
+    { path: 'exam', canActivate: [isLoggedin, examNotEnded], canDeactivate: [canGoBackFromExam], loadComponent: () => import('./exam/layout/layout')},
+    // { path: 'exam', loadComponent: () => import('./exam/layout/layout')},
     { path: 'exam-ended', loadComponent: () => import('./exam-ended/exam-ended')}
 ];
   

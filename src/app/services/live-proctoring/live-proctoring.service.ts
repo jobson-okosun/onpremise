@@ -37,7 +37,7 @@ export class LiveProctoringService {
     if (this.stream()) return true;
 
     try {
-      // ── Get Media Immediately (Blueprint: start media ASAP) ────────────────
+      // ── Get Media Immediately ────────────────
       await this.startUserMedia();
 
       const wsUrl = 'wss://betas.examalpha.com:4080/ws';

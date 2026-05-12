@@ -1,11 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
 import Login from '../login/login';
 import { Store } from '../../store/store';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-authentication',
-  imports: [Login],
+  imports: [Login, RouterLink],
   templateUrl: './authentication.html',
   styleUrl: './authentication.css',
 })
@@ -17,8 +17,8 @@ export default class Authentication {
   store = computed(() => this._store.store());
 
   goToLogin() {
-    const userid = this._route.snapshot.queryParamMap.get('userid')
-    const examid = this._route.snapshot.queryParamMap.get('examid')
-    return this._router.navigate(['/proctored/auth/login'], { queryParams: { userid, examid } })
+    const userId = this._route.snapshot.queryParamMap.get('userId')
+    const examId = this._route.snapshot.queryParamMap.get('examId')
+    return this._router.navigate(['/proctored/auth/login'], { queryParams: { userId, examId } })
   }
 }

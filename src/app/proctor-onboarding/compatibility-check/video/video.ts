@@ -1,6 +1,6 @@
 import { Component, computed, effect, ElementRef, inject, OnDestroy, viewChild } from '@angular/core';
 import { MediaService } from '../../../services/media';
-import { OnboardingService } from '../../../services/onboarding';
+import { OnboardingService } from '../../../services/system-check/onboarding';
 
 @Component({
   selector: 'app-video',
