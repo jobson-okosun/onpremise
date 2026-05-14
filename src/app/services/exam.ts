@@ -10,6 +10,8 @@ import { Router } from "@angular/router";
 import { TauriService } from "./tauri";
 import { ProctorService } from "./auto-proctoring/proctor";
 import { PostLogin } from "./post-login";
+import { SystemCheckService } from "./system-check/system-check";
+import { MINIMUM_REASONABLE_DOWNLOAD_SPEED, MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET, NETWORK_RETRY_INTERVAL } from "../utils/constants";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -20,8 +22,10 @@ export class ExamService {
     private _tauriService = inject(TauriService)
     private _postLoginService = inject(PostLogin)
     private _autoProctoringService = inject(ProctorService);
+    private _systemCheckService = inject(SystemCheckService)
 
     examTimerSub$: Subscription;
+    proctoringNetworkSubscription$: Subscription
     examSubmit$: Subscription;
     screenWidth = signal<number>(window.innerWidth);
     itemTypes = signal(ItemType);
@@ -60,10 +64,14 @@ export class ExamService {
     examType = computed(() => this.store().preloginData?.exam_type ?? ExamType.EXAMALPHA)
     isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
 
-    proctoredExamDeliveryType = computed(() => DeliveryMethod.AUTO_PROCTORING)
-    isAutoProctoring = computed(() => this.proctoredExamDeliveryType() == DeliveryMethod.AUTO_PROCTORING)
-    isLiveProctoring = computed(() => this.proctoredExamDeliveryType() == DeliveryMethod.LIVE_PROCTORING)
+    isAutoProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.AUTO_PROCTORING)
+    isLiveProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.LIVE_PROCTORING)
     isProctoredExam = computed(() => this.isLiveProctoring() || this.isAutoProctoring())
+    isCheckingProctoringNetwork = signal(false)
+    proctoringNetworkSpeed = linkedSignal(() => this._systemCheckService.networkCheckResults()?.upload ?? 0)
+    proctoringNetworkRetryCountdown = signal<number | null>(null);
+    isProctoringNetworkRetryActive = signal(false);
+    private proctoringNetworkRetrySub?: Subscription;
 
     constructor() {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
@@ -188,9 +196,11 @@ export class ExamService {
         this.autoSaveInterval.set(this.store().loginData!.assessment_data.auto_save_sec)
 
         this.examTimerSub$?.unsubscribe();
+
         this.lastAutoSaveTime.set(new Date())
         this.inactivityTimer.set(Date.now())
-        this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() })
+
+        this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() }) 
     }
 
     examTimerCallback() {
@@ -442,7 +452,12 @@ export class ExamService {
     }
 
     triggerActivityWarning() {
+        if(this.isProctoringNetworkRetryActive()){
+            return
+        }
+
         this.isActivityWarningDisplayed.set(true);
+        
         Swal.close();
 
         Swal.fire({
@@ -484,7 +499,11 @@ export class ExamService {
     }
 
     displayConectionLossModal(): void {
+        this.isProctoringNetworkRetryActive.set(false)
+        this.stopNetworkRetryCountdown()
+
         Swal.close();
+
 
         Swal.fire({
             title: 'Loss of Connection',
@@ -615,5 +634,79 @@ export class ExamService {
         if (this.isAutoProctoring()) {
             this._autoProctoringService.cleanUpProctoring()
         }
+    }
+
+    startProctoringNetworkMonitor() {
+        this.proctoringNetworkSubscription$ = interval(NETWORK_RETRY_INTERVAL).subscribe({
+            next: async () => {
+                if (this.isCheckingProctoringNetwork() || this.isProctoringNetworkRetryActive()) return;
+
+                await this.checkProctorNetworkConnectivity()               
+            }
+        })
+    }
+
+    async checkProctorNetworkConnectivity() {
+        if (this.examEnded()) return;
+
+        this.isCheckingProctoringNetwork.set(true);
+
+        try {
+            const req = await this._dataService._checkUploadSpeed();
+            const networkUploadSpeed = +req.toFixed(2);
+
+            this.proctoringNetworkSpeed.set(networkUploadSpeed);
+
+            if(this.proctoringNetworkSpeed() >= MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET && this.proctoringNetworkSpeed() < MINIMUM_REASONABLE_DOWNLOAD_SPEED) {
+                this._toast.warning(`Slow Network Connection`)
+            }
+
+            if (networkUploadSpeed < MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET) {
+                this.isProctoringNetworkRetryActive.set(true);
+                disableRestrictedActions();
+                this.startNetworkRetryCountdown();
+            } else {
+                this.isProctoringNetworkRetryActive.set(false);
+                
+                if (!this.isCandidateSuspended() && this.store().appIsPinned) {
+                    enableRestrictedActions();
+                }
+                
+                this.stopNetworkRetryCountdown();
+            }
+        } 
+        catch(e) {
+            this.proctoringNetworkSpeed.set(0);
+            this.isProctoringNetworkRetryActive.set(true);
+            disableRestrictedActions();
+            this.startNetworkRetryCountdown();
+        }
+        finally {
+            this.isCheckingProctoringNetwork.set(false);
+        }
+    }
+
+    startNetworkRetryCountdown() {
+        if (this.proctoringNetworkRetryCountdown() !== null) return;
+        
+        this.proctoringNetworkRetryCountdown.set(30);
+        this.proctoringNetworkRetrySub = interval(1000).subscribe(() => {
+            const current = this.proctoringNetworkRetryCountdown();
+            if (current !== null) {
+                if (current <= 1) {
+                    this.stopNetworkRetryCountdown();
+                    this.checkProctorNetworkConnectivity();
+                } else {
+                    this.proctoringNetworkRetryCountdown.set(current - 1);
+                }
+            }
+        });
+    }
+
+    stopNetworkRetryCountdown() {
+        if (this.proctoringNetworkRetrySub) {
+            this.proctoringNetworkRetrySub.unsubscribe();
+        }
+        this.proctoringNetworkRetryCountdown.set(null);
     }
 }

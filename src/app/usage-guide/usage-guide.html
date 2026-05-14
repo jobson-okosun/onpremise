@@ -1,7 +1,7 @@
 <div class="h-full bg-white">
     <div class="h-full flex flex-col justify-between lg:flex-row items-start gap-y-16 lg:gap-0">
         <div class="flex w-full lg:w-1/2 lg:h-full px-3 lg:p-0">
-            <div class="flex flex-col justify-between pb-5 md:pb-20 lg:p-10 w-full">
+            <div class="flex flex-col justify-between pb-5 md:pb-20 lg:p-10 lg:pb-0 w-full">
                 <div>
                     <div class="mb-20">
                         <img src="EXPryLogoHor.png" alt="Examlpha logo" width="150">
@@ -24,7 +24,14 @@
                                 </span>
                             </div>
                         }
-                        <button type="button" [disabled]="isLoading()" (click)="fetchPreLoginData()" class="btn p-4!">Proceed to exam</button>
+                        
+                        <div class="flex gap-2 items-end justify-end">
+                            @if(store().platformIsTauri) {
+                                <button type="button" [disabled]="isLoading()" (click)="closeBrowser()" class="btn p-4! bg-red-500!">Close browser</button>
+                            }
+
+                            <button type="button" [disabled]="isLoading()" (click)="fetchPreLoginData()" class="btn p-4!">Proceed to exam</button>
+                        </div>
                     </div>
 
                     @if(store().organizationAssets?.showBranding) {

@@ -40,11 +40,12 @@ import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { AuthService } from '../../services/auth';
+import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
-  styleUrl: './layout.css', 
+  styleUrl: './layout.css',
   imports: [
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
@@ -150,6 +151,29 @@ export default class Layout implements OnDestroy {
   screenWidth = computed(() => this._exam.screenWidth())
   canEndExam = computed(() => this._exam.canEndExam())
 
+  proctoringNetworkSpeed = computed(() => this._exam.proctoringNetworkSpeed())
+  isCheckingProctoringNetwork = computed(() => this._exam.isCheckingProctoringNetwork())
+  proctoringNetworkRetryCountdown = computed(() => this._exam.proctoringNetworkRetryCountdown())
+  isProctoringNetworkRetryActive = computed(() => this._exam.isProctoringNetworkRetryActive())
+  DOWNLOAD_SPEED = MINIMUM_REASONABLE_DOWNLOAD_SPEED
+
+  constructor() {
+    this.sub = this.breakpointObserver
+      .observe('(min-width: 1280px)')
+      .subscribe(() => {
+
+        const width = window.innerWidth;
+        this._exam.screenWidth.set(width);
+      });
+
+    effect(() => {
+      const el = this.infractionToastTemplate();
+      if (el) {
+        this._autoProctorService.infractionTemplateRef.set(el)
+      }
+    });
+  }
+
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
@@ -164,6 +188,7 @@ export default class Layout implements OnDestroy {
     }
 
     if (this.isProctoredExam()) {
+      
       if (this.isLiveProctoring()) {
         this._liveProctoring.initialize({
           roomId: this.store().loginData?.candidate_data?.login_field_value!,
@@ -179,6 +204,8 @@ export default class Layout implements OnDestroy {
           return
         }
       }
+
+      this._exam.startProctoringNetworkMonitor()
     }
 
     this.disableContextMenu()
@@ -222,23 +249,6 @@ export default class Layout implements OnDestroy {
 
     str = section.name.length > 15 ? (section.name.slice(0, 16) + '...') : section.name
     return str
-  } 
-
-  constructor() {
-    this.sub = this.breakpointObserver
-      .observe('(min-width: 1280px)')
-      .subscribe(() => {
-
-        const width = window.innerWidth;
-        this._exam.screenWidth.set(width);
-      });
-
-    effect(() => {
-      const el = this.infractionToastTemplate();
-      if (el) {
-        this._autoProctorService.infractionTemplateRef.set(el)
-      }
-    });
   }
 
   setFontSize(el: HTMLInputElement) {
@@ -382,7 +392,7 @@ export default class Layout implements OnDestroy {
   }
 
   handleAutoProctorEvent(msg: any) {
-    if(msg.type === 'video_streaming_stopped') {
+    if (msg.type === 'video_streaming_stopped') {
       this._toast.warning('Video streaming stopped', { duration: 150000, dismissible: true })
     }
   }

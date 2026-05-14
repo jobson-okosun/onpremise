@@ -10,7 +10,7 @@ export class Store {
         this._store.update(store => ({
             ...store,
             ...state
-        }));
+        }))
     }
 
     getStore() {

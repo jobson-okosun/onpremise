@@ -3,19 +3,18 @@ import { hasActiveExam, isLoggedin } from './guards/onboarding';
 import { canGoBackFromExam, examNotEnded } from './guards/exam';
 import { OnboardingLayout } from './proctor-onboarding/onboarding-layout/onboarding-layout';
 
-
 export const routes: Routes = [
     { path: '', redirectTo: 'usage-guide', pathMatch: 'full' },
     { 
         path: 'proctored',
-        canActivate: [hasActiveExam],
+        // canActivate: [hasActiveExam],
         children: [
             { path: '', redirectTo: 'auth', pathMatch: 'full' },
             { path: 'auth', loadComponent: () => import('./proctor-onboarding/authentication/authentication')},
             { path: 'auth/login', loadComponent: () => import('./proctor-onboarding/login/login')},
             { 
                 path: 'onboarding', 
-                canActivate: [isLoggedin],
+                // canActivate: [isLoggedin],
                 component: OnboardingLayout, 
                 children: [
                     { path: '', redirectTo: 'overview', pathMatch: 'full' },

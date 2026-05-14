@@ -5,7 +5,7 @@ import { filter, finalize, interval, map, Observable, of, Subscription } from "r
 import { environment } from "../../environments/environment";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Store } from "../store/store";
-import { APP_BRANDING } from "../utils/constants";
+import { APP_BRANDING, MINIMUM_REASONABLE_DOWNLOAD_SPEED } from "../utils/constants";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router } from "@angular/router";
 import { formatExamResponseData } from "../utils/helper";
@@ -160,7 +160,7 @@ export class DataService {
             upload: {
                 mbps: +upload.toFixed(2),
                 // passed: upload >= 2,
-                passed: upload >= 0.6,
+                passed: upload >= MINIMUM_REASONABLE_DOWNLOAD_SPEED,
             },
             latency: {
                 avg: +latency.avg.toFixed(0),
@@ -197,7 +197,7 @@ export class DataService {
         return (SIZE_MB * 8) / duration;
     }
 
-    private async _checkUploadSpeed() {
+    async _checkUploadSpeed() {
         const SIZE_MB = 1;
         const totalBytes = SIZE_MB * 1024 * 1024;
         const bytes = new Uint8Array(totalBytes);

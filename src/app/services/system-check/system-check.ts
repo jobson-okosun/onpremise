@@ -38,6 +38,8 @@ export class SystemCheckService {
     isRunning = signal(false);
     isComplete = signal(false);
 
+    networkCheckResults = signal({download: 0, upload: 0, latency: 0})
+
     private updateCheck(id: string, update: Partial<SystemCheckItem>) {
         this._checks.update(checks =>
             checks.map(c => (c.id === id ? { ...c, ...update } : c))
@@ -88,6 +90,7 @@ export class SystemCheckService {
 
         try {
             const result: any = await this._dataService.runNetworkCheck();
+            this.networkCheckResults.set(result)
 
             this.updateCheck('speed', {
                 status: result.download.passed ? 'passed' : 'warning',

@@ -9,6 +9,7 @@ import { AuthService } from '../services/auth';
 import { Router } from '@angular/router';
 import { Store } from '../store/store';
 import { NgClass } from '@angular/common';
+import { TauriService } from '../services/tauri';
 
 @Component({
   selector: 'app-usage-guide',
@@ -22,6 +23,7 @@ export default class UsageGuide {
   private _authService = inject(AuthService)
   private _router = inject(Router)
   private _store = inject(Store)
+  private _tauriService = inject(TauriService)
 
   store = computed(() => this._store.store())
   isLoading = signal(false)
@@ -46,7 +48,11 @@ export default class UsageGuide {
   }
 
   async successfullPrelogin(res: IAssessmentPreLoginData) {
-    if (res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER) {
+    if (
+      res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || 
+      res.delivery_method == DeliveryMethod.AUTO_PROCTORING || 
+      res.delivery_method == DeliveryMethod.LIVE_PROCTORING
+    ) {
       const isSecure = this.store().platformIsTauri
 
       if (!isSecure) {
@@ -75,5 +81,9 @@ export default class UsageGuide {
 
   startAutoSlide(): void {
     setInterval(() => this.nextSlide(), 8000);
+  }
+
+  closeBrowser() {
+    this._tauriService.KillBrowserFromAutoSave()
   }
 }

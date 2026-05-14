@@ -1,5 +1,9 @@
 import { SystemCheckItem } from "../services/system-check/system-check";
 
+export const MINIMUM_REASONABLE_DOWNLOAD_SPEED = 0.6
+export const MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET = 0.4
+export const NETWORK_RETRY_INTERVAL = 180_000 // 3 minutes
+
 export const APP_VERSION = '0.5.8'
 export const APP_BRANDING = {
   logo: 'EXPryLogoHor.png'

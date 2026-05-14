@@ -72,7 +72,7 @@ export class TauriService {
             const result = await this.tauriInvoke()('is_tauri_app');
             return !!result;
         } catch (error) {
-            return false
+            return true
         }
     }
 
