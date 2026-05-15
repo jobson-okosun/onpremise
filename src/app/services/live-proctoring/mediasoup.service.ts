@@ -30,13 +30,12 @@ export class MediasoupService {
   async produce(transport: mediasoup.types.Transport, track: MediaStreamTrack, appData: { source: string }): Promise<mediasoup.types.Producer> {
     if (track.kind === 'video') {
       if (appData.source === 'webcam') {
-        // ── Webcam: Simulcast (3 layers) as per blueprint ──────────────────
+        // ── Webcam: Simulcast (2 layers) as per blueprint ──────────────────
         return await transport.produce({
           track,
           encodings: [
-            { rid: 'r0', maxBitrate: 100000, scalabilityMode: 'S1T3' },
-            { rid: 'r1', maxBitrate: 300000, scalabilityMode: 'S1T3' },
-            { rid: 'r2', maxBitrate: 900000, scalabilityMode: 'S1T3' },
+            { rid: 'r0', maxBitrate: 80000, scalabilityMode: 'S1T3' },
+            { rid: 'r1', maxBitrate: 200000, scalabilityMode: 'S1T3' },
           ],
           codecOptions: { videoGoogleStartBitrate: 1000 },
           appData
@@ -45,7 +44,7 @@ export class MediasoupService {
         // ── Screen: Single high-bitrate encoding as per blueprint ────────────
         return await transport.produce({
           track,
-          encodings: [{ maxBitrate: 1500000 }],
+          encodings: [{ maxBitrate: 500000 }],
           codecOptions: { videoGoogleStartBitrate: 1000 },
           appData
         });

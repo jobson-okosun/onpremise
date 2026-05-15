@@ -3,9 +3,9 @@ import { SignalingService } from './signaling.service';
 import { MediasoupService } from './mediasoup.service';
 
 export interface LiveProctoringConfig {
-  roomId: string;
-  candidateName: string;
-  wsUrl?: string;
+  batch_id: string;
+  role: 'candidate';
+  user_id: string;
 }
 
 @Injectable({
@@ -19,6 +19,7 @@ export class LiveProctoringService {
   private recvTransport: any = null;
   private peerId: string | null = null;
   private signalInterval: any = null;
+  private screenProducer: any = null;
 
   // Track consumers to manage audio elements (Blueprint: consumerMap)
   private consumers = new Map<string, { element: HTMLAudioElement; kind: string }>();
@@ -33,21 +34,15 @@ export class LiveProctoringService {
     this.signalingService.onEvent = (msg) => this.handleServerMessage(msg);
   }
 
-  async initialize(config: Omit<LiveProctoringConfig, 'wsUrl'>): Promise<boolean> {
+  async initialize(config: LiveProctoringConfig): Promise<boolean> {
     if (this.stream()) return true;
 
     try {
-      // ── Get Media Immediately ────────────────
       await this.startUserMedia();
 
-      const wsUrl = 'wss://betas.examalpha.com:4080/ws';
-      await this.signalingService.connect(wsUrl);
+      await this.signalingService.connect();
 
-      this.signalingService.send('joinRoom', {
-        room_id: config.roomId,
-        role: 'candidate',
-        display_name: config.candidateName
-      });
+      this.signalingService.send('joinRoom', config);
 
       return true;
     } catch (error) {
@@ -174,7 +169,7 @@ export class LiveProctoringService {
         id: transport_id,
         iceParameters: ice_parameters,
         iceCandidates: ice_candidates,
-        dtls_parameters,
+        dtlsParameters: dtls_parameters,
       });
 
       this.sendTransport.on('connect', ({ dtlsParameters }: any, callback: any) => {
@@ -251,7 +246,7 @@ export class LiveProctoringService {
   }
 
   private onNewProducer(data: any) {
-    console.log(`LiveProctoring: New producer from proctor: ${data.source}`);
+    // console.log(`LiveProctoring: New producer from proctor: ${data.source}`);
   }
 
   private handleProctorSpeak(data: any) {
@@ -283,7 +278,16 @@ export class LiveProctoringService {
           track.stop();
           throw new Error('Entire Screen sharing is required.');
         }
-        await this.mediasoupService.produce(this.sendTransport, track, { source: 'screen' });
+
+        track.onended = () => {
+          if (this.screenProducer) {
+            this.signalingService.send('closeProducer', { producer_id: this.screenProducer.id });
+            this.screenProducer.close();
+            this.screenProducer = null;
+          }
+        };
+
+        this.screenProducer = await this.mediasoupService.produce(this.sendTransport, track, { source: 'screen' });
       } catch (err) {
         console.warn('LiveProctoring: Screen capture failed', err);
       }
@@ -305,6 +309,10 @@ export class LiveProctoringService {
       c.element.remove();
     });
     this.consumers.clear();
+    if (this.screenProducer) {
+      this.screenProducer.close();
+      this.screenProducer = null;
+    }
     this.sendTransport?.close();
     this.recvTransport?.close();
     this.signalingService.disconnect();

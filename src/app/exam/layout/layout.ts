@@ -38,7 +38,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
-import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
+import { LiveProctoringConfig, LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 
@@ -178,22 +178,29 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    // if (!this.store().loginData) {
-    //   this._authService.setPreLoginData(preloginData as any);
-    //   this._postLoginService.formatLoginDataToStore(loginData as any)
-    // }
+    if (!this.store().loginData) {
+      this._authService.setPreLoginData(preloginData as any);
+      this._postLoginService.formatLoginDataToStore(loginData as any)
+    }
 
     if (!this.store().platformIsTauri) {
       fullscreen()
     }
 
     if (this.isProctoredExam()) {
-      
+
       if (this.isLiveProctoring()) {
-        this._liveProctoring.initialize({
-          roomId: this.store().loginData?.candidate_data?.login_field_value!,
-          candidateName: this.store().loginData?.candidate_data?.name!
-        })
+        const roomPayload: LiveProctoringConfig = {
+          batch_id: 'ad98f482-4130-4436-a8d3-9bc0df60dfc4',
+          role: "candidate",
+          user_id: '019e25e0-db41-7116-8f6a-7ba94d204b2b'
+        }
+
+        const success = await this._liveProctoring.initialize(roomPayload)
+        if (!success) {
+          this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
+          return
+        }
       }
 
       if (this.isAutoProctoring()) {

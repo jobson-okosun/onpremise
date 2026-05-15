@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,11 @@ export class SignalingService {
   public onEvent = (msg: any) => { };
   public connectionStatus = signal<'connected' | 'disconnected' | 'connecting'>('disconnected');
 
-  connect(url: string): Promise<void> {
+  connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.connectionStatus.set('connecting');
-      this.socket = new WebSocket(url);
+      
+      this.socket = new WebSocket(environment.PROCTORING_WS);
 
       this.socket.onopen = () => {
         this.connectionStatus.set('connected');
