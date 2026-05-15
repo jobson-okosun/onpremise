@@ -27,8 +27,8 @@ export class LiveProctoringService {
   public isStreaming = signal(false);
   public stream = signal<MediaStream | null>(null);
   public isTargetSpeaking = signal(false);
-  public speakMessage = signal('');
   public proctorAudioState = signal<'Silent' | 'Ready' | 'Speaking' | 'Paused'>('Silent');
+  hasSharedFullScreen = signal<boolean | null>(null);
 
   constructor() {
     this.signalingService.onEvent = (msg) => this.handleServerMessage(msg);
@@ -250,12 +250,13 @@ export class LiveProctoringService {
   }
 
   private handleProctorSpeak(data: any) {
+    console.log(data, this.peerId)
     if (data.target_id === null) {
       this.isTargetSpeaking.set(true);
-      this.speakMessage.set('The proctor is broadcasting to everyone.');
+       console.log('speaking to everyone')
     } else if (data.target_id === this.peerId) {
       this.isTargetSpeaking.set(true);
-      this.speakMessage.set('The proctor is speaking to you privately.');
+      console.log('speaking to you')
     } else {
       this.isTargetSpeaking.set(false);
     }
@@ -273,9 +274,12 @@ export class LiveProctoringService {
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
           video: { displaySurface: 'monitor', width: { ideal: 1920 }, height: { ideal: 1080 } }
         });
+
         const track = screenStream.getVideoTracks()[0];
+        
         if (track.getSettings().displaySurface !== 'monitor') {
           track.stop();
+          this.hasSharedFullScreen.set(false);
           throw new Error('Entire Screen sharing is required.');
         }
 
@@ -288,6 +292,7 @@ export class LiveProctoringService {
         };
 
         this.screenProducer = await this.mediasoupService.produce(this.sendTransport, track, { source: 'screen' });
+        this.hasSharedFullScreen.set(true);
       } catch (err) {
         console.warn('LiveProctoring: Screen capture failed', err);
       }
@@ -302,13 +307,16 @@ export class LiveProctoringService {
     }, 5000);
   }
 
-  stop() {
+  cleanUpLiveProctoring() {
     if (this.signalInterval) clearInterval(this.signalInterval);
+
     this.consumers.forEach(c => {
       c.element.srcObject = null;
       c.element.remove();
     });
+
     this.consumers.clear();
+
     if (this.screenProducer) {
       this.screenProducer.close();
       this.screenProducer = null;
@@ -317,5 +325,6 @@ export class LiveProctoringService {
     this.recvTransport?.close();
     this.signalingService.disconnect();
     this.isStreaming.set(false);
+    this.stream.set(null);
   }
 }

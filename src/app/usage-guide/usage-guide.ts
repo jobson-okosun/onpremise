@@ -57,7 +57,7 @@ export default class UsageGuide {
 
       if (!isSecure) {
         this._toast.error('This exam can only run on secure browser')
-        // return
+        return
       }
     }
 

@@ -65,7 +65,6 @@ export default class Layout implements OnDestroy {
   private sub!: Subscription;
 
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
-  speakMessage = computed(() => this._liveProctoring.speakMessage())
 
   lastPressTime = signal(0);
   threshold = signal(2000);
@@ -155,6 +154,7 @@ export default class Layout implements OnDestroy {
   isCheckingProctoringNetwork = computed(() => this._exam.isCheckingProctoringNetwork())
   proctoringNetworkRetryCountdown = computed(() => this._exam.proctoringNetworkRetryCountdown())
   isProctoringNetworkRetryActive = computed(() => this._exam.isProctoringNetworkRetryActive())
+  hasSharedFullScreen = computed(() => this._liveProctoring.hasSharedFullScreen())
   DOWNLOAD_SPEED = MINIMUM_REASONABLE_DOWNLOAD_SPEED
 
   constructor() {
@@ -172,6 +172,15 @@ export default class Layout implements OnDestroy {
         this._autoProctorService.infractionTemplateRef.set(el)
       }
     });
+
+    effect(() => {
+      if (this._liveProctoring.hasSharedFullScreen() === true) {
+        this.initiateExam()
+      } else if (this._liveProctoring.hasSharedFullScreen() === false) {
+        this._toast.error('Full screen sharing is mandatory!', { duration: 1500000, dismissible: true })
+        this._liveProctoring.cleanUpLiveProctoring()
+      }
+    })
   }
 
   async ngOnInit() {
@@ -199,8 +208,10 @@ export default class Layout implements OnDestroy {
         const success = await this._liveProctoring.initialize(roomPayload)
         if (!success) {
           this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
-          return
         }
+        
+        // effect tracking full screen will start the exam
+        return
       }
 
       if (this.isAutoProctoring()) {
@@ -215,6 +226,10 @@ export default class Layout implements OnDestroy {
       this._exam.startProctoringNetworkMonitor()
     }
 
+    this.initiateExam()  
+  }
+
+  private initiateExam() {
     this.disableContextMenu()
     this.disableCopyAndPaste()
 

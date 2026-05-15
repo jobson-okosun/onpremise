@@ -12,6 +12,7 @@ import { ProctorService } from "./auto-proctoring/proctor";
 import { PostLogin } from "./post-login";
 import { SystemCheckService } from "./system-check/system-check";
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED, MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET, NETWORK_RETRY_INTERVAL } from "../utils/constants";
+import { LiveProctoringService } from "./live-proctoring/live-proctoring.service";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -22,6 +23,7 @@ export class ExamService {
     private _tauriService = inject(TauriService)
     private _postLoginService = inject(PostLogin)
     private _autoProctoringService = inject(ProctorService);
+    private _liveProctoringService = inject(LiveProctoringService);
     private _systemCheckService = inject(SystemCheckService)
 
     examTimerSub$: Subscription;
@@ -501,9 +503,9 @@ export class ExamService {
     displayConectionLossModal(): void {
         this.isProctoringNetworkRetryActive.set(false)
         this.stopNetworkRetryCountdown()
+        this.cleanUpProctoring()
 
         Swal.close();
-
 
         Swal.fire({
             title: 'Loss of Connection',
@@ -633,6 +635,10 @@ export class ExamService {
     cleanUpProctoring() {
         if (this.isAutoProctoring()) {
             this._autoProctoringService.cleanUpProctoring()
+        }
+        
+        if (this.isLiveProctoring()) {
+            this._liveProctoringService.cleanUpLiveProctoring()
         }
     }
 
