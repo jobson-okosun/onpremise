@@ -531,7 +531,7 @@
 </ng-template>
 
 @if(isProctoringNetworkRetryActive()) {
-    <div animate.enter="fade-in" class="fixed top-0 left-0 z-10 bg-[rgba(0,0,0,0.2)] h-dvh w-full backdrop-blur-3xl">
+    <div animate.enter="fade-in" class="fixed top-0 left-0 z-50 bg-[rgba(0,0,0,0.2)] h-dvh w-full backdrop-blur-3xl">
         <div class="flex h-full w-full items-center justify-center p-5">
             <div class="bg-white p-10 rounded-2xl select-auto flex flex-col items-center justify-center">
             <svg class="stroke-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -556,7 +556,7 @@
     </div>
 }
 
-@if(!hasSharedFullScreen()) {
+@if(!hasSharedFullScreen() && isLiveProctoring()) {
     <div animate.enter="fade-in" class="fixed top-0 left-0 z-50 bg-[rgba(0,0,0,0.2)] h-dvh w-full backdrop-blur-3xl">
         <div class="flex h-full w-full items-center justify-center p-5"></div>
     </div>

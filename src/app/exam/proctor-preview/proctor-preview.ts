@@ -33,6 +33,7 @@ export class ProctorPreview {
   messages = signal<ChatMessage[]>([]);
   unreadCount = signal(0);
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
+  proctorAudioState = computed(() => this._liveProctoring.proctorAudioState())
   
   stream = computed(() => {
     if (this._exam.isLiveProctoring()) {

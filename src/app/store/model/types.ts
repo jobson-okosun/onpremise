@@ -49,6 +49,7 @@ export interface ICandidateData {
   section_ids: Array<string>;
   login_times: Array<string>;
   passport: string;
+  participant_id? : string
 }
 
 export interface ICandidateSectionsOverview {

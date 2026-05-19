@@ -199,11 +199,19 @@ export default class Layout implements OnDestroy {
     if (this.isProctoredExam()) {
 
       if (this.isLiveProctoring()) {
+        // const roomPayload: LiveProctoringConfig = {
+        //   batch_id: 'd1d687a5-b1ed-453c-b5f0-9c3dbd1a626e',
+        //   role: "candidate",
+        //   user_id: '019e3b06-3698-7b1a-aef0-18797f9e826'
+        // }
+
         const roomPayload: LiveProctoringConfig = {
-          batch_id: 'ad98f482-4130-4436-a8d3-9bc0df60dfc4',
+          batch_id: this.store().preloginData?.batch_id ?? '',
           role: "candidate",
-          user_id: '019e25e0-db41-7116-8f6a-7ba94d204b2b'
+          user_id: this.store().loginData?.candidate_data.participant_id ?? ''
         }
+
+        console.log(roomPayload)
 
         const success = await this._liveProctoring.initialize(roomPayload)
         if (!success) {

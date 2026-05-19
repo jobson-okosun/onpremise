@@ -127,8 +127,6 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
   }
 
   confirmPhoto() {
-    // verify photo here
-    console.log('confirmPhoto');
     this._onboardingService.markStepCompleted('facial');
   }
 }

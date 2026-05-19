@@ -19,12 +19,9 @@ export class ProctorService {
         if (!store.loginData || !store.preloginData) return undefined;
 
         return {
-            // candidate_id: store.loginData.candidate_data.login_field_value,
-            // batch_id: store.preloginData.batch_id,
-            // exam_id: store.preloginData.id
-            candidate_id: this.generateUuidV7(),
-            batch_id: this.generateUuidV7(),
-            exam_id: '340d40f2-99c4-4940-b2be-c0df28b3eef7'
+            candidate_id: store.loginData.candidate_data.participant_id,
+            batch_id: store.preloginData.batch_id,
+            exam_id: store.preloginData.id
         };
     });
 

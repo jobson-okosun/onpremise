@@ -27,7 +27,7 @@ export class LiveProctoringService {
   public isStreaming = signal(false);
   public stream = signal<MediaStream | null>(null);
   public isTargetSpeaking = signal(false);
-  public proctorAudioState = signal<'Silent' | 'Ready' | 'Speaking' | 'Paused'>('Silent');
+  public proctorAudioState = signal(false);
   hasSharedFullScreen = signal<boolean | null>(null);
 
   constructor() {
@@ -82,12 +82,10 @@ export class LiveProctoringService {
 
         // media pipe connected
         case 'transportConnected':
-          // Logged in blueprint, no action needed
           break;
 
         // local media (cam/mic/screen) published
         case 'produced':
-          // Handled via produce callback in sendTransport.on('produce')
           break;
 
         // receiving proctor's audio
@@ -215,7 +213,7 @@ export class LiveProctoringService {
     this.consumers.set(data.consumer_id, { element: audio, kind: data.kind });
 
     if (data.kind === 'audio') {
-      this.proctorAudioState.set('Ready');
+      this.proctorAudioState.set(true);
     }
 
     this.signalingService.send('consumerResume', { consumer_id: data.consumer_id });
@@ -228,20 +226,21 @@ export class LiveProctoringService {
       info.element.remove();
       this.consumers.delete(data.consumer_id);
     }
-    this.proctorAudioState.set('Silent');
+    this.proctorAudioState.set(false);
+    this.isTargetSpeaking.set(false);
   }
 
   private onConsumerPaused(data: any) {
     const info = this.consumers.get(data.consumer_id);
     if (info?.kind === 'audio') {
-      this.proctorAudioState.set('Paused');
+      this.proctorAudioState.set(false);
     }
   }
 
   private onConsumerResumed(data: any) {
     const info = this.consumers.get(data.consumer_id);
     if (info?.kind === 'audio') {
-      this.proctorAudioState.set('Speaking');
+      this.proctorAudioState.set(true);
     }
   }
 
@@ -250,13 +249,10 @@ export class LiveProctoringService {
   }
 
   private handleProctorSpeak(data: any) {
-    console.log(data, this.peerId)
     if (data.target_id === null) {
       this.isTargetSpeaking.set(true);
-       console.log('speaking to everyone')
     } else if (data.target_id === this.peerId) {
       this.isTargetSpeaking.set(true);
-      console.log('speaking to you')
     } else {
       this.isTargetSpeaking.set(false);
     }
