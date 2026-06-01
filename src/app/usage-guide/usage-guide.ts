@@ -40,32 +40,33 @@ export default class UsageGuide {
     this.isLoadingExamSettings.set(true)
 
     this._dataService.fetchExamSettingsData()
-    .pipe(finalize(() => this.isLoadingExamSettings.set(false)))
-    .subscribe({
-      next: (res) => {
-        if(DeploymentMode.Online) {
-          this._store.updateStore({ examSettings: res })
-          this.gotoWelcomePage()
-          return
-        }
+      .pipe(finalize(() => this.isLoadingExamSettings.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res.exam_mode == DeploymentMode.Online) {
+            this._store.updateStore({ examSettings: res })
+            this.gotoWelcomePage()
+            return
+          }
 
-        if(res.prelogin_datas.length && DeploymentMode.Offline) {
-          this._store.updateStore({ examSettings: res })
-          this.gotoWelcomePage()
-          return
-        } else {
-          this._toast.error('No exam(s) has been started')
-          return
+          if (res.exam_mode == DeploymentMode.Offline) {
+            if (res.prelogin_datas.length) {
+              this._store.updateStore({ examSettings: res })
+              this.gotoWelcomePage()
+            } else {
+              this._toast.error('No exam(s) has been started')
+              return
+            }
+          }
         }
-      }
-    })
+      })
   }
 
   private gotoWelcomePage() {
-    if(!this.store().examSettings) {
+    if (!this.store().examSettings) {
       return
     }
-    
+
     this._router.navigate(['welcome']);
   }
 
