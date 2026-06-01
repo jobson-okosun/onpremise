@@ -43,7 +43,7 @@
                                 </button>
                             }
 
-                            <button type="button" (click)="fetchExamSettingsData()" class="btn p-4! flex-1!">Proceed to exam</button>
+                            <button type="button" [disabled]="isLoadingExamSettings()" (click)="fetchExamSettingsData()" class="btn p-4! flex-1!">Proceed to exam</button>
                         </div>
                     </div>
 
