@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, model, signal } from '@angular/core';
 import { ExamService } from '../../services/exam';
 import { Store } from '../../store/store';
-import { ItemType } from '../../store/model/types';
+import { ItemType, UsageEvents } from '../../store/model/types';
+import { EventService } from '../../services/event';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { ItemType } from '../../store/model/types';
 export class AnswerTools {
   private _exam = inject(ExamService)
   private _store = inject(Store)
+  private _eventService = inject(EventService)
 
   itemTypes = signal(ItemType);
   store = computed(() => this._store.store())
@@ -38,5 +40,12 @@ export class AnswerTools {
     currentQuestion!.responses = []
 
     this._store.updateStore({ currentQuestion })
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.ANSWER_CLEARED,
+      current_question_id: this.store().currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
   }
 }

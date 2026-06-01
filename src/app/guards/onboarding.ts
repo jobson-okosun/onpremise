@@ -3,6 +3,13 @@ import { CanActivateFn } from "@angular/router";
 import { Store } from "../store/store";
 import { AuthService } from "../services/auth";
 
+export const hasExamSettings:CanActivateFn = () => {
+    const _store = inject(Store)
+    const _authService = inject(AuthService)
+
+    return _store.getStore().examSettings ? true : _authService.noActiveExam()
+}
+
 export const hasActiveExam:CanActivateFn = () => {
     const _store = inject(Store)
     const _authService = inject(AuthService)

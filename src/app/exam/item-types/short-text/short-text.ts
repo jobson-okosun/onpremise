@@ -3,6 +3,8 @@ import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { EventService } from '../../../services/event';
+import { UsageEvents } from '../../../store/model/types';
 
 @Component({
   selector: 'app-short-text',
@@ -13,6 +15,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 export class ShortText {
   private _store = inject(Store)
   private _toast = inject(HotToastService)
+  private _eventService = inject(EventService)
 
   input = viewChild<ElementRef>('input')
   fontSize = model<number>()
@@ -35,7 +38,7 @@ export class ShortText {
     }
   }
 
-  @HostListener('document:paste', ['$event']) 
+  @HostListener('document:paste', ['$event'])
   onPaste(event: ClipboardEvent): void {
     if (!this.store().currentQuestion!.allow_copy) {
       this._toast.warning('You are not allowed to paste')
@@ -62,5 +65,12 @@ export class ShortText {
     currentQuestion.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })
+
+    // this._eventService.logEvent({
+    //   event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
+    //   current_question_id: currentQuestion?.id,
+    //   current_section_id: this.store().currentSection?.id,
+    //   timestamp: new Date()
+    // })
   }
 }

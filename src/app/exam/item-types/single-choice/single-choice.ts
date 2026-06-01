@@ -2,7 +2,8 @@ import { Component, computed, inject, model } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
-import { AlphabetList } from '../../../store/model/types';
+import { AlphabetList, UsageEvents } from '../../../store/model/types';
+import { EventService } from '../../../services/event';
 
 @Component({
   selector: 'app-single-choice',
@@ -12,6 +13,7 @@ import { AlphabetList } from '../../../store/model/types';
 })
 export class SingleChoice {
   private _store = inject(Store)
+  private _eventService = inject(EventService)
 
   fontSize = model<number>()
   store = computed(() => this._store.store())
@@ -22,7 +24,14 @@ export class SingleChoice {
     if (!currentQuestion) {
       return
     };
-    
+
+    this._eventService.logEvent({
+      event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
+      current_question_id: currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
+
     currentQuestion!.responses[0] = value
     currentQuestion!.lastUpdated = new Date()
 

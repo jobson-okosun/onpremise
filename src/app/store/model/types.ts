@@ -1,3 +1,13 @@
+export interface ExamSettings {
+  exam_mode: DeploymentMode
+  prelogin_datas: IAssessmentPreLoginData[]
+}
+
+export enum DeploymentMode {
+  Online = 'Online',
+  Offline = 'Offline',
+}
+
 export interface IAssessmentPreLoginData {
   name: string;
   description: string;
@@ -225,6 +235,7 @@ export interface ICandidateAutoSave {
   seconds: number;
   cand_id: string;
   battery_status?: BatteryStatus;
+  events?: UsageEvent[];
 }
 
 export class ICandidateAutoSaveItems {
@@ -407,4 +418,24 @@ export const INFRACTION_COLORS = {
   23: "red-500",
   24: "red-500",
   25: "red-500",
+}
+
+export enum UsageEvents {
+  SUBJECT_CHANGED = 'SUBJECT_CHANGED',
+  NEXT_QUESTION = 'NEXT_QUESTION',
+  PREVIOUS_QUESTION = 'PREVIOUS_QUESTION',
+  NEXT_SECTION = 'NEXT_SECTION',
+  PREVIOUS_SECTION = 'PREVIOUS_SECTION',
+  QUESTION_NUMBER_SELECTED = 'QUESTION_NUMBER_SELECTED',
+  ANSWER_SELECTED = 'ANSWER_SELECTED',
+  ANSWER_SELECTED_CHANGED = 'ANSWER_SELECTED_CHANGED',
+  ANSWER_CLEARED = 'ANSWER_CLEARED',
+  QUESTION_REVISIT_LATER = 'QUESTION_REVISIT_LATER',
+}
+
+export interface UsageEvent {
+  event_type: UsageEvents;
+  current_question_id?: string;
+  current_section_id?: string;
+  timestamp: Date
 }

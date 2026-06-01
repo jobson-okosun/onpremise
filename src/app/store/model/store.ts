@@ -1,21 +1,22 @@
 import { APP_BRANDING, APP_VERSION } from "../../utils/constants";
-import { BatteryStatus, IAssessmentPreLoginData, ICandidateItem, ICandidateLoginResponse, ICandidationEndExamResponse, StoreSection } from "./types";
+import { BatteryStatus, ExamSettings, IAssessmentPreLoginData, ICandidateItem, ICandidateLoginResponse, ICandidationEndExamResponse, StoreSection } from "./types";
 
-export class StoreDTO { 
+export class StoreDTO {
+    examSettings: null | ExamSettings
     preloginData: null | IAssessmentPreLoginData
     candidatePassport: null | any
-    organizationAssets: null | { 
-        logo: null | string, 
-        hasLogo: boolean, 
+    organizationAssets: null | {
+        logo: null | string,
+        hasLogo: boolean,
         defaultLogo: string,
         currentYear: string,
-        showBranding: boolean 
+        showBranding: boolean
         version: string
     }
-    currentRoute: { 
-        title?: string, 
-        url?: string, 
-        queryParams?: { [key: string]: any } 
+    currentRoute: {
+        title?: string,
+        url?: string,
+        queryParams?: { [key: string]: any }
     }
     loginData: null | ICandidateLoginResponse
     sections: StoreSection[]
@@ -39,8 +40,9 @@ export class StoreDTO {
     }
 
     constructor() {
+        this.examSettings = null
         this.preloginData = null
-        this.organizationAssets = { 
+        this.organizationAssets = {
             logo: '',
             hasLogo: false,
             defaultLogo: APP_BRANDING.logo,
@@ -48,7 +50,7 @@ export class StoreDTO {
             currentYear: new Date().getFullYear().toString(),
             version: APP_VERSION
         },
-        this.candidatePassport = null
+            this.candidatePassport = null
         this.loginData = null
         this.sections = []
         this.currentSection = null
@@ -58,11 +60,11 @@ export class StoreDTO {
         this.platformIsTauri = false
         this.isServerConnected = true
         this.appIsPinned = true
-        this.drawingAndWritingConfig = { 
+        this.drawingAndWritingConfig = {
             layoutFullMode: true,
             layoutFullModeWidth: 0,
             canvasContainerHeight: 1000,
             roughWorkMode: false
-         }
+        }
     }
 }

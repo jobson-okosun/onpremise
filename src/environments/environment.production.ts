@@ -1,6 +1,7 @@
 export const environment = {
     production: true,
     // developmentIP: location.protocol.concat('//', location.hostname, ':8080/examalpha/onpremise'),
+    domain: 'https://onpremise.ngrok.app',
     developmentIP: "https://onpremise.ngrok.app/examalpha/onpremise",
     NETWORK_CHECK: {
         DOWNLOAD: "https://pub-086a38f5ef8c44ccaf276c5b1a970832.r2.dev/2mb.bin",

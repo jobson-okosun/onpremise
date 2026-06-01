@@ -1,9 +1,10 @@
-import { Component, computed, effect, inject, linkedSignal, model, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, model } from '@angular/core';
 import { Store } from '../../../store/store';
 import { ExamService } from '../../../services/exam';
-import { AlphabetList } from '../../../store/model/types';
+import { AlphabetList, UsageEvents } from '../../../store/model/types';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
+import { EventService } from '../../../services/event';
 
 @Component({
   selector: 'app-multiple-response',
@@ -14,6 +15,9 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 export class MultipleResponse {
   private _store = inject(Store);
   private _exam = inject(ExamService);
+  private _eventService = inject(EventService)
+
+
   private multipleResponseAnswers = linkedSignal(() => this._store.store().currentQuestion?.responses!);
   protected maxResponses = computed(() => {
     const max = this.store().currentQuestion?.max_responses;
@@ -38,10 +42,18 @@ export class MultipleResponse {
       answers.splice(answers.indexOf(value), 1);
       return [...answers];
     });
+    
 
     this.store().currentQuestion!.responses = this.multipleResponseAnswers();
     this.store().currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion: this.store().currentQuestion });
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.ANSWER_SELECTED,
+      current_question_id: this.store().currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
   }
 }

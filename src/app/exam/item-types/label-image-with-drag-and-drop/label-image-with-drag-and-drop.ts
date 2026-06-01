@@ -1,10 +1,11 @@
-import { Component, computed, ElementRef, inject, AfterViewInit, signal, effect, viewChild, model } from '@angular/core';
+import { Component, computed, ElementRef, inject, AfterViewInit, signal, effect, viewChild, model, input } from '@angular/core';
 import { Store } from '../../../store/store';
 import { CdkDropList, CdkDragDrop, CdkDrag } from '@angular/cdk/drag-drop';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
-import { IOptionDTO } from '../../../store/model/types';
+import { IOptionDTO, UsageEvents } from '../../../store/model/types';
+import { EventService } from '../../../services/event';
 
 @Component({
   selector: 'app-label-image-with-drag-and-drop',
@@ -15,6 +16,7 @@ import { IOptionDTO } from '../../../store/model/types';
 export class LabelImageWithDragAndDrop implements AfterViewInit {
   private _store = inject(Store)
   private _toast = inject(HotToastService)
+  private _eventService = inject(EventService)
 
   input = viewChild<ElementRef>('input')
   fontSize = model<number>()
@@ -120,6 +122,14 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
     }
 
     const boxes = this.labels()
+
+    this._eventService.logEvent({
+      event_type: currentQuestion!.responses.length > 1 ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
+      current_question_id: this.store().currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
+
     currentQuestion.responses = boxes.map(b => b ? b.value : '')
     currentQuestion.lastUpdated = new Date()
 

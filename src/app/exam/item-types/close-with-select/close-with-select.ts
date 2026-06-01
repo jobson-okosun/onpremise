@@ -2,7 +2,8 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
-import { AlphabetList } from '../../../store/model/types';
+import { AlphabetList, UsageEvents } from '../../../store/model/types';
+import { EventService } from '../../../services/event';
 
 @Component({
   selector: 'app-close-with-select',
@@ -12,6 +13,7 @@ import { AlphabetList } from '../../../store/model/types';
 })
 export class CloseWithSelect {
   private _store = inject(Store);
+  private _eventService = inject(EventService)
 
   store = computed(() => this._store.store());
   fontSize = model(16);
@@ -55,6 +57,13 @@ export class CloseWithSelect {
       return
     };
 
+    this._eventService.logEvent({
+      event_type: currentQuestion!.responses[index] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
+      current_question_id: this.store().currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
+    
     currentQuestion.responses[index] = value;
     currentQuestion!.lastUpdated = new Date()
 

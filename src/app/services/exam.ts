@@ -13,6 +13,7 @@ import { PostLogin } from "./post-login";
 import { SystemCheckService } from "./system-check/system-check";
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED, MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET, NETWORK_RETRY_INTERVAL } from "../utils/constants";
 import { LiveProctoringService } from "./live-proctoring/live-proctoring.service";
+import { EventService } from "./event";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -25,6 +26,7 @@ export class ExamService {
     private _autoProctoringService = inject(ProctorService);
     private _liveProctoringService = inject(LiveProctoringService);
     private _systemCheckService = inject(SystemCheckService)
+    public _eventService = inject(EventService)
 
     examTimerSub$: Subscription;
     proctoringNetworkSubscription$: Subscription
@@ -270,8 +272,9 @@ export class ExamService {
     }
 
     autoSaveExam() {
-        const payload = generatePayLoadForAutoSave(this, this._store)
         const syncStart = Date.now();
+        const payload = generatePayLoadForAutoSave(this, this._store, syncStart)
+        
         this.isAutoSaving.set(true)
         this.isAutoSaveSuccessful.set(false)
 
@@ -304,6 +307,10 @@ export class ExamService {
         this.lastAutoSaveTime.set(new Date())
         this.itemsLastSync.set(syncTime)
         this.connectionStatus.set(true)
+
+        if (autosaveData.auto_saved) {
+            this._eventService.clearEventsBefore(new Date(syncTime))
+        }
 
         if (autosaveData.compensatory_time_added) {
             this.handleCompensatoryTimeAddition();
@@ -535,8 +542,9 @@ export class ExamService {
 
         this.cleanUpProctoring()
 
+        const syncStart = Date.now();
         const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING)
-        const payload = hasDrawingAndWriting ? generatePayLoadForAutoSave(this, this._store) : generatePayLoadWithAllData(this, this._store)
+        const payload = hasDrawingAndWriting ? generatePayLoadForAutoSave(this, this._store, syncStart) : generatePayLoadWithAllData(this, this._store, syncStart)
 
         this.examSubmit$ = this._dataService.endExam(payload, this.examTimedOut(), hasDrawingAndWriting)
             .pipe(

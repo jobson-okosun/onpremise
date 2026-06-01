@@ -1,16 +1,21 @@
 <div class="h-full bg-white">
-    <div class="h-full flex flex-col justify-between lg:flex-row items-start gap-y-16 lg:gap-0">
+    <div class="h-full flex flex-col justify-between lg:flex-row items-start gap-y-16 lg:gap-0 overflow-y-auto">
+        <div class="md:hidden p-5 w-full fixed top-0 left-0 bg-white z-50">
+            <img src="EXPryLogoHor.png" alt="Examlpha logo" width="150">
+        </div>
+
         <div class="flex w-full lg:w-1/2 lg:h-full px-3 lg:p-0">
             <div class="flex flex-col justify-between pb-5 md:pb-20 lg:p-10 lg:pb-0 w-full">
                 <div>
-                    <div class="mb-20">
+                    <div class="hidden md:block mb-20">
                         <img src="EXPryLogoHor.png" alt="Examlpha logo" width="150">
                     </div>
 
                     <div class="bg-[#c2e9f0] text-primary rounded-2xl px-6 py-2 w-max">Learn how to use!</div>
                     <div class="mt-3 mb-10">Read through the slides and in a moment you're good to go.</div>
 
-                    <div class="uppercase font-black text-xl md:text-3xl text-primary animate__animated animate__slideInDown"> {{ slides[currentIndex()].title }}</div>
+                    <div class="uppercase font-black text-xl md:text-3xl text-primary animate__animated animate__slideInDown">
+                        {{ slides[currentIndex()].title }}</div>
                     <div class="text-lg mt-3">{{ slides[currentIndex()].description }}</div>
                 </div>
 
@@ -19,69 +24,83 @@
                         @if(store().platformIsTauri) {
                             <div class="border border-gray-200 rounded-2xl px-6 py-2 w-max">
                                 <span class="flex gap-2 items-center">
-                                    <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
+                                    <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"
+                                        [class.bg-red-500]="!store().isServerConnected"></span>
                                     <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
                                 </span>
                             </div>
                         }
-                        
-                        <div class="flex gap-2 items-end justify-end">
+
+                        <div class="flex items-start flex-1 md:flex-none">
                             @if(store().platformIsTauri) {
-                                <button type="button" [disabled]="isLoading()" (click)="closeBrowser()" class="btn p-4! bg-red-500!">Close browser</button>
+                                <button type="button" [disabled]="isLoading()" (click)="closeBrowser()"
+                                    class="btn p-3! rounded-sm! bg-red-500! absolute top-0 right-0 m-3 z-20">
+                                    <svg class="stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                        width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 6L6.00081 17.9992M17.9992 18L6 6.00085" />
+                                    </svg>
+                                </button>
                             }
 
-                            <button type="button" [disabled]="isLoading()" (click)="fetchPreLoginData()" class="btn p-4!">Proceed to exam</button>
+                            <button type="button" (click)="fetchExamSettingsData()" class="btn p-4! flex-1!">Proceed to exam</button>
                         </div>
                     </div>
 
                     @if(store().organizationAssets?.showBranding) {
-                        <div class="text-sm text-gray-400">
-                            &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved. | v{{ store().organizationAssets?.version }}
-                        </div>
+                    <div class="text-sm text-gray-400 text-center md:text-left">
+                        &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved. |
+                        v{{ store().organizationAssets?.version }}
+                    </div>
                     }
                 </div>
             </div>
         </div>
-      
-        <div class="order-first lg:order-last h-[300px] md:h-[600px] lg:h-full w-full lg:w-1/2 p-3">
+
+        <div class="order-first lg:order-last mt-12 md:mt-0 h-[300px] md:h-[600px] lg:h-full w-full lg:w-1/2 p-3">
             <div class="relative h-full bg-primary rounded-3xl p-5 flex items-center justify-center ">
-                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl animate__animated" [ngClass]="slides[currentIndex()].animation">
-                <div class="rounded-2xl overflow-hidden bg-white/30 xl:w-[80%] 2xl:w-[75%] p-5 border border-white shadow-2xl shadow-white/40">
-                    <img [src]="slides[currentIndex()].image" class="object-scale-down object-center rounded-2xl">
+                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl animate__animated"
+                    [ngClass]="slides[currentIndex()].animation">
+                    <div
+                        class="rounded-2xl overflow-hidden bg-white/30 xl:w-[80%] 2xl:w-[75%] p-5 border border-white shadow-2xl shadow-white/40">
+                        <img [src]="slides[currentIndex()].image" class="object-scale-down object-center rounded-2xl">
+                    </div>
                 </div>
-                </div>
-                <div class="flex items-center lg:items-end justify-between w-full absolute bottom-0 right-0 p-0 lg:p-5 translate-y-[55px] lg:translate-0">
+                <div
+                    class="flex items-center lg:items-end justify-between w-full absolute bottom-0 right-0 p-0 lg:p-5 translate-y-[55px] lg:translate-0">
                     <div class="flex items-center gap-2">
                         <!-- Previous Button -->
-                        <button class="rounded-full size-12 bg-[#c2e9f0] text-primary border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition duration-300" (click)="prevSlide()" aria-label="Previous Slide" title="Previous">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none">
-                            <path d="M15 6C15 6 9 10.4189 9 12C9 13.5812 15 18 15 18" 
-                                    stroke="currentColor" 
-                                    stroke-width="1.7" 
-                                    stroke-linecap="round" 
-                                    stroke-linejoin="round" />
-                            </svg> 
+                        <button
+                            class="rounded-full size-12 bg-[#c2e9f0] text-primary border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition duration-300"
+                            (click)="prevSlide()" aria-label="Previous Slide" title="Previous">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26"
+                                fill="none">
+                                <path d="M15 6C15 6 9 10.4189 9 12C9 13.5812 15 18 15 18" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
                         </button>
 
                         <!-- Next Button -->
-                        <button class="rounded-full size-12 bg-[#c2e9f0] text-primary border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition duration-300" (click)="nextSlide()" aria-label="Next Slide" title="Next">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none">
-                            <path d="M9 6C9 6 15 10.4189 15 12C15 13.5812 9 18 9 18" 
-                                    stroke="currentColor" 
-                                    stroke-width="1.7" 
-                                    stroke-linecap="round" 
-                                    stroke-linejoin="round" /> 
+                        <button
+                            class="rounded-full size-12 bg-[#c2e9f0] text-primary border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition duration-300"
+                            (click)="nextSlide()" aria-label="Next Slide" title="Next">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26"
+                                fill="none">
+                                <path d="M9 6C9 6 15 10.4189 15 12C15 13.5812 9 18 9 18" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
                     </div>
                     <div class="flex gap-1">
                         @for( item of slides; track item; let i = $index) {
-                            <span class="rounded-full bg-transparent border border-gray-300 size-2.5 lg:hidden" [class]="{'bg-primary!': i === currentIndex()}"></span>
-                            <span class="rounded-full bg-transparent border border-gray-300 size-2.5 hidden lg:block" [class]="{'bg-white!': i === currentIndex()}"></span>
+                        <span class="rounded-full bg-transparent border border-gray-300 size-2.5 lg:hidden"
+                            [class]="{'bg-primary!': i === currentIndex()}"></span>
+                        <span class="rounded-full bg-transparent border border-gray-300 size-2.5 hidden lg:block"
+                            [class]="{'bg-white!': i === currentIndex()}"></span>
                         }
-                    </div> 
+                    </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 </div>

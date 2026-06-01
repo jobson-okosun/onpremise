@@ -3,6 +3,8 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
+import { EventService } from '../../../services/event';
+import { UsageEvents } from '../../../store/model/types';
 
 @Component({
   selector: 'app-essay-plain-text',
@@ -13,6 +15,7 @@ import { QuestionTools } from '../../question-tools/question-tools';
 export class EssayPlainText {
   private _store = inject(Store)
   private _toast = inject(HotToastService)
+  private _eventService = inject(EventService)
 
   input = viewChild<ElementRef>('input')
   fontSize = model<number>()
@@ -62,5 +65,12 @@ export class EssayPlainText {
     currentQuestion.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })
+
+    // this._eventService.logEvent({
+    //   event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
+    //   current_question_id: this.store().currentQuestion?.id,
+    //   current_section_id: this.store().currentSection?.id,
+    //   timestamp: new Date()
+    // })
   }
 }

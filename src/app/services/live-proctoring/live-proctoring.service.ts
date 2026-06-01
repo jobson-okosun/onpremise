@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SignalingService } from './signaling.service';
 import { MediasoupService } from './mediasoup.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 export interface LiveProctoringConfig {
   batch_id: string;
@@ -14,6 +15,7 @@ export interface LiveProctoringConfig {
 export class LiveProctoringService {
   private signalingService = inject(SignalingService);
   private mediasoupService = inject(MediasoupService);
+  private _toast = inject(HotToastService)
 
   private sendTransport: any = null;
   private recvTransport: any = null;
@@ -21,7 +23,7 @@ export class LiveProctoringService {
   private signalInterval: any = null;
   private screenProducer: any = null;
 
-  // Track consumers to manage audio elements (Blueprint: consumerMap)
+  // Track consumers to manage audio elements
   private consumers = new Map<string, { element: HTMLAudioElement; kind: string }>();
 
   public isStreaming = signal(false);
@@ -226,6 +228,7 @@ export class LiveProctoringService {
       info.element.remove();
       this.consumers.delete(data.consumer_id);
     }
+
     this.proctorAudioState.set(false);
     this.isTargetSpeaking.set(false);
   }
@@ -234,13 +237,16 @@ export class LiveProctoringService {
     const info = this.consumers.get(data.consumer_id);
     if (info?.kind === 'audio') {
       this.proctorAudioState.set(false);
+      this.isTargetSpeaking.set(false);
     }
   }
 
   private onConsumerResumed(data: any) {
     const info = this.consumers.get(data.consumer_id);
+
     if (info?.kind === 'audio') {
-      this.proctorAudioState.set(true);
+      // this.proctorAudioState.set(false);
+      // this.isTargetSpeaking.set(false);
     }
   }
 
@@ -251,8 +257,10 @@ export class LiveProctoringService {
   private handleProctorSpeak(data: any) {
     if (data.target_id === null) {
       this.isTargetSpeaking.set(true);
+      this._toast.success('Attention: Proctor is speaking to everyone', { duration: 5000 });
     } else if (data.target_id === this.peerId) {
       this.isTargetSpeaking.set(true);
+      this._toast.success('Attention: Proctor is speaking to you', { duration: 5000 });
     } else {
       this.isTargetSpeaking.set(false);
     }

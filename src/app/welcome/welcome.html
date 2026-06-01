@@ -1,29 +1,79 @@
 <div class="h-full">
-    <div class="h-full flex items-start">
-        <div class="h-full w-full lg:w-1/2 p-5">
-            <div class="h-full bg-gray-100/70 rounded-2xl p-5 flex flex-col justify-between">
-                <div class="animate__animated animate__slideInUp">
-                    <div class="bg-white rounded-2xl px-6 py-2 w-max mb-2">Welcome!</div>
-                    <div class="uppercase font-black text-2xl text-primary">{{ store().preloginData?.name }}</div>
-                    <div class="mt-2"> {{ store().preloginData?.description }} </div>
-                </div>
-                <div class="flex flex-col lg:flex-row gap-4 w-full lg:w-max justify-between">
-                    @if(store().platformIsTauri) {
-                        <span class="flex gap-2 items-center">
-                            <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
-                            <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
-                        </span>
-                    }
+    @if(selectedExam() || store().examSettings?.exam_mode == examModes.Online) {
+        <div class="h-full flex items-start justify-center">
+            @if(store().preloginData && !invalidExamEnvironment()) {
+                <div class="h-full w-full lg:w-1/2 p-5">
+                    <div class="h-full bg-gray-100/70 rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="animate__animated animate__slideInUp">
+                            <div class="bg-white rounded-2xl px-6 py-2 w-max mb-2">Welcome!</div>
+                            <div class="uppercase font-black text-2xl text-primary">{{ store().preloginData?.name }}</div>
+                            <div class="mt-2"> {{ store().preloginData?.description }} </div>
+                        </div>
+                        <div class="flex flex-col lg:flex-row gap-4 w-full lg:w-max justify-between">
+                            @if(store().platformIsTauri) {
+                                <span class="flex gap-2 items-center">
+                                    <span class="rounded-full size-2.5" [class.bg-green-700]="store().isServerConnected"  [class.bg-red-500]="!store().isServerConnected"></span>
+                                    <span>{{ store().isServerConnected ? 'Connected' : 'Offline' }}</span>
+                                </span>
+                            }
 
-                    <div class="flex gap-2">
-                        <a routerLink="../usage-guide" class="btn-outline bg-white! flex-1">Back to guide</a>
-                        <a routerLink="../login" class="btn flex-1 lg:hidden!">Proceed</a>
+                            <div class="flex gap-2">
+                                <a href="/" class="btn-outline bg-white! flex-1">Back to guide</a>
+                                <a routerLink="../login" class="btn flex-1 lg:hidden!">Proceed</a>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            }
+
+            <div class="hidden lg:flex lg:w-1/2 items-center justify-center h-full animate__animated animate__fadeIn">
+                <app-login ></app-login>
+            </div>
+        </div>
+    } @else if((store().examSettings!.prelogin_datas.length > 1)) {
+        <div class="bg-zinc-50 h-dvh overflow-y-auto">
+            <div class="h-full lg:w-4/5 2xl:w-4/6 mx-auto p-5 relative animate__animated animate__fadeIn flex flex-col space-y-5">
+                <div class="flex-1 flex flex-col space-y-8 overflow-hidden">
+                    <div class="flex gap-4">
+                        <div>
+                            <div class="bg-white border border-gray-200 rounded-md flex items-center justify-center p-1 min-h-16">
+                                @if(store().organizationAssets?.hasLogo) {
+                                    <img [src]="store().organizationAssets?.logo" class="w-16">
+                                } @else {
+                                    <img [src]="store().organizationAssets?.defaultLogo"  class="w-16">
+                                }
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="uppercase font-black text-lg lg:text-2xl text-primary">Welcome! Select your exam.</div>
+                            <div class="mt-2">Kindly select from the list below your intended exam to take.</div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto flex flex-col gap-2 no-scrollbar">
+                        @for(item of store().examSettings?.prelogin_datas; track item.id) {
+                            <div class="rounded border border-gray-200 border-dashed bg-white p-5">
+                                <h2 class="uppercase font-black text-xl text-primary">{{ item.name }}</h2>
+                                <div class="mt-2">{{ item.description }}</div>
+
+                                <div class="flex flex-col gap-2 mt-5">
+                                    <div><span class="font-semibold">Sections: </span>English, Biology</div>
+                                    <div><span class="font-semibold">Exam Duration: </span> {{ 200 }} mins</div>
+                                    <div><span class="font-semibold">Exam Duration: </span> June 10 - June 12, 2026</div>
+                                </div>
+
+                                <button (click)="selectExam(item)" type="button" class="mt-4 btn fill py-3!">Start Exam</button>
+                            </div>
+                        }
                     </div>
                 </div>
+
+                @if(store().organizationAssets?.showBranding) {
+                    <div class="text-sm text-gray-400">
+                        &copy; {{ store().organizationAssets?.currentYear }} Multilent softwares. All rights reserved. | v{{ store().organizationAssets?.version }}
+                    </div>
+                }
             </div>
-        </div> 
-        <div class="hidden lg:flex lg:w-1/2 items-center justify-center h-full animate__animated animate__fadeIn">
-            <app-login ></app-login>
         </div>
-    </div>
+    }
 </div>

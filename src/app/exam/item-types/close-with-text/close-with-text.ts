@@ -11,7 +11,7 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 })
 export class CloseWithText {
   private _store = inject(Store);
-
+  
   store = computed(() => this._store.store());
   fontSize = model(16);
   clozeRenderArray = signal<{ text: string; dropBox: boolean }[]>([]);

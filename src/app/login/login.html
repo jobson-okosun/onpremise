@@ -1,27 +1,94 @@
-<div class="w-full  h-full flex items-center p-5">
-    <div class="w-full md:w-2/3 md:mx-auto lg:w-full">
-        @if(store().organizationAssets?.hasLogo) {
-            <img [src]="store().organizationAssets?.logo" class="mx-auto w-44 mb-20">
-        } @else {
-            <img [src]="store().organizationAssets?.defaultLogo"  class="mx-auto w-44 mb-20">
-        }
+@if(isLoadingPreloginData()) {
+    <div class="h-full w-full flex flex-col items-center justify-center">
+        <div class="border-4 border-gray-200 border-t-primary rounded-full size-8 animate-spin"></div>
+        <div class="mt-2">Please wait...</div>
+    </div>
+}
 
-        <div class="mb-2 text-center">Enter your login credentials to continue</div>
-        <div> 
-            <div class="flex flex-col gap-3">
-                <input [formControl]="candidateId" (keyup.enter)="login()" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" [placeholder]="store().preloginData?.login_field ?? 'CANDIDATE ID'">
-                @if(candidateId.invalid && candidateId.touched) {
-                    @if(candidateId.hasError('required')) {
-                        <div class="text-red-500 text-sm bg-red-50 p-3 text-center">Please enter your credential</div>
-                    }
-                    @if(candidateId.hasError('serverError')) {
-                        <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ candidateId.errors?.['serverError'].msg }} </div>
-                    }
-                }
-            </div>
-            <div class="my-10">
-                <button type="button" [disabled]="isLoading() || !candidateId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button>
-            </div>
+@if(!isLoadingPreloginData() && store().preloginData && invalidExamEnvironment()) {
+    <div class="h-full w-full flex items-center justify-center bg-gray-100">
+        <span class="flex flex-col p-5 rounded-md bg-white items-center justify-center">
+            <svg class="stroke-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="60" height="60" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13.9248 21H10.0752C5.44476 21 3.12955 21 2.27636 19.4939C1.42317 17.9879 2.60736 15.9914 4.97574 11.9985L6.90057 8.75333C9.17559 4.91778 10.3131 3 12 3C13.6869 3 14.8244 4.91777 17.0994 8.75332L19.0243 11.9985C21.3926 15.9914 22.5768 17.9879 21.7236 19.4939C20.8704 21 18.5552 21 13.9248 21Z"></path>
+                <path d="M12 17V13"></path>
+                <path d="M12 9.25H12.125M12.25 9.25C12.25 9.11193 12.1381 9 12 9C11.8619 9 11.75 9.11193 11.75 9.25C11.75 9.38807 11.8619 9.5 12 9.5C12.1381 9.5 12.25 9.38807 12.25 9.25Z"></path>
+            </svg>
+
+            <div class="mt-2">Exam can only run on secure browser</div>
+        </span>
+    </div>
+}
+
+@if(!isLoadingPreloginData() && !invalidExamEnvironment()) {
+    <div class="w-full h-full flex items-center p-5">
+        <div class="w-full md:w-2/3 md:mx-auto lg:w-full">
+            @if(store().organizationAssets?.hasLogo) {
+                <img [src]="store().organizationAssets?.logo" class="mx-auto w-44 mb-20">
+            } @else {
+                <img [src]="store().organizationAssets?.defaultLogo"  class="mx-auto w-44 mb-20">
+            }
+
+            @if(store().preloginData) {
+                <div class="mb-2 text-center">Enter your login credentials to continue</div>
+                <div> 
+                    <div class="flex flex-col gap-3">
+                        <input [formControl]="candidateId" (keyup.enter)="login()" type="text" class="rounded-md bg-white border border-gray-300 px-3 py-2 w-full md:min-w-[400px] placeholder:text-gray-500 placeholder:text-sm outline-none ring-0" [placeholder]="store().preloginData?.login_field ?? 'CANDIDATE ID'">
+                        
+                        @if(candidateId.invalid && candidateId.touched) {
+                            @if(candidateId.hasError('required')) {
+                                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">Please enter your credential</div>
+                            }
+
+                            @if(candidateId.hasError('serverError')) {
+                                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ candidateId.errors?.['serverError'].msg }} </div>
+                            }
+                        }
+                    </div>
+                    <div class="my-10">
+                        <button type="button" [disabled]="isLoading() || !candidateId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button>
+                    </div>
+                </div>
+            }
+
+            @if(!store().preloginData && store().examSettings?.exam_mode == examModes.Online) {
+                <div class="mb-5 text-center">Enter your exam code to continue</div>
+                <div> 
+                    <div class="flex flex-col gap-3">
+                        <div class="grid grid-cols-4 md:grid-cols-8 gap-2 justify-items-center justify-center max-w-max mx-auto mb-4">
+                            @let len = [0, 1, 2, 3, 4, 5, 6, 7];
+                            @for (i of len; track i) {
+                                <input
+                                    #codeInput
+                                    type="text"
+                                    maxlength="1"
+                                    class="size-14 md:size-12 rounded-lg border border-gray-300 bg-white text-center text-lg font-black text-gray-900 outline-none transition
+                                        focus:border-gray-400 focus:ring-2 focus:ring-gray-200
+                                        hover:border-gray-400"
+                                    [value]="codeDigits()[i]"
+                                    (input)="onCodeInput($event, i)"
+                                    (keydown)="onKeyDown($event, i)"
+                                    (paste)="onPaste($event, i)"
+                                    (keydown.enter)="i == (len.length -1) ? fetchPreloginData() : null"
+                                />
+                            }
+                        </div>
+                        
+                        @if(examCode.invalid && examCode.touched) {
+                            @if(examCode.hasError('required')) {
+                                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">Please enter your exam code</div>
+                            }
+                            @if(examCode.hasError('serverError')) {
+                                <div class="text-red-500 text-sm bg-red-50 p-3 text-center">{{ examCode.errors?.['serverError'].msg }} </div>
+                            }
+                        }
+                    </div>
+                    <div class="my-10">
+                        <button type="button" [disabled]="isLoading() || examCode.invalid" (click)="fetchPreloginData()" class="btn w-full! rounded-full!">Continue</button>
+                    </div>
+                </div>
+            }
+
+
         </div>
     </div>
-</div>
+}

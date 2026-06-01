@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { SLIDES } from '../utils/constants';
 import { DataService } from '../services/data';
 import { finalize } from 'rxjs';
-import { DeliveryMethod, IAssessmentPreLoginData, Slide } from '../store/model/types';
+import { DeliveryMethod, DeploymentMode, IAssessmentPreLoginData, Slide } from '../store/model/types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { AuthService } from '../services/auth';
@@ -27,47 +27,45 @@ export default class UsageGuide {
 
   store = computed(() => this._store.store())
   isLoading = signal(false)
+  isLoadingExamSettings = signal(false)
   currentIndex = signal(0);
   slides: Slide[] = SLIDES
 
   ngOnInit() {
+    localStorage.clear()
     this.startAutoSlide()
   }
 
-  fetchPreLoginData() {
-    this.isLoading.set(true);
+  fetchExamSettingsData() {
+    this.isLoadingExamSettings.set(true)
 
-    this._dataService.fetchPreLoginData()
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: async (value) => this.successfullPrelogin(value),
-        error: (err: HttpErrorResponse) => {
-          this._toast.error(err.error.error ?? 'Sorry! Unable to complete task')
-        },
-      });
+    this._dataService.fetchExamSettingsData()
+    .pipe(finalize(() => this.isLoadingExamSettings.set(false)))
+    .subscribe({
+      next: (res) => {
+        if(DeploymentMode.Online) {
+          this._store.updateStore({ examSettings: res })
+          this.gotoWelcomePage()
+          return
+        }
+
+        if(res.prelogin_datas.length && DeploymentMode.Offline) {
+          this._store.updateStore({ examSettings: res })
+          this.gotoWelcomePage()
+          return
+        } else {
+          this._toast.error('No exam(s) has been started')
+          return
+        }
+      }
+    })
   }
 
-  async successfullPrelogin(res: IAssessmentPreLoginData) {
-    if (
-      res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || 
-      res.delivery_method == DeliveryMethod.AUTO_PROCTORING || 
-      res.delivery_method == DeliveryMethod.LIVE_PROCTORING
-    ) {
-      const isSecure = this.store().platformIsTauri
-
-      if (!isSecure) {
-        this._toast.error('This exam can only run on secure browser')
-        return
-      }
+  private gotoWelcomePage() {
+    if(!this.store().examSettings) {
+      return
     }
-
-    this._authService.setPreLoginData(res);
     
-    if (res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
-      this._router.navigate(['proctored'])
-      return;
-    }
-
     this._router.navigate(['welcome']);
   }
 

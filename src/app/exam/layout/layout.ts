@@ -7,7 +7,7 @@ import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/auto-proctoring/proctor';
-import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
+import { DeliveryMethod, ExamType, ItemType, StoreSection, UsageEvents } from '../../store/model/types';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
 import { NgClass } from '@angular/common';
@@ -41,6 +41,7 @@ import { environment } from '../../../environments/environment';
 import { LiveProctoringConfig, LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
+import { EventService } from '../../services/event';
 
 @Component({
   selector: 'app-layout',
@@ -62,6 +63,7 @@ export default class Layout implements OnDestroy {
   private _authService = inject(AuthService)
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
+  private _eventService = inject(EventService)
   private sub!: Subscription;
 
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
@@ -199,25 +201,17 @@ export default class Layout implements OnDestroy {
     if (this.isProctoredExam()) {
 
       if (this.isLiveProctoring()) {
-        // const roomPayload: LiveProctoringConfig = {
-        //   batch_id: 'd1d687a5-b1ed-453c-b5f0-9c3dbd1a626e',
-        //   role: "candidate",
-        //   user_id: '019e3b06-3698-7b1a-aef0-18797f9e826'
-        // }
-
         const roomPayload: LiveProctoringConfig = {
           batch_id: this.store().preloginData?.batch_id ?? '',
           role: "candidate",
           user_id: this.store().loginData?.candidate_data.participant_id ?? ''
         }
 
-        console.log(roomPayload)
-
         const success = await this._liveProctoring.initialize(roomPayload)
         if (!success) {
           this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
         }
-        
+
         // effect tracking full screen will start the exam
         return
       }
@@ -234,7 +228,7 @@ export default class Layout implements OnDestroy {
       this._exam.startProctoringNetworkMonitor()
     }
 
-    this.initiateExam()  
+    this.initiateExam()
   }
 
   private initiateExam() {
@@ -263,6 +257,13 @@ export default class Layout implements OnDestroy {
     const currentQuestion = section.items[0]
     section = this.store().sections.find(item => item.id == section.id) as StoreSection
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.SUBJECT_CHANGED,
+      current_question_id: currentQuestion.id,
+      current_section_id: section.id,
+      timestamp: new Date()
+    })
   }
 
   sectionNameInFullMode(section: StoreSection): string {

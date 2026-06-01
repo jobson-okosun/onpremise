@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
-import { IAssessmentPreLoginData, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidateEndExamData, ICandidateLoginDTO, ICandidateLoginResponse, ICandidationEndExamResponse, Ping, Pong } from "../store/model/types";
+import { ExamSettings, IAssessmentPreLoginData, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidateEndExamData, ICandidateLoginDTO, ICandidateLoginResponse, ICandidationEndExamResponse, Ping, Pong } from "../store/model/types";
 import { filter, finalize, interval, map, Observable, of, Subscription } from "rxjs";
 import { environment } from "../../environments/environment";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -42,8 +42,16 @@ export class DataService {
         });
     }
 
+    fetchExamSettingsData(): Observable<ExamSettings> {
+        return this._http.get<ExamSettings>(`${environment.domain}/exam_mode`);
+    }
+
     fetchPreLoginData(): Observable<IAssessmentPreLoginData> {
         return this._http.get<IAssessmentPreLoginData>(`${environment.developmentIP}/candidate/fetch_prelogin_data`);
+    }
+
+    fetchPreLoginDataWithCode(code: string): Observable<IAssessmentPreLoginData> {
+        return this._http.get<IAssessmentPreLoginData>(`${environment.developmentIP}/candidate/fetch_prelogin_data/${code}`);
     }
 
     pingServer(payload: Ping): Observable<Pong> {

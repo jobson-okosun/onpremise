@@ -1,6 +1,8 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
+import { EventService } from '../../services/event';
+import { UsageEvents } from '../../store/model/types';
 
 @Component({
   selector: 'app-paginator',
@@ -11,6 +13,7 @@ import { ExamService } from '../../services/exam';
 export class Paginator {
   private _store = inject(Store)
   private _exam = inject(ExamService)
+  private _eventService = inject(EventService)
 
   isMobile = signal(true)
   store = computed(() => this._store.store())
@@ -105,6 +108,13 @@ export class Paginator {
       const currentQuestion = this.store().currentSection?.items[index]
 
       this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
+
+      this._eventService.logEvent({
+        event_type: UsageEvents.PREVIOUS_QUESTION,
+        current_question_id: currentQuestion?.id,
+        current_section_id: this.store().currentSection?.id,
+        timestamp: new Date()
+      })
     }
   }
 
@@ -114,6 +124,13 @@ export class Paginator {
       const currentQuestion = this.store().currentSection?.items[index]
 
       this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
+
+      this._eventService.logEvent({
+        event_type: UsageEvents.NEXT_QUESTION,
+        current_question_id: currentQuestion?.id,
+        current_section_id: this.store().currentSection?.id,
+        timestamp: new Date()
+      })
     }
   }
 
@@ -121,7 +138,15 @@ export class Paginator {
     const sectionIndex = this.store().sections.indexOf(this.store().currentSection as any)
     const section = this.store().sections[sectionIndex + 1]
     const currentQuestion = section.items[0]
+
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.NEXT_SECTION,
+      current_question_id: currentQuestion?.id,
+      current_section_id: section.id,
+      timestamp: new Date()
+    })
   }
 
   prevSection() {
@@ -129,11 +154,25 @@ export class Paginator {
     const section = this.store().sections[sectionIndex - 1]
     const currentQuestion = section.items[0]
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.PREVIOUS_SECTION,
+      current_question_id: currentQuestion?.id,
+      current_section_id: section.id,
+      timestamp: new Date()
+    })
   }
 
   selectPage(index: number) {
     const currentQuestion = this.store().currentSection?.items[index]
     this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
+
+    this._eventService.logEvent({
+      event_type: UsageEvents.QUESTION_NUMBER_SELECTED,
+      current_question_id: currentQuestion?.id,
+      current_section_id: this.store().currentSection?.id,
+      timestamp: new Date()
+    })
   }
 
   ngOnInit() {

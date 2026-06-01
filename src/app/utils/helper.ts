@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { Paginator } from "../exam/paginator/paginator";
-import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateEndExamData, ICandidateItem, ItemType } from "../store/model/types";
+import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateEndExamData, ICandidateItem, ItemType, UsageEvent } from "../store/model/types";
 import { SingleChoice } from "../exam/item-types/single-choice/single-choice";
 import { ExamService } from "../services/exam";
 import { Store } from "../store/store";
@@ -98,7 +98,7 @@ export function useShortcut(keyPressed: string, currentQuestionNumber: number, p
     }
 }
 
-export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): ICandidateAutoSave {
+export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store, syncTime?: number): ICandidateAutoSave {
     const timeDisplay = _exam.timeDisplay()
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
@@ -153,10 +153,13 @@ export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): I
         };
     })
 
+    const syncLimit = syncTime ?? Date.now();
+    autoSaveData.events = _exam._eventService.getEvents().filter(e => new Date(e.timestamp).getTime() <= syncLimit);
+
     return autoSaveData;
 }
 
-export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): ICandidateAutoSave {
+export function generatePayLoadWithAllData(_exam: ExamService, _store: Store, syncTime?: number): ICandidateAutoSave {
     const timeDisplay = _exam.timeDisplay()
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
@@ -209,6 +212,9 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
             seconds: sectionItem!.section_settings.seconds_left,
         };
     })
+
+    const syncLimit = syncTime ?? Date.now();
+    autoSaveData.events = _exam._eventService.getEvents().filter(e => new Date(e.timestamp).getTime() <= syncLimit);
 
     return autoSaveData;
 }
