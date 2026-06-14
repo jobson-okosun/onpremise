@@ -34,6 +34,7 @@ export class ProctorPreview {
   unreadCount = signal(0);
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
   proctorAudioState = computed(() => this._liveProctoring.proctorAudioState())
+  isLiveProctoring = computed(() => this._exam.isLiveProctoring())
   
   stream = computed(() => {
     if (this._exam.isLiveProctoring()) {

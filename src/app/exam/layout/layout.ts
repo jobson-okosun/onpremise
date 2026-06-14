@@ -214,7 +214,7 @@ export default class Layout implements OnDestroy {
 
         // effect tracking full screen sharing will start the exam
         return
-      }
+      } 
 
       if (this.isAutoProctoring()) {
         const success = await this._autoProctorService.initializeProctoring()

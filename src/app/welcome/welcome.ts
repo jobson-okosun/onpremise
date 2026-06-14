@@ -50,10 +50,10 @@ export default class Welcome {
         return
       }
 
-      if (preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING || preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
-        this._router.navigate(['proctored'])
-        return
-      }
+      // if (preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING || preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+      //   this._router.navigate(['proctored'])
+      //   return
+      // }
     })
   }
 

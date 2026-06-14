@@ -18,6 +18,7 @@ export interface IAssessmentPreLoginData {
   delivery_method: DeliveryMethod;
   exam_type: ExamType
   batch_id?: string;
+  r_id?: string;
 }
 
 export enum DeliveryMethod {

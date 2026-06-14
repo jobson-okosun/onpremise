@@ -74,16 +74,17 @@ export default class Login implements AfterViewInit {
         const isSecure = this.store().platformIsTauri
 
         if (!isSecure) {
+          this._toast.error('This exam can only run on a secure browser')
           return
         }
       }
 
       this._authService.setPreLoginData(res);
 
-      if (res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
-        this._router.navigate(['proctored'])
-        return
-      }
+      // if (res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+      //   this._router.navigate(['proctored'], { queryParams: { examCode: res.id } })
+      //   return
+      // }
 
     } catch (error) {
       const err = error as HttpErrorResponse
@@ -143,6 +144,11 @@ export default class Login implements AfterViewInit {
 
       if (this.store().preloginData?.delivery_method == this.deliveryMethods().ON_PREMISE_SECURE_BROWSER) {
         this._tauriService.sendExamStarted()
+      }
+
+      if (this.store().preloginData?.delivery_method == DeliveryMethod.AUTO_PROCTORING || this.store().preloginData?.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+        this._router.navigate(['proctored/onboarding'])
+        return
       }
 
       this._router.navigate(['overview'])

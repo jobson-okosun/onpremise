@@ -21,7 +21,7 @@ export class ProctorService {
         return {
             candidate_id: store.loginData.candidate_data.participant_id,
             batch_id: store.preloginData.batch_id,
-            exam_id: store.preloginData.id
+            exam_id: store.preloginData.r_id
         };
     });
 
@@ -212,14 +212,18 @@ export class ProctorService {
     }
 
     ipcReceivers() {
-        this.tauriListen()('stream_connected', () => { });
+        this.tauriListen()('stream_connected', () => { 
+            console.log('stream_connected')
+        });
 
-        this.tauriListen()('stream_error', () => {
+        this.tauriListen()('stream_error', (event: any) => {
             this.cleanUpProctoring()
+            console.log('streaming cleanedup: error from ipc stream_error:channel', event)
         });
 
         this.tauriListen()('stream_closed', () => {
             this.cleanUpProctoring()
+            console.log('streaming cleanedup: error from ipc stream_closed:channel')
         });
 
         this.tauriListen()('detection_result', (res: any) => {

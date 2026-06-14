@@ -26,8 +26,7 @@ export default class Login {
   patchForm = effect(() => {
     const params = this._store.store().currentRoute?.queryParams || {}
 
-    if (params['userId']) this.userId.setValue(params['userId'])
-    if (params['examId']) this.examId.setValue(params['examId'])
+    if (params['examCode']) this.examId.setValue(params['examCode'])
   })
 
   showLogin = signal(false)
