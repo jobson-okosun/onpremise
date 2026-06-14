@@ -103,7 +103,7 @@ export class ProctorService {
             this.videoSteamInterval = setInterval(() => this.streamVideo(), this.FRAME_INTERVAL_MS);
 
             await this.streamAudio();
-
+ 
             this.ipcReceivers()
 
             this._toast.success('Proctoring initialized successfully')
@@ -123,7 +123,7 @@ export class ProctorService {
         } catch (error: any) {
             console.error('media stream failed to start:', error);
             return false;
-        }
+        } 
     }
 
     private async streamVideo(): Promise<void> {

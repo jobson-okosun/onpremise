@@ -686,6 +686,13 @@ export class ExamService {
                     enableRestrictedActions();
                 }
                 
+                if (this.isAutoProctoring() && !this._autoProctoringService.isStreaming()) {
+                    const success = await this._autoProctoringService.initializeProctoring();
+                    if (!success) {
+                        this._toast.error('Unable to restart proctoring after network recovery. Please contact the administrator.', { duration: 150000, dismissible: true });
+                    }
+                }
+
                 this.stopNetworkRetryCountdown();
             }
         } 
