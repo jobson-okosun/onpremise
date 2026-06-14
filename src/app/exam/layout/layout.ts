@@ -212,7 +212,7 @@ export default class Layout implements OnDestroy {
           this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
         }
 
-        // effect tracking full screen will start the exam
+        // effect tracking full screen sharing will start the exam
         return
       }
 
