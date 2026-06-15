@@ -687,9 +687,16 @@ export class ExamService {
                 }
                 
                 if (this.isAutoProctoring() && !this._autoProctoringService.isStreaming()) {
-                    const success = await this._autoProctoringService.initializeProctoring();
+                    const success = await this._autoProctoringService.initialize();
                     if (!success) {
                         this._toast.error('Unable to restart proctoring after network recovery. Please contact the administrator.', { duration: 150000, dismissible: true });
+                    }
+                }
+                
+                if (this.isLiveProctoring() && !this._liveProctoringService.isStreaming()) {
+                    const success = await this._liveProctoringService.initialize();
+                    if (!success) {
+                        this._toast.error('Unable to restart live proctoring after network recovery. Please contact the administrator.', { duration: 150000, dismissible: true });
                     }
                 }
 

@@ -201,13 +201,7 @@ export default class Layout implements OnDestroy {
     if (this.isProctoredExam()) {
 
       if (this.isLiveProctoring()) {
-        const roomPayload: LiveProctoringConfig = {
-          batch_id: this.store().preloginData?.batch_id ?? '',
-          role: "candidate",
-          user_id: this.store().loginData?.candidate_data.participant_id ?? ''
-        }
-
-        const success = await this._liveProctoring.initialize(roomPayload)
+        const success = await this._liveProctoring.initialize()
         if (!success) {
           this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
         }
@@ -217,7 +211,7 @@ export default class Layout implements OnDestroy {
       } 
 
       if (this.isAutoProctoring()) {
-        const success = await this._autoProctorService.initializeProctoring()
+        const success = await this._autoProctorService.initialize()
 
         if (!success) {
           this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 150000, dismissible: true })

@@ -46,7 +46,7 @@ export class ProctorService {
         audio: { sampleRate: 16000, channelCount: 1, echoCancellation: false, noiseSuppression: false, autoGainControl: true },
     };
 
-    async initializeProctoring(): Promise<boolean> {
+    async initialize(): Promise<boolean> {
         try {
             const cInfo = this.candidateInfo();
             if (!cInfo) {

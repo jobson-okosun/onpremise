@@ -32,7 +32,7 @@ export default class UsageGuide {
   slides: Slide[] = SLIDES
 
   ngOnInit() {
-    localStorage.clear()
+    // localStorage.clear()
     this.startAutoSlide()
   }
 

@@ -58,7 +58,7 @@ export default class Welcome {
   }
 
   selectExam(item: IAssessmentPreLoginData) {
-    localStorage.clear()
+    // localStorage.clear()
     this._authService.setPreLoginData(item);
     this.selectedExam.set(item)
     this.resolveRoute()

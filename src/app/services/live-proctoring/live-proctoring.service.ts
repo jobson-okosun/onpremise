@@ -1,7 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { SignalingService } from './signaling.service';
 import { MediasoupService } from './mediasoup.service';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { Store } from '../../store/store';
 
 export interface LiveProctoringConfig {
   batch_id: string;
@@ -16,6 +17,20 @@ export class LiveProctoringService {
   private signalingService = inject(SignalingService);
   private mediasoupService = inject(MediasoupService);
   private _toast = inject(HotToastService)
+  private _store = inject(Store);
+
+  store = computed(() => this._store.store())
+  candidateInfo = computed(() => {
+      const store = this.store();
+
+      if (!store.loginData || !store.preloginData) return undefined;
+
+      return {
+          batch_id: store.preloginData.batch_id,
+          role: 'candidate' as const,
+          user_id: store.loginData.candidate_data.participant_id
+      };
+  });
 
   private sendTransport: any = null;
   private recvTransport: any = null;
@@ -36,8 +51,11 @@ export class LiveProctoringService {
     this.signalingService.onEvent = (msg) => this.handleServerMessage(msg);
   }
 
-  async initialize(config: LiveProctoringConfig): Promise<boolean> {
+  async initialize(): Promise<boolean> {
     if (this.stream()) return true;
+
+    const config = this.candidateInfo();
+    if (!config) return false;
 
     try {
       await this.startUserMedia();
