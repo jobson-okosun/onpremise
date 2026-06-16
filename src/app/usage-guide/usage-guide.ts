@@ -83,6 +83,6 @@ export default class UsageGuide {
   }
 
   closeBrowser() {
-    this._tauriService.KillBrowserFromAutoSave()
+    this._tauriService.closeApp()
   }
 }

@@ -3,12 +3,16 @@ import { TauriService } from "../tauri";
 import { Store } from "../../store/store";
 import { CandidateInfractionEntry, INFRACTION_COLORS, INFRACTION_LABELS } from "../../store/model/types";
 import { HotToastService } from "@ngxpert/hot-toast";
+import Swal from 'sweetalert2';
+import { disableRestrictedActions } from "../../utils/helper";
 
 @Injectable({ providedIn: 'root' })
 export class ProctorService {
     private _store = inject(Store);
     private _tauri = inject(TauriService)
     private _toast = inject(HotToastService)
+
+    public onStreamErrorCallback?: () => void;
 
     infractionTemplateRef = signal<TemplateRef<HTMLDivElement> | undefined>(undefined);
 
@@ -37,6 +41,8 @@ export class ProctorService {
     frameErrCount = 0;
     frameCount = 0;
     fpsTimestamp = performance.now();
+    private _ipcListenersRegistered = signal<boolean>(false);
+    public isNetworkRetryActive = signal(false);
 
     tauriInvoke = computed(() => this._tauri.tauriInvoke())
     tauriListen = computed(() => this._tauri.tauriListen())
@@ -104,7 +110,7 @@ export class ProctorService {
 
             await this.streamAudio();
  
-            this.ipcReceivers()
+            this.ipcReceivers() 
 
             this._toast.success('Proctoring initialized successfully')
             return true;
@@ -212,22 +218,56 @@ export class ProctorService {
     }
 
     ipcReceivers() {
+        if (this._ipcListenersRegistered()) return;
+
+        this._ipcListenersRegistered.set(true);
+        
         this.tauriListen()('stream_connected', () => { 
             console.log('stream_connected')
         });
 
         this.tauriListen()('stream_error', (event: any) => {
             this.cleanUpProctoring()
+            this.displayProctoringStreamErrorModal()
             console.log('streaming cleanedup: error from ipc stream_error:channel', event)
         });
 
         this.tauriListen()('stream_closed', () => {
             this.cleanUpProctoring()
             console.log('streaming cleanedup: error from ipc stream_closed:channel')
+            if (!this.isNetworkRetryActive()) {
+                this.displayProctoringStreamErrorModal()
+            }
         });
 
         this.tauriListen()('detection_result', (res: any) => {
             this.onInfractions(res);
+        });
+    }
+
+    displayProctoringStreamErrorModal(): void {
+        disableRestrictedActions();
+
+        if (this.onStreamErrorCallback) {
+            this.onStreamErrorCallback();
+        }
+        
+        Swal.close();
+        Swal.fire({
+            title: 'Proctoring Stream Error',
+            text: 'An error occurred with the proctoring stream. Please contact the administrator.',
+            icon: 'error',
+            showCancelButton: false,
+            confirmButtonColor: 'rgb(3, 142, 220)',
+            cancelButtonColor: 'rgb(243, 78, 78)',
+            confirmButtonText: 'Yes, Relogin',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            heightAuto: false,
+        }).then((result) => {
+            if (result.value) {
+                location.assign('/usage-guide');
+            }
         });
     }
 
@@ -260,6 +300,11 @@ export class ProctorService {
 
     async cleanUpProctoring() {
         this.isStreaming.set(false);
+
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
 
         clearInterval(this.videoSteamInterval);
         this.videoSteamInterval = null;

@@ -52,6 +52,7 @@
 
             @if(!store().preloginData && store().examSettings?.exam_mode == examModes.Online) {
                 <div class="mb-5 text-center">Enter your exam code to continue</div>
+
                 <div> 
                     <div class="flex flex-col gap-3">
                         <div class="grid grid-cols-4 md:grid-cols-8 gap-2 justify-items-center justify-center max-w-max mx-auto mb-4">
@@ -82,10 +83,23 @@
                             }
                         }
                     </div>
-                    <div class="my-10">
+                    <div class="my-10 space-y-4">
                         <button type="button" [disabled]="isLoading() || examCode.invalid" (click)="fetchPreloginData()" class="btn w-full! rounded-full!">Continue</button>
+                        <div class="text-center">Want to start over? <a href="/" class="text-primary underline cursor-pointer">Go back</a></div>
                     </div>
                 </div>
+
+                <!-- @if(store().platformIsTauri) {
+                    <button type="button" [disabled]="isLoading()" (click)="closeBrowser()"
+                        class="btn p-2! rounded-md! bg-red-800! absolute top-0 right-0 m-3 z-20">
+                        <svg class="stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            width="20" height="20" color="#4a4a4a" fill="none" stroke="#4a4a4a" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6.00081 17.9992M17.9992 18L6 6.00085" />
+                        </svg>
+                        <span>Close app</span>
+                    </button>
+                } -->
             }
 
 

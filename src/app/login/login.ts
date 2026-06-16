@@ -69,7 +69,7 @@ export default class Login implements AfterViewInit {
       this.isLoadingPreloginData.set(true)
 
       const res = await lastValueFrom(this._dataService.fetchPreLoginDataWithCode(this.examCode.value!))
-      
+
       if (res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
         const isSecure = this.store().platformIsTauri
 
@@ -211,7 +211,7 @@ export default class Login implements AfterViewInit {
     digits.forEach((d, i) => {
       if (index + i < 8) {
         current[index + i] = d;
-      }
+      } 
     });
 
     this.codeDigits.set(current);
@@ -222,5 +222,9 @@ export default class Login implements AfterViewInit {
     if (this.codeInputs && this.codeInputs.length > nextIndex) {
       this.codeInputs.get(nextIndex)?.nativeElement.focus();
     }
+  }
+
+  closeBrowser() {
+    this._tauriService.closeApp()
   }
 }

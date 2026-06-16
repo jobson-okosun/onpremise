@@ -73,12 +73,22 @@ export class ExamService {
     isProctoredExam = computed(() => this.isLiveProctoring() || this.isAutoProctoring())
     isCheckingProctoringNetwork = signal(false)
     proctoringNetworkSpeed = linkedSignal(() => this._systemCheckService.networkCheckResults()?.upload ?? 0)
+    proctoringLatencyStatus = signal<'good' | 'poor' | 'checking'>('checking')
+    proctoringNetworkRetryCount = signal(0)
     proctoringNetworkRetryCountdown = signal<number | null>(null);
     isProctoringNetworkRetryActive = signal(false);
     private proctoringNetworkRetrySub?: Subscription;
+    private proctoringLatencyMonitorSub$?: Subscription;
+    private proctoringUploadMonitorSub$?: Subscription;
 
     constructor() {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
+
+        this._autoProctoringService.onStreamErrorCallback = () => {
+            if (this.examTimerSub$) {
+                this.examTimerSub$.unsubscribe();
+            }
+        };
     }
 
     isAppPinned = effect(() => {
@@ -226,10 +236,12 @@ export class ExamService {
         // }
 
         if (autoSaveTimeDiff >= 300) {
-            if (this.examTimerSub$) {
-                this.examTimerSub$.unsubscribe();
-                disableRestrictedActions();
-                this.displayConectionLossModal();
+            if (!this.isProctoredExam()) {
+                if (this.examTimerSub$) {
+                    this.examTimerSub$.unsubscribe();
+                    disableRestrictedActions();
+                    this.displayConectionLossModal();
+                }
             }
         }
 
@@ -437,7 +449,7 @@ export class ExamService {
             },
             complete: async () => {
                 this.closeBrowerCounter.set(null);
-                this._tauriService.KillBrowserFromAutoSave()
+                this._tauriService.closeApp()
             }
         });
     }
@@ -651,16 +663,90 @@ export class ExamService {
     }
 
     startProctoringNetworkMonitor() {
-        this.proctoringNetworkSubscription$ = interval(NETWORK_RETRY_INTERVAL).subscribe({
+        if (!this.isProctoredExam()) return;
+
+        this.proctoringLatencyMonitorSub$ = interval(30000).subscribe({
             next: async () => {
                 if (this.isCheckingProctoringNetwork() || this.isProctoringNetworkRetryActive()) return;
-
-                await this.checkProctorNetworkConnectivity()               
+                await this.checkProctorNetworkLatency();
             }
-        })
+        });
+
+        this.proctoringUploadMonitorSub$ = interval(60000).subscribe({
+            next: async () => {
+                if (this.isCheckingProctoringNetwork() || this.isProctoringNetworkRetryActive()) return;
+                await this.checkProctorNetworkUploadSpeed();
+            }
+        });
     }
 
-    async checkProctorNetworkConnectivity() {
+    stopProctoringNetworkMonitor() {
+        this.proctoringLatencyMonitorSub$?.unsubscribe();
+        this.proctoringUploadMonitorSub$?.unsubscribe();
+    }
+
+    async checkProctorNetworkLatency() {
+        if (this.examEnded() || this.isProctoringNetworkRetryActive()) return;
+
+        try {
+            const latency = await this._dataService.checkLatency(5);
+            if (latency.avg <= 600 && latency.jitter <= 200) {
+                this.proctoringLatencyStatus.set('good');
+            } else {
+                this.proctoringLatencyStatus.set('poor');
+            }
+        } catch (e) {
+            this.proctoringLatencyStatus.set('poor');
+            this.triggerProctoringNetworkRetry();
+        }
+    }
+
+    async checkProctorNetworkUploadSpeed() {
+        if (this.examEnded() || this.isProctoringNetworkRetryActive()) return;
+
+        this.isCheckingProctoringNetwork.set(true);
+
+        try {
+            const req = await this._dataService._checkUploadSpeed();
+            const networkUploadSpeed = +req.toFixed(2);
+            this.proctoringNetworkSpeed.set(networkUploadSpeed);
+
+            if (networkUploadSpeed >= MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET && networkUploadSpeed < MINIMUM_REASONABLE_DOWNLOAD_SPEED) {
+                this._toast.warning(`Slow Network Connection`);
+            }
+
+            if (networkUploadSpeed < MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET) {
+                this.triggerProctoringNetworkRetry();
+            }
+        } catch (e) {
+            this.proctoringNetworkSpeed.set(0);
+            this.triggerProctoringNetworkRetry();
+        } finally {
+            this.isCheckingProctoringNetwork.set(false);
+        }
+    }
+
+    triggerProctoringNetworkRetry() {
+        if (this.isProctoringNetworkRetryActive()) return;
+
+        this.isProctoringNetworkRetryActive.set(true);
+        this.proctoringLatencyStatus.set('poor');
+        this.proctoringNetworkRetryCount.set(0);
+        disableRestrictedActions();
+        
+        if (this.isAutoProctoring()) {
+            this._autoProctoringService.isNetworkRetryActive.set(true);
+            this._autoProctoringService.cleanUpProctoring();
+        }
+
+        if (this.isLiveProctoring()) {
+            this._liveProctoringService.cleanUpLiveProctoring();
+        }
+
+        this.startNetworkRetryCountdown(3);
+    }
+
+    async runProctoringNetworkRetryCheck() {
         if (this.examEnded()) return;
 
         this.isCheckingProctoringNetwork.set(true);
@@ -668,25 +754,20 @@ export class ExamService {
         try {
             const req = await this._dataService._checkUploadSpeed();
             const networkUploadSpeed = +req.toFixed(2);
-
             this.proctoringNetworkSpeed.set(networkUploadSpeed);
 
-            if(this.proctoringNetworkSpeed() >= MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET && this.proctoringNetworkSpeed() < MINIMUM_REASONABLE_DOWNLOAD_SPEED) {
-                this._toast.warning(`Slow Network Connection`)
-            }
-
-            if (networkUploadSpeed < MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET) {
-                this.isProctoringNetworkRetryActive.set(true);
-                disableRestrictedActions();
-                this.startNetworkRetryCountdown();
-            } else {
+            if (networkUploadSpeed >= MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET) {
+                // Connection restored
                 this.isProctoringNetworkRetryActive.set(false);
+                this.proctoringNetworkRetryCount.set(0);
+                this.proctoringLatencyStatus.set('checking');
                 
                 if (!this.isCandidateSuspended() && this.store().appIsPinned) {
                     enableRestrictedActions();
                 }
                 
                 if (this.isAutoProctoring() && !this._autoProctoringService.isStreaming()) {
+                    this._autoProctoringService.isNetworkRetryActive.set(false);
                     const success = await this._autoProctoringService.initialize();
                     if (!success) {
                         this._toast.error('Unable to restart proctoring after network recovery. Please contact the administrator.', { duration: 150000, dismissible: true });
@@ -701,29 +782,46 @@ export class ExamService {
                 }
 
                 this.stopNetworkRetryCountdown();
+            } else {
+                // Connection still poor
+                this.handleFailedRetryCheck();
             }
         } 
-        catch(e) {
+        catch (e) {
+            // Connection still dead
             this.proctoringNetworkSpeed.set(0);
-            this.isProctoringNetworkRetryActive.set(true);
-            disableRestrictedActions();
-            this.startNetworkRetryCountdown();
+            this.handleFailedRetryCheck();
         }
         finally {
             this.isCheckingProctoringNetwork.set(false);
         }
     }
 
-    startNetworkRetryCountdown() {
+    handleFailedRetryCheck() {
+        const currentCount = this.proctoringNetworkRetryCount() + 1;
+        this.proctoringNetworkRetryCount.set(currentCount);
+        
+        if (currentCount >= 10) {
+            this.stopNetworkRetryCountdown();
+            this.stopProctoringNetworkMonitor();
+            this.displayConectionLossModal();
+        } else {
+            const backoff = [3, 5, 10, 15, 20];
+            const delay = currentCount < backoff.length ? backoff[currentCount] : 20;
+            this.startNetworkRetryCountdown(delay);
+        }
+    }
+
+    startNetworkRetryCountdown(delay: number = 3) {
         if (this.proctoringNetworkRetryCountdown() !== null) return;
         
-        this.proctoringNetworkRetryCountdown.set(30);
+        this.proctoringNetworkRetryCountdown.set(delay);
         this.proctoringNetworkRetrySub = interval(1000).subscribe(() => {
             const current = this.proctoringNetworkRetryCountdown();
             if (current !== null) {
                 if (current <= 1) {
                     this.stopNetworkRetryCountdown();
-                    this.checkProctorNetworkConnectivity();
+                    this.runProctoringNetworkRetryCheck();
                 } else {
                     this.proctoringNetworkRetryCountdown.set(current - 1);
                 }

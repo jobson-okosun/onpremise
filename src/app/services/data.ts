@@ -147,7 +147,7 @@ export class DataService {
 
             [download, latency] = await Promise.all([
                 this._checkDownloadSpeed().catch(() => 0),
-                this._checkLatency(5).catch(() => ({ avg: 999, min: 999, max: 999, jitter: 999, samples: [] })),
+                this.checkLatency(5).catch(() => ({ avg: 999, min: 999, max: 999, jitter: 999, samples: [] })),
             ]);
 
         } catch (err) {
@@ -235,7 +235,7 @@ export class DataService {
         return (SIZE_MB * 8) / duration;
     }
 
-    private async _checkLatency(samples = 5) {
+    async checkLatency(samples = 5) {
         const rtts = [];
         const url = environment.NETWORK_CHECK.LATENCY;
         const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));

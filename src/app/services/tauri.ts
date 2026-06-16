@@ -2,7 +2,7 @@ import { effect, inject, Injectable, signal } from "@angular/core";
 import { Store } from "../store/store";
 import { BatteryStatus } from "../store/model/types";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { interval } from "rxjs";
+import { async, interval } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class TauriService {
@@ -83,10 +83,14 @@ export class TauriService {
         this._store.updateStore({ batteryStatus })
     }
 
-    async KillBrowserFromAutoSave() {
+    async closeApp() {
         try {
-            await this.tauriInvoke()('exit_browser_autosave')
-        } catch (error) { }
+            await this.tauriInvoke()('close_app');
+        } catch (e) {
+            await (window as any).__TAURI__.window.getCurrentWindow().close();
+            try {
+            } catch (_) { }
+        }
     }
 
     async sendExamStarted() {
@@ -122,7 +126,6 @@ export class TauriService {
     }
 
     async listenForInfrigement() {
-
         try {
             const unlisten = await this.tauriListen()('infrigment::discovered', (event: any) => {
                 const infridgementMessage = event.payload || 'Infrigement Detected';

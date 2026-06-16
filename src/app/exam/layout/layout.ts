@@ -70,7 +70,8 @@ export default class Layout implements OnDestroy {
 
   lastPressTime = signal(0);
   threshold = signal(2000);
-  showCalculator = signal<null | string>(null)
+  showCalculator = signal<'SIMPLE' | 'SCIENTIFIC' | null>(null);
+  autoProctoringFailed = signal(false);
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
   infractionToastTemplate = viewChild<TemplateRef<HTMLDivElement>>('infractionToastTemplate');
@@ -153,6 +154,7 @@ export default class Layout implements OnDestroy {
   canEndExam = computed(() => this._exam.canEndExam())
 
   proctoringNetworkSpeed = computed(() => this._exam.proctoringNetworkSpeed())
+  proctoringLatencyStatus = computed(() => this._exam.proctoringLatencyStatus())
   isCheckingProctoringNetwork = computed(() => this._exam.isCheckingProctoringNetwork())
   proctoringNetworkRetryCountdown = computed(() => this._exam.proctoringNetworkRetryCountdown())
   isProctoringNetworkRetryActive = computed(() => this._exam.isProctoringNetworkRetryActive())
@@ -214,7 +216,9 @@ export default class Layout implements OnDestroy {
         const success = await this._autoProctorService.initialize()
 
         if (!success) {
-          this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 150000, dismissible: true })
+          this.autoProctoringFailed.set(true);
+          // this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 150000, dismissible: true })
+
           return
         }
       }

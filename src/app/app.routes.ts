@@ -9,11 +9,9 @@ export const routes: Routes = [
         path: 'proctored',
         canActivate: [hasActiveExam],
         children: [
-            { path: '', redirectTo: 'auth', pathMatch: 'full' },
-            { path: 'auth', loadComponent: () => import('./proctor-onboarding/authentication/authentication') },
-            { path: 'auth/login', loadComponent: () => import('./proctor-onboarding/login/login') },
+            { path: '', redirectTo: 'onboarding', pathMatch: 'full' },
             {
-                path: 'onboarding',
+                path: 'onboarding', 
                 canActivate: [isLoggedin],
                 component: OnboardingLayout,
                 children: [
