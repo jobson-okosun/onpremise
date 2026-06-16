@@ -253,6 +253,7 @@ export class LiveProctoringService {
 
   private onConsumerPaused(data: any) {
     const info = this.consumers.get(data.consumer_id);
+    
     if (info?.kind === 'audio') {
       this.proctorAudioState.set(false);
       this.isTargetSpeaking.set(false);
