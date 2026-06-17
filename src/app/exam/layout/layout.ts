@@ -152,6 +152,7 @@ export default class Layout implements OnDestroy {
   connectionStatus = computed(() => this._exam.connectionStatus())
   screenWidth = computed(() => this._exam.screenWidth())
   canEndExam = computed(() => this._exam.canEndExam())
+  examEnded = computed(() => this._exam.examEnded())
 
   proctoringNetworkSpeed = computed(() => this._exam.proctoringNetworkSpeed())
   proctoringLatencyStatus = computed(() => this._exam.proctoringLatencyStatus())

@@ -530,7 +530,7 @@
     </div>
 </ng-template>
 
-@if(isProctoringNetworkRetryActive()) {
+@if(isProctoringNetworkRetryActive() && !examEnded()) {
     <div animate.enter="fade-in" class="fixed top-0 left-0 z-50 bg-[rgba(0,0,0,0.2)] h-dvh w-full backdrop-blur-3xl">
         <div class="flex h-full w-full items-center justify-center p-5">
             <div class="bg-white p-10 rounded-2xl select-auto flex flex-col items-center justify-center">

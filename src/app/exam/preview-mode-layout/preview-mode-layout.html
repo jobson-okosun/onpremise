@@ -1,15 +1,15 @@
 <div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
     <!-- top -->
     <div>
-        <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
+        <div class="relative w-full h-3 bg-gray-300 overflow-hidden">
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
         </div>
         
         <div class="flex flex-col bg-white rounded-md rounded-t-none drop-shadow-sm drop-shadow-gray-50 divide-y divide-gray-200">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-x-5 p-0.5">
+            <div class="flex flex-col lg:flex-row justify-center items-center gap-x-5 p-0.5">
 
-                <div class="uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
+                <!-- <div class="uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div> -->
 
                 <div class="flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
                     <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
