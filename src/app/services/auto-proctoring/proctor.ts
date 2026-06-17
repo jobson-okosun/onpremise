@@ -227,47 +227,21 @@ export class ProctorService {
         });
 
         this.tauriListen()('stream_error', (event: any) => {
-            this.cleanUpProctoring()
-            this.displayProctoringStreamErrorModal()
             console.log('streaming cleanedup: error from ipc stream_error:channel', event)
+            if (this.onStreamErrorCallback) {
+                this.onStreamErrorCallback();
+            }
         });
 
         this.tauriListen()('stream_closed', () => {
-            this.cleanUpProctoring()
             console.log('streaming cleanedup: error from ipc stream_closed:channel')
-            if (!this.isNetworkRetryActive()) {
-                this.displayProctoringStreamErrorModal()
+            if (this.onStreamErrorCallback) {
+                this.onStreamErrorCallback();
             }
         });
 
         this.tauriListen()('detection_result', (res: any) => {
             this.onInfractions(res);
-        });
-    }
-
-    displayProctoringStreamErrorModal(): void {
-        disableRestrictedActions();
-
-        if (this.onStreamErrorCallback) {
-            this.onStreamErrorCallback();
-        }
-        
-        Swal.close();
-        Swal.fire({
-            title: 'Proctoring Stream Error',
-            text: 'An error occurred with the proctoring stream. Please contact the administrator.',
-            icon: 'error',
-            showCancelButton: false,
-            confirmButtonColor: 'rgb(3, 142, 220)',
-            cancelButtonColor: 'rgb(243, 78, 78)',
-            confirmButtonText: 'Yes, Relogin',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            heightAuto: false,
-        }).then((result) => {
-            if (result.value) {
-                location.assign('/usage-guide');
-            }
         });
     }
 
@@ -291,12 +265,12 @@ export class ProctorService {
             color: INFRACTION_COLORS[infractionType]
         }
 
-        if (!this.infractionTemplateRef()) {
+        if (!this.infractionTemplateRef()) { 
             return
         }
 
         this._toast.show(this.infractionTemplateRef(), { data: { ...data }, duration: 7000, position: "top-left" })
-    }
+    } 
 
     async cleanUpProctoring() {
         this.isStreaming.set(false);

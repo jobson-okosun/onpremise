@@ -85,9 +85,7 @@ export class ExamService {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
 
         this._autoProctoringService.onStreamErrorCallback = () => {
-            if (this.examTimerSub$) {
-                this.examTimerSub$.unsubscribe();
-            }
+            this.triggerProctoringNetworkRetry();
         };
     }
 
@@ -639,7 +637,7 @@ export class ExamService {
 
     logout() {
         this.examEnded.set(true);
-        location.assign('/usage-guide')
+        location.assign('/')
     }
 
     destroySubscription() {
@@ -805,6 +803,12 @@ export class ExamService {
             this.stopNetworkRetryCountdown();
             this.stopProctoringNetworkMonitor();
             this.displayConectionLossModal();
+            
+            if (this.examTimerSub$) {
+                this.examTimerSub$.unsubscribe();
+            }
+
+            disableRestrictedActions();
         } else {
             const backoff = [3, 5, 10, 15, 20];
             const delay = currentCount < backoff.length ? backoff[currentCount] : 20;
