@@ -8,7 +8,9 @@
                         <div class="text-primary">{{ store().currentSection?.name }}</div>
                         <div>Question {{ store().currentQuestionIndex + 1 }}</div>
                     </div>
-                    <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                    @if(!store().isPreviewMode) {
+                        <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                    }
                 </div>
             </div>
             <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed select-none">

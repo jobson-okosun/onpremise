@@ -11,7 +11,7 @@ export const routes: Routes = [
         children: [
             { path: '', redirectTo: 'onboarding', pathMatch: 'full' },
             {
-                path: 'onboarding', 
+                path: 'onboarding',
                 canActivate: [isLoggedin],
                 component: OnboardingLayout,
                 children: [
@@ -29,35 +29,40 @@ export const routes: Routes = [
         ]
     },
     { path: 'usage-guide', loadComponent: () => import('./usage-guide/usage-guide') },
-    { 
-        path: 'welcome', 
-        canActivate: [hasExamSettings], 
-        loadComponent: () => import('./welcome/welcome') 
-    },
-    { 
-        path: 'login', 
-        canActivate: [hasExamSettings], 
-        loadComponent: () => import('./login/login') 
-    },
-    { 
-        path: 'overview', 
-        canActivate: [hasActiveExam, isLoggedin], 
-        loadComponent: () => import('./overview/overview') 
+    {
+        path: 'welcome',
+        canActivate: [hasExamSettings],
+        loadComponent: () => import('./welcome/welcome')
     },
     {
-         path: 'instruction', 
-         canActivate: [hasActiveExam, isLoggedin], 
-         loadComponent: () => import('./instructions/instructions') 
+        path: 'login',
+        canActivate: [hasExamSettings],
+        loadComponent: () => import('./login/login')
     },
     {
-         path: 'exam', 
-         canActivate: [hasActiveExam, isLoggedin, examNotEnded], 
-         canDeactivate: [canGoBackFromExam], 
-         loadComponent: () => import('./exam/layout/layout')
+        path: 'overview',
+        canActivate: [hasActiveExam, isLoggedin],
+        loadComponent: () => import('./overview/overview')
     },
+    {
+        path: 'instruction',
+        canActivate: [hasActiveExam, isLoggedin],
+        loadComponent: () => import('./instructions/instructions')
+    },
+    {
+        path: 'exam',
+        canActivate: [hasActiveExam, isLoggedin, examNotEnded],
+        canDeactivate: [canGoBackFromExam],
+        loadComponent: () => import('./exam/layout/layout')
+    },
+    {
+        path: 'exam-preview',
+        loadComponent: () => import('./exam/preview-mode-layout/preview-mode-layout')
+    },
+
     // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
-         path: 'exam-ended', 
-         loadComponent: () => import('./exam-ended/exam-ended') 
+        path: 'exam-ended',
+        loadComponent: () => import('./exam-ended/exam-ended')
     }
 ];

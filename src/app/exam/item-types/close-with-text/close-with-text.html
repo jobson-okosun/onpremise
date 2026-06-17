@@ -9,7 +9,9 @@
                     </div>
                     <div class="flex gap-3">
                         <app-answer-tools></app-answer-tools>
-                        <app-question-tools [showQuestionModalButton]="false" [showQuestionModalButton]="false"></app-question-tools>
+                        @if(!store().isPreviewMode) {
+                            <app-question-tools [showQuestionModalButton]="false" [showQuestionModalButton]="false"></app-question-tools>
+                        }
                     </div>
                 </div>
             </div>

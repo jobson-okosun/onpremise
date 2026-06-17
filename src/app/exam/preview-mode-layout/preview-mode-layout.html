@@ -1,0 +1,225 @@
+<div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
+    <!-- top -->
+    <div>
+        <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
+            <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+            <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+        </div>
+        
+        <div class="flex flex-col bg-white rounded-md rounded-t-none drop-shadow-sm drop-shadow-gray-50 divide-y divide-gray-200">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-x-5 p-0.5">
+
+                <div class="uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
+
+                <div class="flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
+                    <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
+                        @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
+                            <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
+                                <div 
+                                    [class.bg-primary!]="store().currentSection?.id == item.id"
+                                    [class.text-white!]="store().currentSection?.id == item.id"
+                                    [class.rounded-l-2xl!] = "first"
+                                    [class.rounded-r-2xl!] = "last"
+                                    class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
+
+                                    <div 
+                                        [class.font-bold!]="store().currentSection?.id == item.id" 
+                                        class="text-sm font-medium select-none text-start">
+                                        {{ sectionNameInFullMode(item) }}
+                                    </div>
+                                        
+                                    <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
+                                        <div class="text-xs font-normal lowercase select-none text-start">
+                                            <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
+                                        </div>
+                                        <div 
+                                            class="w-full xl:w-2/4 xl:min-w-[70px]">
+                                            <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
+                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
+                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+                        }
+                    </div>
+                </div>
+                
+            </div>
+            <div class="flex w-full gap-3 p-2 items-center justify-between text-sm">
+                <div class="hidden lg:flex gap-3 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
+                    <div class="flex flex-col justify-between">
+                        <div class="font-semibold">{{ 'Section' }} {{ currentSectionIndex() + 1 }} of {{ store().sections.length }}</div>
+                        <div>{{ store().currentSection?.items?.length }} questions</div>
+                    </div>
+                </div>
+                
+                <app-paginator class="w-full lg:w-max"></app-paginator>
+
+                <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
+                        <div class="flex gap-2 items-center">
+                            <span class="rounded-full size-2.5 bg-green-600"></span>
+                            <span class="text-xs">Answered</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                        <div class="flex gap-2 items-center">
+                            <span class="rounded-full size-2.5 bg-red-600"></span>
+                            <span class="text-xs">Unanswered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- content area -->
+    <div id="itemTypesContainer" class="flex-1 max-h-[580px] 2xl:max-h-[1000px] overflow-hidden"> 
+        @if(showItemTypesContainer()) {
+
+            @if(store().currentQuestion!.item_type === itemTypes().MCQ) {
+                <app-single-choice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().MRQ) {
+                <app-multiple-response [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response>
+            }
+
+            @if(store().currentQuestion?.item_type === itemTypes().TRUE_FALSE) {
+                <app-true-or-false [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false>
+            }
+
+            @if(store().currentQuestion?.item_type === itemTypes().YES_NO) {
+                <app-yes-or-no [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no>
+            }  
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
+                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
+                 <!-- <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> -->
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
+                <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_RADIO) {
+                <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().SHORT_TEXT) {
+                <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ESSAY_RICH_TEXT) {
+                <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ESSAY_PLAIN_TEXT) {
+                <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ASSOCIATION) {
+                <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().ORDER_LIST) {
+                <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT_IMAGE) {
+                <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN_IMAGE) {
+                <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().IMAGE_DRAG_AND_DROP) {
+                <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop>
+            }
+
+            @if(store().currentQuestion!.item_type === itemTypes().CHOICE_MATRIX) {
+                <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix>
+            }
+            
+            @if(store().currentQuestion!.item_type === itemTypes().DRAWING_AND_WRITING) {
+                @if(store().drawingAndWritingConfig.roughWorkMode) {
+                    <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
+                } @else {
+                    <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
+                }
+            }
+        }
+    </div> 
+
+    <!-- bottom -->
+    <div>
+        <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
+            <div class="flex justify-between items-center md:justify-between gap-3">
+                @if(store().currentQuestionIndex > 0) {
+                    <button (click)="prev()" class="btn gap-3!">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                        </svg>
+                        Previous
+                    </button>
+                }
+                @if(showPrevSectionButton()) {
+                    <button (click)="prevSection()" class="btn bg-gray-800! gap-3!">
+                        <svg class="w-4 h-4 rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                        </svg>
+                        Previous {{ 'Section' }}
+                    </button>
+                }
+
+                @if(store().currentQuestionIndex < (store().currentSection!.items!.length - 1)) {
+                    <button (click)="nextQuestion()" class="btn gap-3!">
+                        Next
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </button>
+                }
+
+                @if(showNextSectionButton()) {
+                    <button (click)="nextSection()" class="btn bg-gray-800! gap-3!">
+                        Next {{ 'Section' }}
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </button>
+                }
+            </div>
+            
+            <div class="flex flex-col sm:flex-row lg:items-center gap-2">
+                <div class="p-3 py-2 rounded-2xl bg-white text-sm font-medium">
+                    <div>Attempted {{ allSectionsAttemp() }} of {{ totalSectionsQuestions() }} for all {{ 'Sections' }}</div>
+                </div>
+                <button (click)="examprogress.toggle($event)"class="p-3 py-2 rounded-2xl bg-primary text-white text-sm font-medium flex items-center justify-center gap-2">
+                    <div>Show attempts</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" class="text-white">
+                        <path d="M2.5 7.5V13.5C2.5 17.2712 2.5 19.1569 3.67157 20.3284C4.84315 21.5 6.72876 21.5 10.5 21.5H12.5M21.5 11.5V7.5" 
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3.86909 5.31461L2.5 7.5H21.5L20.2478 5.41303C19.3941 3.99021 18.9673 3.2788 18.2795 2.8894C17.5918 2.5 16.7621 2.5 15.1029 2.5H8.95371C7.32998 2.5 6.51812 2.5 5.84013 2.8753C5.16215 3.2506 4.73113 3.93861 3.86909 5.31461Z" 
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M12 7.5V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10 10.5H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M18 15.5V17.5H19.5M22 17.5C22 19.7091 20.2091 21.5 18 21.5C15.7909 21.5 14 19.7091 14 17.5C14 15.2909 15.7909 13.5 18 13.5C20.2091 13.5 22 15.2909 22 17.5Z" 
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-popover #examprogress>
+    <app-overview [activeTab]="0"></app-overview>
+</p-popover>

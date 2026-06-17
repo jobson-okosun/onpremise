@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { DialogModule } from 'primeng/dialog';
 import { Store } from '../../store/store';
 import { OnboardingService } from '../../services/system-check/onboarding';
 import { ALL_ONBOARDING_STEPS, DEFAULT_ONBOARDING_SETTINGS, OnboardingSettings, OnboardingStep, OnboardingStepId } from '../../store/model/types';
@@ -7,7 +8,7 @@ import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-progress-indicator',
-  imports: [],
+  imports: [DialogModule],
   templateUrl: './progress-indicator.html',
   styleUrl: './progress-indicator.css',
 })
@@ -123,5 +124,20 @@ export class ProgressIndicator {
     // Navigate
     this._router.navigate([steps[newStep].route]);
     this.currentStep.set(newStep);
+  }
+
+  showRestartModal = signal(false);
+
+  confirmRestart(event: Event) {
+    event.preventDefault();
+    this.showRestartModal.set(true);
+  }
+
+  cancelRestart() {
+    this.showRestartModal.set(false);
+  }
+
+  doRestart() {
+    location.assign('/');
   }
 }

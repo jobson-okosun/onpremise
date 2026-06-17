@@ -34,6 +34,11 @@
                 "glob": "**/*",
                 "input": "node_modules/katex",
                 "output": "/katex/"
+              },
+              {
+                "glob": "vercel.json",
+                "input": "./",
+                "output": "./"
               }
             ],
             "styles": [

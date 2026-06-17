@@ -228,6 +228,8 @@ export class ProctorService {
 
         this.tauriListen()('stream_error', (event: any) => {
             console.log('streaming cleanedup: error from ipc stream_error:channel', event)
+            if (this.isNetworkRetryActive()) return;
+
             if (this.onStreamErrorCallback) {
                 this.onStreamErrorCallback();
             }
@@ -235,6 +237,8 @@ export class ProctorService {
 
         this.tauriListen()('stream_closed', () => {
             console.log('streaming cleanedup: error from ipc stream_closed:channel')
+            if (this.isNetworkRetryActive()) return;
+            
             if (this.onStreamErrorCallback) {
                 this.onStreamErrorCallback();
             }

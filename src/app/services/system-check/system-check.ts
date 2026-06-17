@@ -181,35 +181,31 @@ export class SystemCheckService {
 
         if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
             try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const hasVideo = devices.some(d => d.kind === 'videoinput');
-                const hasAudio = devices.some(d => d.kind === 'audioinput');
+                // Request explicit permissions for both video and audio
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                
+                // Stop all tracks immediately to release the hardware
+                stream.getTracks().forEach(track => track.stop());
 
-                if (hasVideo && hasAudio) {
-                    this.updateCheck('mediaDevices', {
-                        status: 'passed',
-                        message: 'Camera and microphone detected',
-                    });
-                } else if (hasVideo) {
-                    this.updateCheck('mediaDevices', {
-                        status: 'warning',
-                        message: 'Camera found, but no microphone',
-                    });
-                } else if (hasAudio) {
-                    this.updateCheck('mediaDevices', {
-                        status: 'warning',
-                        message: 'Microphone found, but no camera',
-                    });
-                } else {
-                    this.updateCheck('mediaDevices', {
-                        status: 'failed',
-                        message: 'No camera or microphone found',
-                    });
-                }
-            } catch {
+                // If we reach here, we successfully got permission and the hardware works
                 this.updateCheck('mediaDevices', {
                     status: 'passed',
-                    message: 'Camera and microphone available',
+                    message: 'Camera and microphone detected and permitted',
+                });
+            } catch (err: any) {
+                let errorMessage = 'Failed to access camera or microphone';
+                
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    errorMessage = 'Camera or microphone permission was denied';
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    errorMessage = 'No camera or microphone was found';
+                } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                    errorMessage = 'Camera or microphone is already in use by another application';
+                }
+
+                this.updateCheck('mediaDevices', {
+                    status: 'failed',
+                    message: errorMessage,
                 });
             }
         } else {

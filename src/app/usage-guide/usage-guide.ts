@@ -1,11 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { DialogModule } from 'primeng/dialog';
 import { SLIDES } from '../utils/constants';
 import { DataService } from '../services/data';
 import { finalize } from 'rxjs';
-import { DeliveryMethod, DeploymentMode, IAssessmentPreLoginData, Slide } from '../store/model/types';
-import { HttpErrorResponse } from '@angular/common/http';
+import { DeploymentMode, Slide } from '../store/model/types';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { AuthService } from '../services/auth';
 import { Router } from '@angular/router';
 import { Store } from '../store/store';
 import { NgClass } from '@angular/common';
@@ -13,14 +12,13 @@ import { TauriService } from '../services/tauri';
 
 @Component({
   selector: 'app-usage-guide',
-  imports: [NgClass],
+  imports: [NgClass, DialogModule],
   templateUrl: './usage-guide.html',
   styleUrl: './usage-guide.css',
 })
 export default class UsageGuide {
   private _dataService = inject(DataService)
   private _toast = inject(HotToastService)
-  private _authService = inject(AuthService)
   private _router = inject(Router)
   private _store = inject(Store)
   private _tauriService = inject(TauriService)
@@ -32,7 +30,6 @@ export default class UsageGuide {
   slides: Slide[] = SLIDES
 
   ngOnInit() {
-    // localStorage.clear()
     this.startAutoSlide()
   }
 
@@ -82,7 +79,17 @@ export default class UsageGuide {
     setInterval(() => this.nextSlide(), 8000);
   }
 
+  showCloseModal = signal(false);
+
   closeBrowser() {
-    this._tauriService.closeApp()
+    this.showCloseModal.set(true);
+  }
+
+  cancelCloseApp() {
+    this.showCloseModal.set(false);
+  }
+
+  doCloseBrowser() {
+    this._tauriService.closeApp();
   }
 }

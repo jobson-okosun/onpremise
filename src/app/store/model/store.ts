@@ -38,6 +38,7 @@ export class StoreDTO {
         canvasContainerHeight: number,
         roughWorkMode: boolean
     }
+    isPreviewMode: boolean
 
     constructor() {
         this.examSettings = null
@@ -66,5 +67,6 @@ export class StoreDTO {
             canvasContainerHeight: 1000,
             roughWorkMode: false
         }
+        this.isPreviewMode = false
     }
 }

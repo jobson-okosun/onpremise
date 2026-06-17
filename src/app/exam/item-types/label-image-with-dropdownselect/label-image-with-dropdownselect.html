@@ -7,7 +7,9 @@
                         <div class="text-primary">{{ store().currentSection?.name }}</div>
                         <div>Question {{ store().currentQuestionIndex + 1 }}</div>
                     </div>
-                    <app-question-tools [showToggleLayoutButton]="true" [showQuestionModalButton]="false"></app-question-tools>
+                    @if(!store().isPreviewMode) {
+                        <app-question-tools [showToggleLayoutButton]="true" [showQuestionModalButton]="false"></app-question-tools>
+                    }
                 </div>
             </div>
             <div [style.fontSize.px]="fontSize()"
