@@ -45,7 +45,7 @@ export class App {
     let currentRoute = this.store().currentRoute || {}
     currentRoute = { ...currentRoute, queryParams }
 
-    this._store.updateStore({ currentRoute })
+    this._store.updateStore({ currentRoute, isPreviewMode: !!localStorage.getItem('exam-preview-mode') })
   } 
 
   isAdminUrl() {
