@@ -2,7 +2,8 @@ import { Component, computed, inject, model } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
-import { AlphabetList, UsageEvents } from '../../../store/model/types';
+import { AlphabetList } from '../../../store/model/types';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 
 @Component({
@@ -25,11 +26,24 @@ export class SingleChoice {
       return
     };
 
+    const oldAnswer = currentQuestion!.responses[0];
+    const isSameAnswer = oldAnswer === value;
+
+    if (isSameAnswer) {
+      return;
+    }
+
+    const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
+
+    const answerIndex = currentQuestion!.options.findIndex(opt => opt.value === value).toString();
+    const oldAnswerIndex = hasOldAnswer ? currentQuestion!.options.findIndex(opt => opt.value === oldAnswer).toString() : null;
+
     this._eventService.logEvent({
-      event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-      current_question_id: currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
+      event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+      question_id: currentQuestion!.id,
+      section_id: this.store().currentSection!.id,
+      answer: answerIndex,
+      old_answer: oldAnswerIndex
     })
 
     currentQuestion!.responses[0] = value

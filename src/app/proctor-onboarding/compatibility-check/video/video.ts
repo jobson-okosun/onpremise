@@ -1,6 +1,8 @@
 import { Component, computed, effect, ElementRef, inject, OnDestroy, viewChild } from '@angular/core';
 import { MediaService } from '../../../services/media';
 import { OnboardingService } from '../../../services/system-check/onboarding';
+import { EventService } from '../../../services/event';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-video',
@@ -11,6 +13,7 @@ import { OnboardingService } from '../../../services/system-check/onboarding';
 export default class Video implements OnDestroy {
   private _mediaService = inject(MediaService);
   private _onboardingService = inject(OnboardingService);
+  private _eventService = inject(EventService);
 
   videoPreview = viewChild<ElementRef<HTMLVideoElement>>('videoPreview');
 
@@ -28,6 +31,7 @@ export default class Video implements OnDestroy {
   }
 
   async requestVideoPermission() {
+    this._eventService.logEvent({ event_type: CandidateEventType.CAMERA_TEST_STARTED });
     await this._mediaService.requestVideoPermission();
 
     // Set video element after permission is granted
@@ -42,6 +46,7 @@ export default class Video implements OnDestroy {
   }
 
   confirmVideoWorks() {
+    this._eventService.logEvent({ event_type: CandidateEventType.CAMERA_TEST_COMPLETED });
     this._mediaService.confirmVideoWorks();
     this._onboardingService.markStepCompleted('device-check-video');
   }

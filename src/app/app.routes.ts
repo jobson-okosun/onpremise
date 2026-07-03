@@ -59,7 +59,6 @@ export const routes: Routes = [
         path: 'exam-preview',
         loadComponent: () => import('./exam/preview-mode-layout/preview-mode-layout')
     },
-
     // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
         path: 'exam-ended',

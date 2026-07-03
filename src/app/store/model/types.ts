@@ -1,3 +1,5 @@
+import { ICandidateEvent } from './events/events.interface';
+
 export interface ExamSettings {
   exam_mode: DeploymentMode
   prelogin_datas: IAssessmentPreLoginData[]
@@ -49,6 +51,8 @@ export interface ICandidateLoginResponse {
   sections_overview: Array<ICandidateSectionsOverview>;
   assessment_data: ICandidateAssessmentData;
   sections_questions: Array<ICandidateSectionQuestions>;
+  events_session_id: string;
+  resume_elapsed_ms: number;
 }
 
 export interface ICandidateData {
@@ -236,7 +240,7 @@ export interface ICandidateAutoSave {
   seconds: number;
   cand_id: string;
   battery_status?: BatteryStatus;
-  events?: UsageEvent[];
+  pending_events?: ICandidateEvent[];
 }
 
 export class ICandidateAutoSaveItems {

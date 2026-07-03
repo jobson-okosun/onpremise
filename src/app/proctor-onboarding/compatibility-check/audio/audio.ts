@@ -1,6 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { MediaService } from '../../../services/media';
 import { OnboardingService } from '../../../services/system-check/onboarding';
+import { EventService } from '../../../services/event';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-audio',
@@ -11,6 +13,7 @@ import { OnboardingService } from '../../../services/system-check/onboarding';
 export default class Audio {
   private _mediaService = inject(MediaService);
   private _onboardingService = inject(OnboardingService);
+  private _eventService = inject(EventService);
 
   audioState = computed(() => this._mediaService.audioState());
   hasAudioPermission = computed(() => this._mediaService.hasAudioPermission());
@@ -28,6 +31,7 @@ export default class Audio {
   }
 
   recordAudio() {
+    this._eventService.logEvent({ event_type: CandidateEventType.MIC_TEST_STARTED });
     this._mediaService.recordAudio();
   }
 
@@ -36,6 +40,7 @@ export default class Audio {
   }
 
   confirmAudioWorks() {
+    this._eventService.logEvent({ event_type: CandidateEventType.MIC_TEST_COMPLETED });
     this._mediaService.confirmAudioWorks();
     this._onboardingService.markStepCompleted('device-check-audio');
   }

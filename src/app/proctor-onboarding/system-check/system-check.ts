@@ -1,6 +1,8 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { OnboardingService } from '../../services/system-check/onboarding';
 import { CheckStatus, SystemCheckService } from '../../services/system-check/system-check';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 
 @Component({
     selector: 'app-system-check',
@@ -11,6 +13,7 @@ import { CheckStatus, SystemCheckService } from '../../services/system-check/sys
 export default class SystemCheck implements OnInit {
     private _systemCheckService = inject(SystemCheckService);
     private _onboardingService = inject(OnboardingService);
+    private _eventService = inject(EventService);
 
     checks = computed(() => this._systemCheckService.checks());
     isRunning = computed(() => this._systemCheckService.isRunning());
@@ -27,10 +30,14 @@ export default class SystemCheck implements OnInit {
     }
 
     async runChecks() {
+        this._eventService.logEvent({ event_type: CandidateEventType.SYSTEM_CHECK_STARTED });
         const success = await this._systemCheckService.runAllChecks();
         
         if (success) {
+            this._eventService.logEvent({ event_type: CandidateEventType.SYSTEM_CHECK_COMPLETED });
             this._onboardingService.markStepCompleted('system-check');
+        } else {
+            this._eventService.logEvent({ event_type: CandidateEventType.SYSTEM_CHECK_FAILED });
         }
     }
 

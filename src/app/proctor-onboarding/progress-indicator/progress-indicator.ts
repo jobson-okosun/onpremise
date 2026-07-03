@@ -5,6 +5,8 @@ import { Store } from '../../store/store';
 import { OnboardingService } from '../../services/system-check/onboarding';
 import { ALL_ONBOARDING_STEPS, DEFAULT_ONBOARDING_SETTINGS, OnboardingSettings, OnboardingStep, OnboardingStepId } from '../../store/model/types';
 import { environment } from '../../../environments/environment';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-progress-indicator',
@@ -17,6 +19,7 @@ export class ProgressIndicator {
   private _router = inject(Router);
   private _store = inject(Store);
   private _onboardingService = inject(OnboardingService);
+  private _eventService = inject(EventService);
 
   private _settings = signal<OnboardingSettings>(DEFAULT_ONBOARDING_SETTINGS);
   allowNavigation = signal(!environment.production);
@@ -115,6 +118,15 @@ export class ProgressIndicator {
       return;
     }
 
+    if (arg === 'next') {
+      const currentStepConfig = steps[currentIndex];
+      if (currentStepConfig.id === 'guidelines') {
+        this._eventService.logEvent({ event_type: CandidateEventType.GUIDELINES_ACCEPTED });
+      } else if (currentStepConfig.id === 'rules') {
+        this._eventService.logEvent({ event_type: CandidateEventType.INSTRUCTIONS_VIEWED });
+      }
+    }
+
     // Update history
     if (newStep > this.maxStepReached()) {
       this.maxStepReached.set(newStep);
@@ -124,6 +136,8 @@ export class ProgressIndicator {
     // Navigate
     this._router.navigate([steps[newStep].route]);
     this.currentStep.set(newStep);
+    
+    this._eventService.logEvent({ event_type: CandidateEventType.ONBOARDING_STEP_CHANGED });
   }
 
   showRestartModal = signal(false);

@@ -6,6 +6,8 @@ import { ExamService } from '../../services/exam';
 import { Store } from '../../store/store';
 import { Menu } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 @Component({
   selector: 'app-exam-tools',
   templateUrl: './exam-tools.html',
@@ -15,6 +17,7 @@ import { TooltipModule } from 'primeng/tooltip';
 export class ExamTools {
   private _store = inject(Store)
   private _exam = inject(ExamService)
+  private _eventService = inject(EventService)
 
   store = computed(() => this._store.store())
   countDownTimer = computed(() => this._exam.timeDisplay())
@@ -36,6 +39,7 @@ export class ExamTools {
   }
 
   endExam() {
+    this._eventService.logEvent({ event_type: CandidateEventType.EXAM_SUBMIT_REQUESTED });
     this._exam.showUnattemptedModal.set(true)
   }
 }

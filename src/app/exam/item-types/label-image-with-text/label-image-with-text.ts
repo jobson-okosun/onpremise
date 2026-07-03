@@ -4,7 +4,7 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { EventService } from '../../../services/event';
-import { UsageEvents } from '../../../store/model/types';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-label-image-with-text',
@@ -31,14 +31,16 @@ export class LabelImageWithText {
       return
     };
 
-    this._eventService.logEvent({
-      event_type: currentQuestion!.responses[index] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-      current_question_id: this.store().currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
-    })
-
+    // const oldAnswers = [...currentQuestion.responses];
     currentQuestion.responses[index] = value;
+
+    // this._eventService.logEvent({
+    //   event_type: oldAnswers[index] ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+    //   question_id: currentQuestion.id,
+    //   section_id: this.store().currentSection!.id,
+    //   answer: value,
+    //   old_answer: oldAnswers.join(',')
+    // })
     currentQuestion.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })

@@ -4,6 +4,8 @@ import { Store } from '../store/store';
 import { Router, RouterLink } from '@angular/router';
 import { DeliveryMethod, DeploymentMode, IAssessmentPreLoginData } from '../store/model/types';
 import { AuthService } from '../services/auth';
+import { EventService } from '../services/event';
+import { CandidateEventType } from '../store/model/events/events.enum';
 
 @Component({
   selector: 'app-welcome',
@@ -15,6 +17,7 @@ export default class Welcome {
   private _store = inject(Store)
   private _router = inject(Router)
   private _authService = inject(AuthService)
+  private _eventService = inject(EventService)
 
   examModes = DeploymentMode
   isLoading = signal(false)
@@ -49,16 +52,20 @@ export default class Welcome {
       if (!preLoginData) {
         return
       }
-
-      // if (preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING || preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
-      //   this._router.navigate(['proctored'])
-      //   return
-      // }
     })
+
+    effect(() => {
+      const isInvalid = this.invalidExamEnvironment();
+      untracked(() => {
+        if (isInvalid) {
+          this._eventService.logEvent({ event_type: CandidateEventType.SECURE_ENVIRONMENT_FAILED });
+        }
+      });
+    });
   }
 
   selectExam(item: IAssessmentPreLoginData) {
-    // localStorage.clear()
+    this._eventService.logEvent({ event_type: CandidateEventType.EXAM_SELECTED });
     this._authService.setPreLoginData(item);
     this.selectedExam.set(item)
     this.resolveRoute()

@@ -2,6 +2,8 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
+import { EventService } from '../../../services/event';
 
 @Component({
   selector: 'app-close-with-dropdown',
@@ -11,6 +13,7 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 })
 export class CloseWithDropdown {
   private _store = inject(Store);
+  private _eventService = inject(EventService);
 
   store = computed(() => this._store.store());
   fontSize = model(16);
@@ -49,7 +52,34 @@ export class CloseWithDropdown {
       return
     };
 
+    const oldAnswers = [...currentQuestion.responses];
+
+    if (oldAnswers[index] === value) {
+      return;
+    }
+
     currentQuestion.responses[index] = value;
+
+    const oldAnswer = oldAnswers[index];
+    const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
+
+    const possibleResponses = currentQuestion.possible_responses?.[index]?.responses || [];
+    const answerIndex = value ? possibleResponses.findIndex((opt: any) => opt.value === value).toString() : '';
+
+    const oldAnswerIndices = oldAnswers.map((ans, idx) => {
+      if (!ans) return '';
+      const pr = currentQuestion.possible_responses?.[idx]?.responses || [];
+      return pr.findIndex((opt: any) => opt.value === ans).toString();
+    }).join(',');
+
+    this._eventService.logEvent({
+      event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+      question_id: currentQuestion.id,
+      section_id: this.store().currentSection!.id,
+      answer: answerIndex,
+      old_answer: oldAnswerIndices
+    });
+
     currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })

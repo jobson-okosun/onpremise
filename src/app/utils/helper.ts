@@ -7,8 +7,10 @@ import { Store } from "../store/store";
 import { MultipleResponse } from "../exam/item-types/multiple-response/multiple-response";
 import { YesOrNo } from "../exam/item-types/yes-or-no/yes-or-no";
 import { TrueOrFalse } from "../exam/item-types/true-or-false/true-or-false";
+import { CandidateEventType, NavigationMethod } from "../store/model/events/events.enum";
+import { EventService } from "../services/event";
 
-export function fullscreen() {
+export function fullscreen(eventService?: EventService) {
     const elem = document.documentElement;
 
     const requestFullScreen = () => {
@@ -25,19 +27,28 @@ export function fullscreen() {
 
     document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement) {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_EXITED });
             requestFullScreen();
+        } else {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_ENTERED });
         }
     });
 
     document.addEventListener('webkitfullscreenchange', () => {
         if (!(document as any).webkitFullscreenElement) {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_EXITED });
             requestFullScreen();
+        } else {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_ENTERED });
         }
     });
 
     document.addEventListener('msfullscreenchange', () => {
         if (!(document as any).msFullscreenElement) {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_EXITED });
             requestFullScreen();
+        } else {
+            eventService?.logEvent({ event_type: CandidateEventType.FULLSCREEN_ENTERED });
         }
     });
 }
@@ -48,12 +59,12 @@ export function useShortcut(keyPressed: string, currentQuestionNumber: number, p
     const itemTypes = ItemType;
 
     if (key === 'p' && currentQuestionNumber !== 0) {
-        paginatorComponent.prev();
+        paginatorComponent.prev(NavigationMethod.Keyboard);
         return;
     }
 
     if (key === 'n' && currentQuestionNumber + 1 !== sectionItemsLength) {
-        paginatorComponent.next();
+        paginatorComponent.next(NavigationMethod.Keyboard);
         return;
     }
 
@@ -98,7 +109,7 @@ export function useShortcut(keyPressed: string, currentQuestionNumber: number, p
     }
 }
 
-export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store, syncTime?: number): ICandidateAutoSave {
+export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): ICandidateAutoSave {
     const timeDisplay = _exam.timeDisplay()
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
@@ -153,13 +164,12 @@ export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store, sy
         };
     })
 
-    const syncLimit = syncTime ?? Date.now();
-    autoSaveData.events = _exam._eventService.getEvents().filter(e => new Date(e.timestamp).getTime() <= syncLimit);
+    autoSaveData.pending_events = _exam._eventService.getPendingEvents();
 
     return autoSaveData;
 }
 
-export function generatePayLoadWithAllData(_exam: ExamService, _store: Store, syncTime?: number): ICandidateAutoSave {
+export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): ICandidateAutoSave {
     const timeDisplay = _exam.timeDisplay()
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
@@ -213,8 +223,7 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store, sy
         };
     })
 
-    const syncLimit = syncTime ?? Date.now();
-    autoSaveData.events = _exam._eventService.getEvents().filter(e => new Date(e.timestamp).getTime() <= syncLimit);
+    autoSaveData.pending_events = _exam._eventService.getPendingEvents();
 
     return autoSaveData;
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, inject, linkedSignal, QueryList, signal, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, inject, linkedSignal, QueryList, signal, untracked, ViewChildren } from '@angular/core';
 import { Store } from '../store/store';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { DeliveryMethod, DeploymentMode, ICandidateLoginDTO, ICandidateLoginResponse } from '../store/model/types';
@@ -10,6 +10,8 @@ import { TauriService } from '../services/tauri';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { PostLogin } from '../services/post-login';
 import { AuthService } from '../services/auth';
+import { EventService } from '../services/event';
+import { CandidateEventType } from '../store/model/events/events.enum';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +27,7 @@ export default class Login implements AfterViewInit {
   private _tauriService = inject(TauriService)
   private _toast = inject(HotToastService)
   private _authService = inject(AuthService)
+  private _eventService = inject(EventService)
 
   @ViewChildren('codeInput') codeInputs!: QueryList<ElementRef>;
 
@@ -53,6 +56,17 @@ export default class Login implements AfterViewInit {
 
   examModes = DeploymentMode
 
+  constructor() {
+    effect(() => {
+      const isInvalid = this.invalidExamEnvironment();
+      untracked(() => {
+        if (isInvalid) {
+          this._eventService.logEvent({ event_type: CandidateEventType.SECURE_ENVIRONMENT_FAILED });
+        }
+      });
+    });
+  }
+
   async ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 1024px)').matches
     this.showLogin.set(isMobile ? false : true)
@@ -80,11 +94,6 @@ export default class Login implements AfterViewInit {
       }
 
       this._authService.setPreLoginData(res);
-
-      // if (res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
-      //   this._router.navigate(['proctored'], { queryParams: { examCode: res.id } })
-      //   return
-      // }
 
     } catch (error) {
       const err = error as HttpErrorResponse
@@ -122,6 +131,8 @@ export default class Login implements AfterViewInit {
       unique_id: preLoginData.unique_id
     }
 
+    this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_ATTEMPTED });
+
     this._dataService.login(payload)
       .pipe(
         this._toast.observe({ loading: 'Please wait...', success: 'Login successfull', error: 'Error!' }),
@@ -130,6 +141,7 @@ export default class Login implements AfterViewInit {
       .subscribe({
         next: (res) => this.onSuccessfullLogin(res),
         error: (err: HttpErrorResponse) => {
+          this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_FAILED });
           const control = this.candidateId
 
           control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
@@ -140,6 +152,9 @@ export default class Login implements AfterViewInit {
 
   onSuccessfullLogin(value: ICandidateLoginResponse) {
     this._postLoginService.formatLoginDataToStore(value).then(async () => {
+
+      this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_SUCCEEDED });
+      
       await this._dataService.downloadParticipantPassport()
 
       if (this.store().preloginData?.delivery_method == this.deliveryMethods().ON_PREMISE_SECURE_BROWSER) {

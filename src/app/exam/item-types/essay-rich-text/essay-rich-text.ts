@@ -5,7 +5,6 @@ import { Editor } from '../../editor/editor';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { EventService } from '../../../services/event';
-import { UsageEvents } from '../../../store/model/types';
 
 @Component({
   selector: 'app-essay-rich-text',
@@ -15,9 +14,6 @@ import { UsageEvents } from '../../../store/model/types';
 })
 export class EssayRichText {
   private _store = inject(Store);
-  private _toast = inject(HotToastService);
-  private _editor = viewChild(Editor);
-  private _eventService = inject(EventService)
 
   fontSize = model<number>();
   store = computed(() => this._store.store());
@@ -74,12 +70,5 @@ export class EssayRichText {
     currentQuestion.lastUpdated = new Date();
 
     this._store.updateStore({ currentQuestion });
-
-    // this._eventService.logEvent({
-    //   event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-    //   current_question_id: this.store().currentQuestion?.id,
-    //   current_section_id: this.store().currentSection?.id,
-    //   timestamp: new Date()
-    // })
   }
 }

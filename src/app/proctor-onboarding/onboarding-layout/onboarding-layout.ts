@@ -4,6 +4,8 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '../../store/store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-onboarding-layout',
@@ -14,6 +16,7 @@ import { filter, map } from 'rxjs';
 export class OnboardingLayout {
   private _store = inject(Store)
   private _router = inject(Router)
+  private _eventService = inject(EventService)
 
   year = new Date().getFullYear();
   progressIndicator = viewChild(ProgressIndicator);
@@ -28,6 +31,10 @@ export class OnboardingLayout {
         element.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
+  }
+
+  ngOnInit() {
+    this._eventService.logEvent({ event_type: CandidateEventType.ONBOARDING_STARTED });
   }
 
   private currentUrl = toSignal(

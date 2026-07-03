@@ -306,7 +306,9 @@ export default class PreviewModeLayout implements OnDestroy {
           candidate_data,
           sections_overview,
           assessment_data,
-          sections_questions
+          sections_questions,
+          events_session_id: 'aa-11b',
+          resume_elapsed_ms: 0,
         };
 
         this._authService.setPreLoginData(mappedPreLogin);

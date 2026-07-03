@@ -1,10 +1,12 @@
-import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, signal, untracked, viewChild } from '@angular/core';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { ProctorService } from '../../services/auto-proctoring/proctor';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { ExamService } from '../../services/exam';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 
 export interface ChatMessage {
   id: string;
@@ -23,6 +25,7 @@ export class ProctorPreview {
   private _proctor = inject(ProctorService);
   private _liveProctoring = inject(LiveProctoringService);
   private _exam = inject(ExamService);
+  private _eventService = inject(EventService);
   
   videoElement = viewChild<ElementRef<HTMLVideoElement>>('videoEl');
   chatContainer = viewChild<ElementRef<HTMLDivElement>>('chatMessagesContainer');
@@ -61,6 +64,21 @@ export class ProctorPreview {
         video.muted = true;
         video.srcObject = stream;
       }
+    });
+
+    effect((onCleanup) => {
+      const isOpen = this.isChatOpen();
+      untracked(() => {
+        if (isOpen) {
+          this._eventService.logEvent({ event_type: CandidateEventType.PROCTOR_CHAT_OPENED });
+          const openTime = Date.now();
+          
+          onCleanup(() => {
+            const duration_ms = Date.now() - openTime;
+            this._eventService.logEvent({ event_type: CandidateEventType.PROCTOR_CHAT_CLOSED, duration_ms });
+          });
+        }
+      });
     });
   }
 

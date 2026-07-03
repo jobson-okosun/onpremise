@@ -2,7 +2,7 @@ import { Component, computed, inject, output, signal } from '@angular/core';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { EventService } from '../../services/event';
-import { UsageEvents } from '../../store/model/types';
+import { CandidateEventType, NavigationMethod } from '../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-paginator',
@@ -102,77 +102,75 @@ export class Paginator {
   }
 
 
-  prev() {
+  prev(method: NavigationMethod = NavigationMethod.Prev) {
     if (this.currentQuestionIndex() > 0) {
+      const oldQuestion = this.store().currentQuestion;
+
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_EXITED, question_id: oldQuestion!.id, section_id: this.store().currentSection!.id, navigation_method: method });
+
       const index = this.currentQuestionIndex() - 1
       const currentQuestion = this.store().currentSection?.items[index]
 
       this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
 
-      this._eventService.logEvent({
-        event_type: UsageEvents.PREVIOUS_QUESTION,
-        current_question_id: currentQuestion?.id,
-        current_section_id: this.store().currentSection?.id,
-        timestamp: new Date()
-      })
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: currentQuestion!.id, section_id: this.store().currentSection!.id, navigation_method: method });
     }
   }
 
-  next() {
+  next(method: NavigationMethod = NavigationMethod.Next) {
     if (this.currentQuestionIndex() < this.totalQuestions() - 1) {
+      const oldQuestion = this.store().currentQuestion;
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_EXITED, question_id: oldQuestion!.id, section_id: this.store().currentSection!.id, navigation_method: method });
+
       const index = this.currentQuestionIndex() + 1
       const currentQuestion = this.store().currentSection?.items[index]
 
       this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
 
-      this._eventService.logEvent({
-        event_type: UsageEvents.NEXT_QUESTION,
-        current_question_id: currentQuestion?.id,
-        current_section_id: this.store().currentSection?.id,
-        timestamp: new Date()
-      })
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: currentQuestion!.id, section_id: this.store().currentSection!.id, navigation_method: method });
     }
   }
 
   nextSection() {
-    const sectionIndex = this.store().sections.indexOf(this.store().currentSection as any)
+    const oldSection = this.store().currentSection;
+
+    this._eventService.logEvent({ event_type: CandidateEventType.SECTION_EXITED, section_id: oldSection!.id });
+
+    const sectionIndex = this.store().sections.indexOf(oldSection as any)
     const section = this.store().sections[sectionIndex + 1]
     const currentQuestion = section.items[0]
 
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
 
-    this._eventService.logEvent({
-      event_type: UsageEvents.NEXT_SECTION,
-      current_question_id: currentQuestion?.id,
-      current_section_id: section.id,
-      timestamp: new Date()
-    })
+    this._eventService.logEvent({ event_type: CandidateEventType.SECTION_ENTERED, section_id: section.id });
   }
 
   prevSection() {
-    const sectionIndex = this.store().sections.indexOf(this.store().currentSection as any)
+    const oldSection = this.store().currentSection;
+
+    this._eventService.logEvent({ event_type: CandidateEventType.SECTION_EXITED, section_id: oldSection!.id });
+
+    const sectionIndex = this.store().sections.indexOf(oldSection as any)
     const section = this.store().sections[sectionIndex - 1]
     const currentQuestion = section.items[0]
+    
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
 
-    this._eventService.logEvent({
-      event_type: UsageEvents.PREVIOUS_SECTION,
-      current_question_id: currentQuestion?.id,
-      current_section_id: section.id,
-      timestamp: new Date()
-    })
+    this._eventService.logEvent({ event_type: CandidateEventType.SECTION_ENTERED, section_id: section.id });
   }
 
   selectPage(index: number) {
+    const oldQuestion = this.store().currentQuestion;
+    if (oldQuestion) {
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_EXITED, question_id: oldQuestion.id, section_id: this.store().currentSection!.id, navigation_method: NavigationMethod.Palette });
+    }
+
     const currentQuestion = this.store().currentSection?.items[index]
     this._store.updateStore({ currentQuestionIndex: index, currentQuestion })
 
-    this._eventService.logEvent({
-      event_type: UsageEvents.QUESTION_NUMBER_SELECTED,
-      current_question_id: currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
-    })
+    if (currentQuestion) {
+      this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: currentQuestion.id, section_id: this.store().currentSection!.id, navigation_method: NavigationMethod.Palette });
+    }
   }
 
   ngOnInit() {

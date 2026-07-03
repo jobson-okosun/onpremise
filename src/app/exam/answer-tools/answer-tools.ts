@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, model, signal } from '@angular/core';
 import { ExamService } from '../../services/exam';
 import { Store } from '../../store/store';
-import { ItemType, UsageEvents } from '../../store/model/types';
+import { ItemType } from '../../store/model/types';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 import { EventService } from '../../services/event';
 
 
@@ -37,15 +38,17 @@ export class AnswerTools {
 
   clearAnwser() {
     const currentQuestion = this.store().currentQuestion
+    const oldAnswers = [...currentQuestion!.responses];
     currentQuestion!.responses = []
 
     this._store.updateStore({ currentQuestion })
 
     this._eventService.logEvent({
-      event_type: UsageEvents.ANSWER_CLEARED,
-      current_question_id: this.store().currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
+      event_type: CandidateEventType.ANSWER_CLEARED,
+      question_id: this.store().currentQuestion!.id,
+      section_id: this.store().currentSection!.id,
+      answer: null,
+      old_answer: oldAnswers.length ? oldAnswers.join(',') : null
     })
   }
 }

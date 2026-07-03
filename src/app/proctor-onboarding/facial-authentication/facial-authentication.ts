@@ -2,6 +2,8 @@ import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, vie
 import { MediaService } from '../../services/media';
 import { OnboardingService } from '../../services/system-check/onboarding';
 import { CaptureState } from '../../store/model/media-models';
+import { EventService } from '../../services/event';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 
 @Component({
   selector: 'app-facial-authentication',
@@ -12,6 +14,7 @@ import { CaptureState } from '../../store/model/media-models';
 export default class FacialAuthentication implements OnInit, OnDestroy {
   private _mediaService = inject(MediaService);
   private _onboardingService = inject(OnboardingService);
+  private _eventService = inject(EventService);
 
   videoPreview = viewChild<ElementRef<HTMLVideoElement>>('videoPreview');
   canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('captureCanvas');
@@ -40,6 +43,7 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
   }
 
   private async initializeCamera() {
+    this._eventService.logEvent({ event_type: CandidateEventType.CAMERA_TEST_STARTED });
     const stream = await navigator.mediaDevices.getUserMedia({ video: true })
     this.videoPreview()!.nativeElement.srcObject = stream
     this.captureState.set('ready');
@@ -127,6 +131,7 @@ export default class FacialAuthentication implements OnInit, OnDestroy {
   }
 
   confirmPhoto() {
+    this._eventService.logEvent({ event_type: CandidateEventType.FACE_DETECTED });
     this._onboardingService.markStepCompleted('facial');
   }
 }

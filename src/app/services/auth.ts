@@ -8,6 +8,16 @@ export class AuthService {
     private _store = inject(Store)
     private _router = inject(Router)
 
+    setPreLoginData(data: IAssessmentPreLoginData) {
+        const getComputerId = this.getComputerId();
+
+        const newLoginData = { ...data }
+        newLoginData.unique_id = getComputerId ? getComputerId : data.unique_id;
+
+        this._store.updateStore({ preloginData: newLoginData })
+        this.saveComputerId(data);
+    }
+
     getComputerId(): string {
         return localStorage.getItem('computerId') ?? '';
     }
@@ -21,16 +31,6 @@ export class AuthService {
         localStorage.setItem("computerId", data?.unique_id);
     }
 
-    setPreLoginData(data: IAssessmentPreLoginData) {
-        const getComputerId = this.getComputerId();
-
-        const newLoginData = { ...data }
-        newLoginData.unique_id = getComputerId ? getComputerId : data.unique_id;
-
-        this._store.updateStore({ preloginData: newLoginData })
-        this.saveComputerId(data);
-    }
-
     noActiveExam() {
         this._router.navigate(['usage-guide'])
         return false
@@ -38,7 +38,6 @@ export class AuthService {
 
     notAuthorized() {
         this._router.navigate(['usage-guide'])
-        localStorage.clear()
         return false
     }
 }

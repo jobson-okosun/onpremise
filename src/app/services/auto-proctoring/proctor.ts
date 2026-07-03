@@ -5,12 +5,15 @@ import { CandidateInfractionEntry, INFRACTION_COLORS, INFRACTION_LABELS } from "
 import { HotToastService } from "@ngxpert/hot-toast";
 import Swal from 'sweetalert2';
 import { disableRestrictedActions } from "../../utils/helper";
+import { EventService } from "../event";
+import { CandidateEventType } from "../../store/model/events/events.enum";
 
 @Injectable({ providedIn: 'root' })
 export class ProctorService {
     private _store = inject(Store);
     private _tauri = inject(TauriService)
     private _toast = inject(HotToastService)
+    private _eventService = inject(EventService)
 
     public onStreamErrorCallback?: () => void;
 
@@ -257,6 +260,21 @@ export class ProctorService {
         }
 
         const infractionType = payload.infractionType as keyof typeof INFRACTION_LABELS;
+
+        const infractionToEventMap: Record<number, CandidateEventType> = {
+            1: CandidateEventType.LOOKING_AWAY,
+            3: CandidateEventType.MULTIPLE_FACES,
+            5: CandidateEventType.FACE_LOST,
+            6: CandidateEventType.PHONE_DETECTED,
+            7: CandidateEventType.BOOK_DETECTED,
+            24: CandidateEventType.CAMERA_BLOCKED,
+            25: CandidateEventType.MIC_BLOCKED,
+        };
+
+        const mappedEvent = infractionToEventMap[payload.infractionType as number];
+        if (mappedEvent) {
+            this._eventService.logEvent({ event_type: mappedEvent } as any);
+        }
 
         const data: CandidateInfractionEntry = {
             id: Date.now().toString(),

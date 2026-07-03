@@ -2,7 +2,8 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
-import { AlphabetList, UsageEvents } from '../../../store/model/types';
+import { AlphabetList } from '../../../store/model/types';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 
 @Component({
@@ -57,14 +58,33 @@ export class CloseWithSelect {
       return
     };
 
-    this._eventService.logEvent({
-      event_type: currentQuestion!.responses[index] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-      current_question_id: this.store().currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
-    })
+    const oldAnswers = [...currentQuestion.responses];
     
+    if (oldAnswers[index] === value) {
+      return;
+    }
+
     currentQuestion.responses[index] = value;
+
+    const oldAnswer = oldAnswers[index];
+    const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
+
+    const possibleResponses = currentQuestion.possible_responses?.[index]?.responses || [];
+    const answerIndex = value ? possibleResponses.findIndex((opt: any) => opt.value === value).toString() : '';
+
+    const oldAnswerIndices = oldAnswers.map((ans, idx) => {
+      if (!ans) return '';
+      const pr = currentQuestion.possible_responses?.[idx]?.responses || [];
+      return pr.findIndex((opt: any) => opt.value === ans).toString();
+    }).join(',');
+
+    this._eventService.logEvent({
+      event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+      question_id: currentQuestion.id,
+      section_id: this.store().currentSection!.id,
+      answer: answerIndex,
+      old_answer: oldAnswerIndices
+    })
     currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })

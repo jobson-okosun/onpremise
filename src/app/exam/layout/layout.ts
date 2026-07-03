@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, HostListener, inject, linkedSignal, OnDestroy, signal, TemplateRef, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, HostListener, inject, linkedSignal, OnDestroy, signal, TemplateRef, untracked, viewChild } from '@angular/core';
 import { DrawingAndWriting } from '../item-types/drawing-and-writing/drawing-and-writing';
 import { ExamTools } from '../exam-tools/exam-tools';
 import { Paginator } from '../paginator/paginator';
@@ -7,7 +7,8 @@ import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/auto-proctoring/proctor';
-import { DeliveryMethod, ExamType, ItemType, StoreSection, UsageEvents } from '../../store/model/types';
+import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
 import { NgClass } from '@angular/common';
@@ -38,7 +39,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
-import { LiveProctoringConfig, LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
+import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 import { EventService } from '../../services/event';
@@ -75,7 +76,8 @@ export default class Layout implements OnDestroy {
   showItemTypesContainer = signal<boolean>(false)
   itemTypesContainer = viewChild<ElementRef>('itemTypesContainer')
   infractionToastTemplate = viewChild<TemplateRef<HTMLDivElement>>('infractionToastTemplate');
-  showUserProfileModal: boolean = false;
+  showUserProfileModal = signal<boolean>(false);
+  _blurTimestamp: number | null = null;
   expandedPane = signal<number | null>(0);
   isMobile = signal(true)
   questionFontSize = signal(16)
@@ -128,8 +130,14 @@ export default class Layout implements OnDestroy {
       return update
     })
 
-    map[0].open = true
+    if (map.length > 0) {
+      map[0].open = true
+    }
     return map
+  })
+
+  hasUnattemptedOrRevisited = computed(() => {
+    return this.overviewSections().some(s => (s.summary?.unattempted?.length ?? 0) > 0);
   })
 
   examName = computed(() => {
@@ -185,7 +193,31 @@ export default class Layout implements OnDestroy {
         this._toast.error('Full screen sharing is mandatory!', { duration: 1500000, dismissible: true })
         this._liveProctoring.cleanUpLiveProctoring()
       }
-    })
+    });
+
+    effect((onCleanup) => {
+      const calcState = this.showCalculator();
+      untracked(() => {
+        if (calcState) {
+          this._eventService.logEvent({ event_type: CandidateEventType.CALCULATOR_OPENED });
+          const openTime = Date.now();
+
+          onCleanup(() => {
+            const duration_ms = Date.now() - openTime;
+            this._eventService.logEvent({ event_type: CandidateEventType.CALCULATOR_CLOSED, duration_ms });
+          });
+        }
+      });
+    });
+
+    effect((onCleanup) => {
+      const isProfileOpen = this.showUserProfileModal();
+      untracked(() => {
+        if (isProfileOpen) {
+          this._eventService.logEvent({ event_type: CandidateEventType.PROFILE_OPENED });
+        }
+      });
+    });
   }
 
   async ngOnInit() {
@@ -198,7 +230,7 @@ export default class Layout implements OnDestroy {
     // }
 
     if (!this.store().platformIsTauri) {
-      fullscreen()
+      fullscreen(this._eventService)
     }
 
     if (this.isProctoredExam()) {
@@ -211,15 +243,13 @@ export default class Layout implements OnDestroy {
 
         // effect tracking full screen sharing will start the exam
         return
-      } 
+      }
 
       if (this.isAutoProctoring()) {
         const success = await this._autoProctorService.initialize()
 
         if (!success) {
           this.autoProctoringFailed.set(true);
-          // this._toast.error('Unable to start proctoring. Please check your device settings.', { duration: 150000, dismissible: true })
-
           return
         }
       }
@@ -233,8 +263,16 @@ export default class Layout implements OnDestroy {
   private initiateExam() {
     this.disableContextMenu()
     this.disableCopyAndPaste()
+    // this.disablePrintAndScreenshot()
 
     this._exam.startExam()
+
+    // this._eventService.initializeSession()
+    // this._eventService.logEvent({ event_type: CandidateEventType.SESSION_STARTED });
+    
+    this._eventService.logEvent({ event_type: CandidateEventType.EXAM_STARTED });
+    this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: this.store().currentQuestion!.id, section_id: this.store().currentSection!.id });
+    this._eventService.updatePastEventsSessionId();
   }
 
   selectSection(section: StoreSection) {
@@ -257,12 +295,11 @@ export default class Layout implements OnDestroy {
     section = this.store().sections.find(item => item.id == section.id) as StoreSection
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
 
-    this._eventService.logEvent({
-      event_type: UsageEvents.SUBJECT_CHANGED,
-      current_question_id: currentQuestion.id,
-      current_section_id: section.id,
-      timestamp: new Date()
-    })
+    
+    if (currentSection) {
+      this._eventService.logEvent({ event_type: CandidateEventType.SECTION_EXITED, section_id: currentSection.id });
+    }
+    this._eventService.logEvent({ event_type: CandidateEventType.SECTION_ENTERED, section_id: section.id });
   }
 
   sectionNameInFullMode(section: StoreSection): string {
@@ -410,7 +447,38 @@ export default class Layout implements OnDestroy {
 
       if (isCtrl && ['a', 'c'].includes(e.key.toLowerCase())) {
         e.preventDefault();
+        this._eventService.logEvent({ event_type: CandidateEventType.COPY_ATTEMPT });
         this._toast.warning('Command not allowed', { position: 'bottom-right' })
+      }
+
+      if (isCtrl && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        this._eventService.logEvent({ event_type: CandidateEventType.PASTE_ATTEMPT });
+        this._toast.warning('Command not allowed', { position: 'bottom-right' })
+      }
+    });
+  }
+
+  disablePrintAndScreenshot() {
+    window.addEventListener('beforeprint', (e) => {
+      e.preventDefault();
+      this._eventService.logEvent({ event_type: CandidateEventType.PRINT_ATTEMPT });
+      this._toast.warning('Printing is not allowed', { position: 'bottom-right' });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const isCtrl = e.ctrlKey || e.metaKey;
+      const key = e.key ? e.key.toLowerCase() : '';
+
+      if (isCtrl && key === 'p') {
+        e.preventDefault();
+        this._eventService.logEvent({ event_type: CandidateEventType.PRINT_ATTEMPT });
+        this._toast.warning('Printing is not allowed', { position: 'bottom-right' });
+      }
+
+      if (e.key === 'PrintScreen' || (e.shiftKey && (e.metaKey || e.ctrlKey) && ['3', '4', '5', 's'].includes(key))) {
+        this._eventService.logEvent({ event_type: CandidateEventType.SCREENSHOT_ATTEMPT });
+        this._toast.warning('Screenshots are not allowed', { position: 'bottom-right' });
       }
     });
   }
@@ -425,5 +493,25 @@ export default class Layout implements OnDestroy {
     if (msg.type === 'video_streaming_stopped') {
       this._toast.warning('Video streaming stopped', { duration: 150000, dismissible: true })
     }
+  }
+
+  @HostListener('window:blur')
+  onWindowBlur() {
+    this._blurTimestamp = Date.now();
+  }
+
+  @HostListener('window:focus')
+  onWindowFocus() {
+    let duration_ms: number | undefined = undefined;
+    if (this._blurTimestamp) {
+        duration_ms = Date.now() - this._blurTimestamp;
+        this._blurTimestamp = null;
+    }
+    
+    if (duration_ms !== undefined) {
+      this._eventService.logEvent({ event_type: CandidateEventType.WINDOW_BLURRED, duration_ms });
+    }
+
+    this._eventService.logEvent({ event_type: CandidateEventType.WINDOW_FOCUSED });
   }
 }

@@ -4,7 +4,8 @@ import { CdkDropList, CdkDragDrop, CdkDrag } from '@angular/cdk/drag-drop';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
-import { IOptionDTO, UsageEvents } from '../../../store/model/types';
+import { IOptionDTO } from '../../../store/model/types';
+import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 
 @Component({
@@ -82,7 +83,7 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
       boxes[idx] = option
       this.labels.set(boxes)
 
-      this.captureResponses()
+      this.captureResponses(CandidateEventType.ANSWER_SELECTED, option.value)
       return
     }
 
@@ -94,7 +95,7 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
       if (item) {
         boxes[prevIdx] = null
         this.labels.set(boxes)
-        this.captureResponses()
+        this.captureResponses(CandidateEventType.ANSWER_CLEARED, item.value)
       }
 
       return
@@ -110,27 +111,36 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
       boxes[currIdx] = tmp
       this.labels.set(boxes)
 
-      this.captureResponses()
+      this.captureResponses(CandidateEventType.ANSWER_CHANGED, boxes[currIdx]?.value || '')
       return
     }
   }
 
-  captureResponses() {
+  captureResponses(eventType: CandidateEventType.ANSWER_SELECTED | CandidateEventType.ANSWER_CHANGED | CandidateEventType.ANSWER_CLEARED, answerValue: string) {
     const currentQuestion = this.store().currentQuestion
     if (!currentQuestion) {
       return
     }
 
     const boxes = this.labels()
+    const oldAnswers = [...currentQuestion.responses]
+    const newAnswers = boxes.map(b => b ? b.value : '')
+
+    const answerIndex = answerValue ? currentQuestion.options.findIndex(opt => opt.value === answerValue).toString() : '';
+    const oldAnswerIndices = oldAnswers.map(ans => {
+      if (!ans) return '';
+      return currentQuestion.options.findIndex(opt => opt.value === ans).toString();
+    }).join(',');
 
     this._eventService.logEvent({
-      event_type: currentQuestion!.responses.length > 1 ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-      current_question_id: this.store().currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
+      event_type: eventType,
+      question_id: currentQuestion.id,
+      section_id: this.store().currentSection!.id,
+      answer: answerIndex,
+      old_answer: oldAnswerIndices
     })
 
-    currentQuestion.responses = boxes.map(b => b ? b.value : '')
+    currentQuestion.responses = newAnswers
     currentQuestion.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })

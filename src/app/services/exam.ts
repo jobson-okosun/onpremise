@@ -1,6 +1,6 @@
-import { computed, effect, inject, Injectable, linkedSignal, signal } from "@angular/core";
+import { computed, effect, inject, Injectable, linkedSignal, signal, untracked } from "@angular/core";
 import { Store } from "../store/store";
-import { DeliveryMethod, ExamType, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
+import { DeliveryMethod, ExamType, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
 import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
 import { DataService } from "./data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
@@ -14,6 +14,7 @@ import { SystemCheckService } from "./system-check/system-check";
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED, MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET, NETWORK_RETRY_INTERVAL } from "../utils/constants";
 import { LiveProctoringService } from "./live-proctoring/live-proctoring.service";
 import { EventService } from "./event";
+import { CandidateEventType } from "../store/model/events/events.enum";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -87,6 +88,17 @@ export class ExamService {
         this._autoProctoringService.onStreamErrorCallback = () => {
             this.triggerProctoringNetworkRetry();
         };
+
+        effect(() => {
+            const isOnline = this.connectionStatus();
+            untracked(() => {
+                if (isOnline) {
+                    this._eventService.logEvent({ event_type: CandidateEventType.NETWORK_ONLINE });
+                } else {
+                    this._eventService.logEvent({ event_type: CandidateEventType.NETWORK_OFFLINE });
+                }
+            });
+        });
     }
 
     isAppPinned = effect(() => {
@@ -248,6 +260,7 @@ export class ExamService {
                 return;
             }
 
+            this._eventService.logEvent({ event_type: CandidateEventType.SESSION_TIMEOUT });
             this.examTimedOut.set(true)
             this.showSubmitExamModalOnExamEnd();
             return
@@ -283,44 +296,51 @@ export class ExamService {
 
     autoSaveExam() {
         const syncStart = Date.now();
-        const payload = generatePayLoadForAutoSave(this, this._store, syncStart)
+        const payload = generatePayLoadForAutoSave(this, this._store)
         
         this.isAutoSaving.set(true)
         this.isAutoSaveSuccessful.set(false)
+
+        this._eventService.logEvent({ event_type: CandidateEventType.SYNC_STARTED });
 
         this._dataService.autoSave(payload)
             .pipe(finalize(() => this.isAutoSaving.set(false)))
             .subscribe({
                 next: (res) => {
-                    this.autosaveSuccess(res as any, syncStart)
+                    this.autosaveSuccess(res as any, syncStart, payload)
                     this.isAutoSaveSuccessful.set(true)
                 },
                 error: () => {
-                    this.autosaveFailed()
+                    this.autosaveFailed(syncStart)
                 }
             })
     }
 
-    autosaveFailed() {
+    autosaveFailed(syncStart?: number) {
+        const duration_ms = syncStart ? Date.now() - syncStart : undefined;
+        this._eventService.logEvent({ event_type: CandidateEventType.SYNC_FAILED, duration_ms });
         this.isAutosaveSaved.set(false)
         this.connectionStatus.set(false)
         this._toast.error('Your network is disconnected. Contact the administrator', { dismissible: true })
     }
 
-    autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any) {
+    autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any, payload: ICandidateAutoSave) {
         if (!autosaveData) {
-            this.autosaveFailed()
+            this.autosaveFailed(syncTime)
             return
         }
 
+        const duration_ms = syncTime ? Date.now() - syncTime : undefined;
+        this._eventService.logEvent({ event_type: CandidateEventType.SYNC_COMPLETED, duration_ms });
+        
         this.isAutosaveSaved.set(autosaveData.auto_saved)
         this.lastAutoSaveTime.set(new Date())
         this.itemsLastSync.set(syncTime)
         this.connectionStatus.set(true)
+        
+        this._eventService.clearSentEvents(payload.pending_events || [])
 
-        if (autosaveData.auto_saved) {
-            this._eventService.clearEventsBefore(new Date(syncTime))
-        }
+        this.saveEventsToLocalStorage(payload.pending_events || []);
 
         if (autosaveData.compensatory_time_added) {
             this.handleCompensatoryTimeAddition();
@@ -347,6 +367,18 @@ export class ExamService {
 
         if (autosaveData.close_browser) {
             this.closeCandidateBrowser()
+        }
+    }
+
+    private saveEventsToLocalStorage(events: any[]) {
+        if (!events || events.length === 0) return;
+        try {
+            const existingLogsStr = localStorage.getItem('events_log');
+            const existingLogs = existingLogsStr ? JSON.parse(existingLogsStr) : [];
+            const updatedLogs = [...existingLogs, ...events];
+            localStorage.setItem('events_log', JSON.stringify(updatedLogs));
+        } catch (e) {
+            console.error('Failed to save events log to local storage', e);
         }
     }
 
@@ -546,15 +578,20 @@ export class ExamService {
         disableRestrictedActions()
         this.examEnded.set(true)
 
+        if (this.examTimedOut()) {
+            this._eventService.logEvent({ event_type: CandidateEventType.EXAM_AUTO_SUBMITTED });
+        } else {
+            this._eventService.logEvent({ event_type: CandidateEventType.EXAM_SUBMITTED });
+        }
+
         if (this.examTimerSub$) {
             this.examTimerSub$.unsubscribe()
         }
 
         this.cleanUpProctoring()
 
-        const syncStart = Date.now();
         const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING)
-        const payload = hasDrawingAndWriting ? generatePayLoadForAutoSave(this, this._store, syncStart) : generatePayLoadWithAllData(this, this._store, syncStart)
+        const payload = hasDrawingAndWriting ? generatePayLoadForAutoSave(this, this._store) : generatePayLoadWithAllData(this, this._store)
 
         this.examSubmit$ = this._dataService.endExam(payload, this.examTimedOut(), hasDrawingAndWriting)
             .pipe(
@@ -614,6 +651,8 @@ export class ExamService {
         }).then((result) => {
             if (result.value) {
                 this.showSubmitExamModalOnExamEnd();
+            } else if (result.dismiss === Swal.DismissReason.cancel || result.dismiss === Swal.DismissReason.backdrop) {
+                this._eventService.logEvent({ event_type: CandidateEventType.EXAM_SUBMIT_CANCELLED });
             }
         });
     }

@@ -1,6 +1,7 @@
-import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, model, signal, untracked } from '@angular/core';
 import { ExamService } from '../../services/exam';
-import { ItemType, UsageEvents } from '../../store/model/types';
+import { ItemType } from '../../store/model/types';
+import { CandidateEventType } from '../../store/model/events/events.enum';
 import { Dialog } from 'primeng/dialog';
 import { Store } from '../../store/store';
 import { DrawerModule } from 'primeng/drawer';
@@ -33,14 +34,31 @@ export class QuestionTools {
   showQuestionModalButton = model<boolean>(true)
   isExamAlpha = computed(() => this._exam.isExamAlpha())
 
+  constructor() {
+    effect((onCleanup) => {
+      const isOpen = this.showIntructionDrawer();
+      untracked(() => {
+        if (isOpen) {
+          this._eventService.logEvent({ event_type: CandidateEventType.INSTRUCTIONS_PANEL_TOGGLED });
+          const openTime = Date.now();
+
+          onCleanup(() => {
+            const duration_ms = Date.now() - openTime;
+            this._eventService.logEvent({ event_type: CandidateEventType.INSTRUCTIONS_PANEL_TOGGLED, duration_ms });
+          });
+        }
+      });
+    });
+  }
+
   revisit() {
     this._exam.addQuestionForRevisit()
     
+    const isFlagged = this.store().currentQuestion?.revisit;
     this._eventService.logEvent({
-      event_type: UsageEvents.QUESTION_REVISIT_LATER,
-      current_question_id: this.store().currentQuestion?.id,
-      current_section_id: this.store().currentSection?.id,
-      timestamp: new Date()
+      event_type: isFlagged ? CandidateEventType.QUESTION_FLAGGED : CandidateEventType.QUESTION_UNFLAGGED,
+      question_id: this.store().currentQuestion!.id,
+      section_id: this.store().currentSection!.id
     })
   }
 

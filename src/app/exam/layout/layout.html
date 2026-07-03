@@ -15,11 +15,11 @@
  
                     <div class="items-center gap-2 hidden lg:flex">
                         @if(store().candidatePassport) {
-                            <span (click)="showUserProfileModal = true"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200">
+                            <span (click)="showUserProfileModal.set(true)"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200">
                                 <img [src]="store().candidatePassport" alt="" class="{{ passportSize }}">
                             </span>
                         } @else {
-                            <span (click)="showUserProfileModal = true" class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
+                            <span (click)="showUserProfileModal.set(true)" class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
                                 <svg class="w-[150px] h-auto text-gray-500 {{ imagePlaceholderTranslate }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
                                 </svg>
@@ -381,13 +381,15 @@
 
 <p-dialog [visible]="showUnattemptedModal()" [modal]="true" [closable]="false" [focusOnShow]="false" [draggable]="false" [resizable]="false" [style]="{ width: '600px' }" header="You are attempting to end exam?" class="p-0">
   <div class="text-center p-6">
-    <p class="text-gray-500">
-        Certain questions are unanswered 
+    @if(hasUnattemptedOrRevisited()) {
+        <p class="text-gray-500">
+            Certain questions are unanswered 
 
-        @if(isExamAlpha()) {
-            or not revisited
-        }
-    </p>
+            @if(isExamAlpha()) {
+                or not revisited
+            }
+        </p>
+    }
 
     <div class="my-6 max-h-[400px] overflow-y-auto space-y-4">
         @for (section of overviewSections(); track $index; let i = $index) {
@@ -432,9 +434,9 @@
   </div>
 </p-dialog>
 
-<p-dialog [(visible)]="showUserProfileModal" [position]="'topleft'" [modal]="true" [closable]="false" [dismissableMask]="true" [style]="{ width: '420px' }" contentStyleClass="p-0">
+<p-dialog [visible]="showUserProfileModal()" (visibleChange)="showUserProfileModal.set($event)" [position]="'topleft'" [modal]="true" [closable]="false" [dismissableMask]="true" [style]="{ width: '420px' }" contentStyleClass="p-0">
 
-  <button (click)="showUserProfileModal = false" type="button" class="absolute top-3 right-3 bg-gray-200 border-transparent border ring-0 outline-none p-1 rounded hover:bg-gray-200 transition z-10">
+  <button (click)="showUserProfileModal.set(false)" type="button" class="absolute top-3 right-3 bg-gray-200 border-transparent border ring-0 outline-none p-1 rounded hover:bg-gray-200 transition z-10">
     <svg class="w-6 h-6 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none"
       viewBox="0 0 24 24">
       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -466,7 +468,7 @@
       <div class="max-h-[300px] overflow-y-auto mt-4 text-left px-3 border-t border-gray-200 pt-4 space-y-4">
         <div class="flex flex-col gap-2">
           <span>Close candidate browser</span>
-          <button (click)="showCloseAppWithPasswordModal();showUserProfileModal=false" class="bg-red-100 text-red-700 text-sm px-3 py-1 rounded hover:bg-red-200 transition w-max">Close browser</button>
+          <button (click)="showCloseAppWithPasswordModal();showUserProfileModal.set(false)" class="bg-red-100 text-red-700 text-sm px-3 py-1 rounded hover:bg-red-200 transition w-max">Close browser</button>
         </div>
       </div>
     } -->

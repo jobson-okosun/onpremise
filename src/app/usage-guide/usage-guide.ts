@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { Store } from '../store/store';
 import { NgClass } from '@angular/common';
 import { TauriService } from '../services/tauri';
+import { EventService } from '../services/event';
+import { CandidateEventType } from '../store/model/events/events.enum';
 
 @Component({
   selector: 'app-usage-guide',
@@ -22,6 +24,7 @@ export default class UsageGuide {
   private _router = inject(Router)
   private _store = inject(Store)
   private _tauriService = inject(TauriService)
+  private _eventService = inject(EventService)
 
   store = computed(() => this._store.store())
   isLoading = signal(false)
@@ -40,6 +43,9 @@ export default class UsageGuide {
       .pipe(finalize(() => this.isLoadingExamSettings.set(false)))
       .subscribe({
         next: (res) => {
+          this._eventService.initializeSession()
+          this._eventService.logEvent({ event_type: CandidateEventType.SESSION_STARTED });
+
           if (res.exam_mode == DeploymentMode.Online) {
             this._store.updateStore({ examSettings: res })
             this.gotoWelcomePage()
