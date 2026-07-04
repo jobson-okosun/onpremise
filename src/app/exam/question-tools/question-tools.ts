@@ -8,10 +8,12 @@ import { DrawerModule } from 'primeng/drawer';
 import { AccordionModule } from 'primeng/accordion';
 import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/event.service';
 import { EventService } from '../../services/event';
+import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-question-tools',
-  imports: [Dialog, DrawerModule, AccordionModule],
+  imports: [Dialog, DrawerModule, AccordionModule, SafeHtmlPipe],
   templateUrl: './question-tools.html',
   styleUrl: './question-tools.css',
 })

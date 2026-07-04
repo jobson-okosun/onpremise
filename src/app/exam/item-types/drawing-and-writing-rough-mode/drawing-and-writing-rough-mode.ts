@@ -9,9 +9,10 @@ import { KonvaToolsEvent } from './services/event.service';
 import { DrawingAndWritingStore } from './services/store.service';
 import { Store } from '../../../store/store';
 import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 @Component({
   selector: 'app-drawing-and-writing-rough-mode',
-  imports: [QuestionTools, MenuModule, Dialog],
+  imports: [QuestionTools, MenuModule, Dialog, SafeHtmlPipe],
   templateUrl: '../drawing-and-writing/drawing-and-writing.html',
   styleUrl: '../drawing-and-writing/drawing-and-writing.css',
 }) 

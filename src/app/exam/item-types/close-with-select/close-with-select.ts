@@ -5,10 +5,12 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AlphabetList } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-close-with-select',
-  imports: [AnswerTools, QuestionTools],
+  imports: [AnswerTools, QuestionTools, SafeHtmlPipe],
   templateUrl: './close-with-select.html',
   styleUrl: './close-with-select.css',
 })

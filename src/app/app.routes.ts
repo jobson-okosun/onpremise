@@ -55,11 +55,11 @@ export const routes: Routes = [
         canDeactivate: [canGoBackFromExam],
         loadComponent: () => import('./exam/layout/layout')
     },
+    // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
         path: 'exam-preview',
         loadComponent: () => import('./exam/preview-mode-layout/preview-mode-layout')
     },
-    // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
         path: 'exam-ended',
         loadComponent: () => import('./exam-ended/exam-ended')

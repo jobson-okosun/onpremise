@@ -5,10 +5,12 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { EventService } from '../../../services/event';
 import { UsageEvents } from '../../../store/model/types';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-short-text',
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './short-text.html',
   styleUrl: './short-text.css',
 })

@@ -62,10 +62,10 @@
 
     <div class="mb-8 p-6 select-none">
         @if(currentQuestion()?.passage_stimulus) {
-            <div [innerHTML]="currentQuestion()?.passage_stimulus"></div>
+            <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"></div>
         }
         @if(currentQuestion()?.stimulus) {
-            <div [innerHTML]="currentQuestion()?.stimulus" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
+            <div [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
         }
     </div>
 </p-dialog>
@@ -76,7 +76,7 @@
         <p-accordion-panel value="0">
             <p-accordion-header>Exam Instruction</p-accordion-header>
             <p-accordion-content>
-                <div [innerHTML]="store().loginData?.assessment_data?.start_exam_instruction"></div>
+                <div [innerHTML]="store().loginData?.assessment_data?.start_exam_instruction | safeHtml"></div>
             </p-accordion-content>
         </p-accordion-panel>
         <p-accordion-panel value="1">
@@ -87,7 +87,7 @@
                         <p-accordion-panel value="{{i}}">
                             <p-accordion-header>{{ item.name }} Instruction</p-accordion-header>
                             <p-accordion-content>
-                                <div [innerHTML]="item.section_settings.section_instruction"></div>
+                                <div [innerHTML]="item.section_settings.section_instruction | safeHtml"></div>
                             </p-accordion-content>
                         </p-accordion-panel>
                     }

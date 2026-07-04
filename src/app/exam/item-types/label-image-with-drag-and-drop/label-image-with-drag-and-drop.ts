@@ -7,10 +7,12 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 import { IOptionDTO } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-label-image-with-drag-and-drop',
-  imports: [QuestionTools, AnswerTools, CdkDropList, CdkDrag],
+  imports: [QuestionTools, AnswerTools, CdkDropList, CdkDrag, SafeHtmlPipe],
   templateUrl: './label-image-with-drag-and-drop.html',
   styleUrl: './label-image-with-drag-and-drop.css',
 })

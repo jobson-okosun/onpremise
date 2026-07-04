@@ -5,10 +5,12 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 import { AlphabetList } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-single-choice',
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './single-choice.html',
   styleUrl: './single-choice.css',
 })

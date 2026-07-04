@@ -20,8 +20,25 @@ export class EventService {
     private _questionEntryTimes = new Map<string, number>();
     private _sectionEntryTimes = new Map<string, number>();
 
+    private _isSequenceSynced = signal(false);
+
     initializeSession(): void {
         this._localStartTimeMs.set(performance.now());
+        this._isSequenceSynced.set(false);
+    }
+
+    syncSequence(serverSequence: number): void {
+        if (this._isSequenceSynced()) return;
+
+        this._pendingEvents.update(events => {
+            return events.map(e => ({
+                ...e,
+                sequence: e.sequence + serverSequence
+            }));
+        });
+        
+        this._sequenceCounter.update(seq => seq + serverSequence);
+        this._isSequenceSynced.set(true);
     }
 
     private generateUUID(): string {
@@ -117,7 +134,7 @@ export class EventService {
         this._sequenceCounter.update(seq => seq + 1);
         this._pendingEvents.update((events) => [...events, event]);
 
-        console.log("event", event)
+        // console.log("event", event)
     }
 
     getPendingEvents(): ICandidateEvent[] {

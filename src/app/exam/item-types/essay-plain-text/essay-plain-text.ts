@@ -4,10 +4,12 @@ import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-essay-plain-text',
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './essay-plain-text.html',
   styleUrl: './essay-plain-text.css',
 })

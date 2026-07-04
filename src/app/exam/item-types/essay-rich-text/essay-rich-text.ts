@@ -5,10 +5,12 @@ import { Editor } from '../../editor/editor';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-essay-rich-text',
-  imports: [Editor, QuestionTools, AnswerTools],
+  imports: [Editor, QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './essay-rich-text.html',
   styleUrl: './essay-rich-text.css',
 })

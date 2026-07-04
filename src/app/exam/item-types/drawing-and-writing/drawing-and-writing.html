@@ -3,7 +3,7 @@
     @if(!store().drawingAndWritingConfig.layoutFullMode) {
     <div class="lg:w-2/5 lg:h-full overflow-hidden">
         <div class="rounded-md bg-white h-full flex flex-col">
-            <div class="py-1 pr-2">
+            <div class="py-1 pr-2"> 
                 <div class="border-l-4 border-primary flex justify-between items-center">
                     <div class="font-bold text-sm px-3">
                         <div class="text-primary">{{ store().currentSection?.name }}</div>
@@ -17,10 +17,10 @@
             <div [style.fontSize.px]="fontSize()"
                 class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
                 @if(currentQuestion()?.passage_stimulus) {
-                <div [innerHTML]="currentQuestion()?.passage_stimulus"></div>
+                <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"> </div>
                 }
                 @if(currentQuestion()?.stimulus) {
-                <div [innerHTML]="currentQuestion()?.stimulus" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
+                <div [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
                 }
             </div>
         </div>

@@ -9,12 +9,14 @@ import { KonvaToolsEvent } from './services/event.service';
 import { Dialog } from 'primeng/dialog';
 import { scrollContainers } from '../../../utils/helper';
 import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-drawing-and-writing',
   templateUrl: './drawing-and-writing.html',
   styleUrl: './drawing-and-writing.css',
-  imports: [QuestionTools, MenuModule, Dialog],
+  imports: [QuestionTools, MenuModule, Dialog, SafeHtmlPipe],
 })
 export class DrawingAndWriting {
   private _store = inject(Store)

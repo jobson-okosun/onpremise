@@ -5,10 +5,12 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { EventService } from '../../../services/event';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-label-image-with-dropdownselect',
-  imports: [QuestionTools, AnswerTools, CdkDrag],
+  imports: [QuestionTools, AnswerTools, CdkDrag, SafeHtmlPipe],
   templateUrl: './label-image-with-dropdownselect.html',
   styleUrl: './label-image-with-dropdownselect.css',
 })

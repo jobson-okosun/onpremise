@@ -5,10 +5,12 @@ import { AnswerTools } from '../../answer-tools/answer-tools';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { EventService } from '../../../services/event';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-label-image-with-text',
-  imports: [QuestionTools, AnswerTools, CdkDrag],
+  imports: [QuestionTools, AnswerTools, CdkDrag, SafeHtmlPipe],
   templateUrl: './label-image-with-text.html',
   styleUrl: './label-image-with-text.css',
 })

@@ -16,10 +16,10 @@
             <div [style.fontSize.px]="fontSize()"
                 class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
                 @if(store().currentQuestion?.passage_stimulus) {
-                <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div>
+                <div [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
                 }
                 @if(store().currentQuestion?.stimulus) {
-                <div [innerHTML]="store().currentQuestion?.stimulus"
+                <div [innerHTML]="store().currentQuestion?.stimulus | safeHtml"
                     [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
                 }
             </div>
@@ -57,7 +57,7 @@
                                 class="hidden checked:inline-block w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-0 accent-primary cursor-pointer">
                             <label for="default-checkbox"
                                 class="select-none ms-2 text-sm font-medium text-heading cursor-pointer"
-                                [innerHTML]="option.label" [style.fontSize.px]="fontSize()"></label>
+                                [innerHTML]="option.label | safeHtml" [style.fontSize.px]="fontSize()"></label>
                         </div>
 
                     </div>

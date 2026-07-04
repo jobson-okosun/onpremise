@@ -4,11 +4,13 @@ import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { IOptionDTO } from '../../../store/model/types';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 
 @Component({
   selector: 'app-classify-by-ordering',
-  imports: [CdkDropList, CdkDrag, QuestionTools, AnswerTools],
+  imports: [CdkDropList, CdkDrag, QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './classify-by-ordering.html',
   styleUrl: './classify-by-ordering.css',
 })

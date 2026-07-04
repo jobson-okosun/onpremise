@@ -5,10 +5,12 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { IOptionDTO } from '../../../store/model/types';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-classify-by-matching',
-  imports: [CdkDropList, CdkDrag, QuestionTools, AnswerTools],
+  imports: [CdkDropList, CdkDrag, QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './classify-by-matching.html',
   styleUrl: './classify-by-matching.css',
 })

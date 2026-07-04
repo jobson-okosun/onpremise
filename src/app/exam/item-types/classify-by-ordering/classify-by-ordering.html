@@ -16,11 +16,11 @@
 
             <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
                 @if(store().currentQuestion?.passage_stimulus) { 
-                    <div [innerHTML]="store().currentQuestion?.passage_stimulus"></div> 
+                    <div [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div> 
                 }
 
                 @if(store().currentQuestion?.stimulus) { 
-                    <div [innerHTML]="store().currentQuestion?.stimulus" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div> 
+                    <div [innerHTML]="store().currentQuestion?.stimulus | safeHtml" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div> 
                 } 
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <div cdkDropList (cdkDropListDropped)="drop($event)" class="drag-container flex flex-col gap-4"> 
                             @for (item of rightItems(); track item.label; let i = $index) { 
                                 <div cdkDrag class="drag-item p-4 bg-white rounded-xl border border-gray-200 cursor-move select-none relative flex justify-between">
-                                    <span [style.fontSize.px]="fontSize()" [innerHTML]="item.label"></span> 
+                                    <span [style.fontSize.px]="fontSize()" [innerHTML]="item.label | safeHtml"></span> 
                                     <span class="flex items-center justify-center">
                                         <svg class="opacity-40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#cac8c8" fill="none" stroke="#141B34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M6 5C6.55228 5 7 5.44772 7 6C7 6.55228 6.55228 7 6 7C5.44772 7 5 6.55228 5 6C5 5.44772 5.44772 5 6 5Z" />

@@ -4,10 +4,12 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-close-with-dropdown',
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './close-with-dropdown.html',
   styleUrl: './close-with-dropdown.css',
 })

@@ -340,7 +340,7 @@ export class ExamService {
         
         this._eventService.clearSentEvents(payload.pending_events || [])
 
-        this.saveEventsToLocalStorage(payload.pending_events || []);
+        // this.saveEventsToLocalStorage(payload.pending_events || []);
 
         if (autosaveData.compensatory_time_added) {
             this.handleCompensatoryTimeAddition();

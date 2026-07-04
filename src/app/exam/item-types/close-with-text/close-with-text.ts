@@ -2,10 +2,12 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-close-with-text',
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './close-with-text.html',
   styleUrl: './close-with-text.css',
 })

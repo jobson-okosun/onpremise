@@ -5,10 +5,12 @@ import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
+import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+
 
 @Component({
   selector: 'app-choice-matrix', 
-  imports: [QuestionTools, AnswerTools],
+  imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './choice-matrix.html',
   styleUrl: './choice-matrix.css',
 })

@@ -53,6 +53,7 @@ export interface ICandidateLoginResponse {
   sections_questions: Array<ICandidateSectionQuestions>;
   events_session_id: string;
   resume_elapsed_ms: number;
+  last_sequence: number
 }
 
 export interface ICandidateData {
