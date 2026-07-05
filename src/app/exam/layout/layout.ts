@@ -224,10 +224,10 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    // if (!this.store().loginData) {
-    //   this._authService.setPreLoginData(preloginData as any);
-    //   this._postLoginService.formatLoginDataToStore(loginData as any)
-    // }
+    if (!this.store().loginData) {
+      this._authService.setPreLoginData(preloginData as any);
+      this._postLoginService.formatLoginDataToStore(loginData as any)
+    }
 
     if (!this.store().platformIsTauri) {
       fullscreen(this._eventService)
