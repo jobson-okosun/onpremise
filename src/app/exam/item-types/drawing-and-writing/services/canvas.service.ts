@@ -911,7 +911,7 @@ export class CanvasService {
 
         stage.on('pointermove', (e) => {
 
-            if (e.evt.pointerType !== 'pen') {
+            if (e.evt.pointerType !== 'pen' || e.evt.buttons !== 1) {
                 return
             }
 
@@ -1007,6 +1007,10 @@ export class CanvasService {
                 const line = this.currentLine()!;
                 const rawPoints = line.points();
 
+                this.currentLine.set(null as any);
+                this.drawing.set(false);
+                pointBuffer = [];
+
                 if (rawPoints.length <= 6) {
                     return;
                 }
@@ -1030,10 +1034,6 @@ export class CanvasService {
                     color: line.stroke(),
                     size: line.strokeWidth(),
                 });
-
-                this.currentLine.set(null as any);
-                this.drawing.set(false);
-                pointBuffer = [];
 
                 return;
             }
@@ -1093,6 +1093,18 @@ export class CanvasService {
 
         stage.on('mouseleave', () => {
             document.body.style.cursor = 'default';
+        });
+
+        stage.on('pointerleave pointercancel', () => {
+            if (this.drawing()) {
+                this.currentLine.set(null as any);
+                this.drawing.set(false);
+                pointBuffer = [];
+            }
+            if (this.currentShape()) {
+                this.currentShape.set(null);
+                this.shapeStartPos = null;
+            }
         });
 
         window.addEventListener('resize', resizeStage);

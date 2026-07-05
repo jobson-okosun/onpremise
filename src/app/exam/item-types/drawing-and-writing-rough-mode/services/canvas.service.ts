@@ -583,7 +583,7 @@ export class CanvasService {
         });
 
         stage.on('pointermove', (e) => {
-            if (e.evt.pointerType !== 'pen') {
+            if (e.evt.pointerType !== 'pen' || e.evt.buttons !== 1) {
                 return
             }
 
@@ -674,6 +674,13 @@ export class CanvasService {
 
         stage.on('mouseleave', () => {
             document.body.style.cursor = 'default';
+        });
+
+        stage.on('pointerleave pointercancel', () => {
+            if (this.drawing()) {
+                this.currentLine.set(null as any);
+                this.drawing.set(false);
+            }
         });
 
         window.addEventListener('resize', resizeStage);
