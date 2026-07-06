@@ -33,7 +33,6 @@ export class CanvasService {
     currentTool = signal<'brush' | 'eraser' | 'rectangle' | 'square' | 'circle'>('brush')
     currentShape = signal<Konva.Shape | null>(null)
     private shapeStartPos: { x: number, y: number } | null = null
-    eraserSize = signal<number>(10)
     drawing = signal<boolean>(false)
     currentLine = signal<Konva.Line | null>(null)
     ruler = signal<Konva.Group | null>(null)
@@ -42,7 +41,8 @@ export class CanvasService {
     protractorTransformer = signal<Konva.Transformer | null>(null)
     eraserCursor = signal<any>(null)
     loaded = signal(false)
-    brushSize = signal(2)
+    brushSize = signal(1.8)
+    eraserSize = signal<number>(10)
     brushColor = signal(DRAWING_AND_WRITING_BRUSH_COLORS[0])
     eraserColor = signal('#f5f5f7')
 
@@ -268,6 +268,63 @@ export class CanvasService {
         }
 
 
+        function drawPageMargins() {
+            const w = stage?.width();
+            const h = stage?.height();
+            if (!w || !h) return;
+
+            const marginSize = 40; 
+
+            const marginGroup = new Konva.Group({
+                listening: false,
+                perfectDrawEnabled: false
+            });
+
+            const leftLine = new Konva.Line({
+                points: [marginSize, 0, marginSize, h],
+                stroke: 'rgba(255, 99, 71, 0.8)',
+                strokeWidth: 2,
+            });
+
+            const rightLine = new Konva.Line({
+                points: [w - marginSize, 0, w - marginSize, h],
+                stroke: 'rgba(255, 99, 71, 0.8)',
+                strokeWidth: 2,
+            });
+
+            marginGroup.add(leftLine, rightLine);
+
+            // Repeat the text down the page so it's visible at the top, middle, and bottom
+            for (let y = 300; y <= Math.max(h, 300); y += 300) {
+                const leftText = new Konva.Text({
+                    x: marginSize / 2 - 6,
+                    y: y, // draws upwards from y
+                    text: 'DO NOT WRITE IN THIS MARGIN',
+                    fontSize: 12,
+                    fontFamily: 'sans-serif',
+                    fill: 'rgba(255, 99, 71, 0.8)',
+                    rotation: -90,
+                });
+
+                const rightText = new Konva.Text({
+                    x: w - (marginSize / 2) + 6,
+                    y: y - 180, // Offset so it aligns horizontally with the left text (draws downwards)
+                    text: 'DO NOT WRITE IN THIS MARGIN',
+                    fontSize: 12,
+                    fontFamily: 'sans-serif',
+                    fill: 'rgba(255, 99, 71, 0.8)',
+                    rotation: 90,
+                });
+
+                marginGroup.add(leftText, rightText);
+            }
+
+            gridLayer?.add(marginGroup);
+            gridLayer?.clearCache();
+            gridLayer?.cache();
+            gridLayer?.batchDraw();
+        }
+
         const setBackgroundType = () => {
             clearBackground()
 
@@ -288,6 +345,8 @@ export class CanvasService {
                 default:
                     break;
             }
+            
+            drawPageMargins();
 
         }
 

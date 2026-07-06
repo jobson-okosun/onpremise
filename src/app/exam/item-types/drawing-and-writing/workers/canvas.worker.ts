@@ -17,22 +17,6 @@ function deltaEncode(points: number[]): number[] {
   return deltas;
 }
 
-// helper: approximate circle as polygon with `segments` vertices (closed)
-function circleToPoints(cx: number, cy: number, radius: number, segments = 24): number[] {
-  const pts: number[] = [];
-  for (let i = 0; i < segments; i++) {
-    const theta = (i / segments) * Math.PI * 2;
-    const px = cx + radius * Math.cos(theta);
-    const py = cy + radius * Math.sin(theta);
-    pts.push(Number(px.toFixed(1)), Number(py.toFixed(1)));
-  }
-  // close polygon by repeating first point
-  if (pts.length >= 2) {
-    pts.push(pts[0], pts[1]);
-  }
-  return pts;
-}
-
 
 addEventListener('message', ({ data }) => {
 
