@@ -164,6 +164,15 @@ export class ICandidateItem {
   lastUpdated?: any
   isPassageItem: boolean
   roughWorkResponse: string[]
+  SubQuestions?: SubQuestionUI[]
+}
+
+export interface SubQuestionUI {
+  id: string;
+  content: string;
+  children: SubQuestionUI[];
+  score: number;
+  backgroundType: string;
 }
 
 export interface ICandidatePassageItem {
