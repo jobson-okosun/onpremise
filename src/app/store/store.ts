@@ -11,6 +11,8 @@ export class Store {
             ...store,
             ...state
         }))
+
+        console.log(this.store())
     }
 
     getStore() {

@@ -23,6 +23,7 @@ export class StoreDTO {
     currentSection: null | StoreSection
     currentQuestion: null | ICandidateItem
     currentQuestionIndex: number
+    activeSubQuestionId: string | null
     examDuration: number
     platformIsTauri: boolean
     isServerConnected: boolean
@@ -57,6 +58,7 @@ export class StoreDTO {
         this.currentSection = null
         this.currentQuestion = null
         this.currentQuestionIndex = 0
+        this.activeSubQuestionId = null
         this.examDuration = 0
         this.platformIsTauri = false
         this.isServerConnected = true

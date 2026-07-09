@@ -1,54 +1,58 @@
-<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5">
+<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode">
     <!-- question -->
     @if(!store().drawingAndWritingConfig.layoutFullMode) {
-    <div class="lg:w-2/5 lg:h-full overflow-hidden">
-        <div class="rounded-md bg-white h-full flex flex-col"> 
-            <div class="py-1 pr-2"> 
-                <div class="border-l-4 border-primary flex justify-between items-center">
-                    <div class="font-bold text-sm px-3">
-                        <div class="text-primary">{{ store().currentSection?.name }}</div>
-                        <div>Question {{ store().currentQuestionIndex + 1 }}</div>
+        <div class="lg:w-2/5 lg:h-full overflow-hidden">
+            <div class="rounded-md bg-white h-full flex flex-col"> 
+                <div class="py-1 pr-2"> 
+                    <div class="border-l-4 border-primary flex justify-between items-center">
+                        <div class="font-bold text-sm px-3">
+                            <div class="text-primary">{{ store().currentSection?.name }}</div>
+                            <div>Question {{ store().currentQuestionIndex + 1 }}{{ activeSubQuestionLabel() }}</div>
+                        </div>
+                        @if(!store().isPreviewMode) {
+                            <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                        }
                     </div>
-                    @if(!store().isPreviewMode) {
-                        <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
-                    }
                 </div>
-            </div>
-            <div class="flex flex-1 overflow-hidden border-t border-gray-300 border-dashed">
-                <div class="overflow-y-auto bg-gray-100 m-1 p-1 rounded-md flex flex-col gap-2 items-center">
-                    @for(item of [1,2,3,4,5]; track item; let i=$index) {
-                        <button 
-                            [class.bg-primary]="i == 0" 
-                            [class.text-white]="i == 0" 
-                            [class.bg-white]="i !== 0" 
-                            [class.text-black]="i !== 0" 
-                            class="flex rounded-md border-0 items-center justify-center font-semibold text-sm size-8">
-                            {{ i + 1 }}A
-                        </button>
+                <div class="flex flex-1 overflow-hidden border-t border-gray-300 border-dashed">
+                    @if(store().currentQuestion?.subQuestions) {
+                        <div class="h-full p-1">
+                            <app-sub-question-navigation class="h-full"></app-sub-question-navigation>
+                        </div>
                     }
-                </div>
-                <div [style.fontSize.px]="fontSize()"
-                    class="flex-1 overflow-y-auto p-3">
-                    @if(currentQuestion()?.passage_stimulus) {
-                    <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"> </div>
-                    }
-                    @if(currentQuestion()?.stimulus) {
-                    <div [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
-                    }
+
+                    <div [style.fontSize.px]="fontSize()"
+                        class="flex-1 overflow-y-auto p-1">
+                        @if(currentQuestion()?.passage_stimulus) {
+                        <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"> </div>
+                        }
+                        @if(currentQuestion()?.stimulus) {
+                        <div [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
+                        }
+                        @if(activeSubQuestionContent()) {
+                        <div [innerHTML]="activeSubQuestionContent() | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus || currentQuestion()?.stimulus"></div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+
+    @if(store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.subQuestions) {
+        <div class="h-full p-1 bg-white rounded-md w-14">
+            <app-sub-question-navigation class="h-full"></app-sub-question-navigation>
+        </div>
     }
 
     <!-- answer -->
     <div [class.lg:w-3/5]="!store().drawingAndWritingConfig.layoutFullMode"
-        [class.lg:w-full]="store().drawingAndWritingConfig.layoutFullMode">
+        [class.lg:flex-1]="store().drawingAndWritingConfig.layoutFullMode">
         <div class="rounded-md bg-white h-[400px] md:h-full! flex flex-col">
             <div class="px-2 py-1">
                 <div class="flex w-full overflow-x-auto no-scrollbar gap-3 justify-between items-center">
                     <div class="flex gap-1 items-center justify-between">
                         @if(store().drawingAndWritingConfig.layoutFullMode) {
+                        <div class="font-bold text-sm mr-5">Question {{ store().currentQuestionIndex + 1 }}{{ activeSubQuestionLabel() }}</div>
                         <app-question-tools [showToggleLayoutButton]="true" class="mr-10"></app-question-tools>
                         }
 

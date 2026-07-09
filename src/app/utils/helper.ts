@@ -292,3 +292,20 @@ export const scrollContainers = () => {
         document.getElementById('stage-parent')?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     } catch (e) { }
 }
+
+export function getAlphabetChar(index: number): string {
+    return String.fromCharCode(97 + index);
+}
+
+export function getRomanNumeral(index: number): string {
+    const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+    return roman[index] || (index + 1).toString();
+}
+
+export function getParentLabel(questionIndex: number, parentIndex: number): string {
+    return `${questionIndex + 1}${getAlphabetChar(parentIndex)}`;
+}
+
+export function getChildLabel(childIndex: number): string {
+    return `${getRomanNumeral(childIndex)}`;
+}

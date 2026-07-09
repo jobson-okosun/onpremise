@@ -26,6 +26,7 @@ export class CanvasService {
     eraserSizeChange$: Subscription
     backgroundChange$: Subscription
     deletePageSub$: Subscription
+    subQuestionSelectEvent$?: Subscription
 
     store = computed(() => this._store.store())
     isTouchDevice = signal('ontouchstart' in window)
@@ -71,8 +72,8 @@ export class CanvasService {
             this._drawingStore.updateCurrentPageStrokes(updatedStrokes);
 
             // save into question response
-            const updatedStore = this._drawingStore.getStoreData();
-            const dataJson = JSON.stringify(updatedStore);
+            const allStores = this._drawingStore.getAllStores();
+            const dataJson = JSON.stringify(allStores);
 
             const currentQuestion = this.store().currentQuestion;
             currentQuestion!.responses = [dataJson];
@@ -1070,13 +1071,13 @@ export class CanvasService {
                 this.drawing.set(false);
                 pointBuffer = [];
 
-                if (rawPoints.length <= 6) {
-                    return;
-                }
+                // if (rawPoints.length <= 6) {
+                //     return;
+                // }
 
-                if (rawPoints.length >= 500) {
-                    return;
-                }
+                // if (rawPoints.length >= 500) {
+                //     return;
+                // }
 
                 const simplified = simplifyPoints(rawPoints, 1.5);
 
@@ -1210,6 +1211,13 @@ export class CanvasService {
             next: () => {
                 loadCurrentPageStrokes()
                 scrollContainers()
+            }
+        })
+
+        this.subQuestionSelectEvent$?.unsubscribe()
+        this.subQuestionSelectEvent$ = this._konvaEventTools.subQuestionSelectEvent$.subscribe({
+            next: () => {
+                loadCurrentPageStrokes()
             }
         })
 

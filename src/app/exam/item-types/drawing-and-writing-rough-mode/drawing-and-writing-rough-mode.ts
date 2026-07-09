@@ -10,9 +10,13 @@ import { DrawingAndWritingStore } from './services/store.service';
 import { Store } from '../../../store/store';
 import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+import { SubQuestionNavigation } from '../../sub-question-navigation/sub-question-navigation';
+import { getAlphabetChar, getRomanNumeral } from '../../../utils/helper';
+import { MenuItem } from 'primeng/api';
+
 @Component({
   selector: 'app-drawing-and-writing-rough-mode',
-  imports: [QuestionTools, MenuModule, Dialog, SafeHtmlPipe],
+  imports: [QuestionTools, MenuModule, Dialog, SafeHtmlPipe, SubQuestionNavigation],
   templateUrl: '../drawing-and-writing/drawing-and-writing.html',
   styleUrl: '../drawing-and-writing/drawing-and-writing.css',
 }) 
@@ -48,6 +52,47 @@ export class DrawingAndWritingRoughMode {
   pages = computed(() => Array.from({ length: this._drawingStore.store().pages.length }, (_, i) => i))
   currentPage = computed(() => this._drawingStore.store().currentPage)
   currentPageData = computed(() => this._drawingStore.getStoreData().pages[this.currentPage()])
+
+  activeStoreId = computed(() => 'default') 
+  parentSubQuestions = computed<any[]>(() => [])
+
+  activeSubQuestionContent = computed(() => {
+    const activeId = this.activeStoreId();
+    if (activeId === 'default') return '';
+    const subQuestions = this.parentSubQuestions();
+    for (const sq of subQuestions) {
+      if (sq.id === activeId) { return sq.stimulus || ''; }
+      if (sq.children?.length > 0) {
+        const child = sq.children.find((c: any) => c.id === activeId);
+        if (child) { return child.stimulus || ''; }
+      }
+    }
+    return '';
+  });
+
+  activeSubQuestionLabel = computed(() => {
+    const activeId = this.activeStoreId();
+    if (activeId === 'default') return '';
+    const subQuestions = this.parentSubQuestions();
+
+    for (let pIdx = 0; pIdx < subQuestions.length; pIdx++) {
+      const sq = subQuestions[pIdx];
+      if (sq.id === activeId) {
+        return ` (${getAlphabetChar(pIdx)})`;
+      }
+      if (sq.children?.length > 0) {
+        for (let cIdx = 0; cIdx < sq.children.length; cIdx++) {
+          const child = sq.children[cIdx];
+          if (child.id === activeId) {
+            return `${getAlphabetChar(pIdx)} (${getRomanNumeral(cIdx)})`;
+          }
+        }
+      }
+    }
+
+    return '';
+  });
+
 
   prepareCanvasAndStoreDataOnLoad() {
     const currentQuestion = this.store().currentQuestion

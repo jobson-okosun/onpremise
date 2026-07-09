@@ -15,6 +15,9 @@ export class KonvaToolsEvent {
    _pageSelectEvent = new Subject<void>();
   pageSelectEvent$: Observable<any> = this._pageSelectEvent.asObservable();
 
+  _subQuestionSelectEvent = new Subject<void>();
+  subQuestionSelectEvent$: Observable<void> = this._subQuestionSelectEvent.asObservable();
+
   _questionChanged$ = new Subject<boolean>();
   _toggleDrawingAndWritingLayout$ = new Subject<void>();
   _selectDrawingTool = new Subject<string>();

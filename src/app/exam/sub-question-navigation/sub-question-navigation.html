@@ -1,0 +1,40 @@
+<div class="h-full overflow-visible bg-gray-100 p-1 rounded-md flex flex-col gap-2 items-center z-50">
+    @for(sq of subQuestions(); track sq.id; let pIdx = $index) {
+        @if(sq.children && sq.children.length > 0) {
+            <div class="relative w-full flex justify-center">
+                <button (click)="toggleParent(sq.id)"
+                    [class.bg-primary]="isChildActive(sq)" 
+                    [class.text-white]="isChildActive(sq)" 
+                    [class.bg-white]="!isChildActive(sq)" 
+                    [class.text-black]="!isChildActive(sq)" 
+                    class="flex rounded-md items-center justify-center font-semibold text-sm size-10 cursor-pointer border border-transparent hover:border-primary transition duration-200 outline-none">
+                    {{ getParentLabel(pIdx) }}
+                </button>
+                
+                @if(expandedParentId() === sq.id) {
+                    <div class="absolute left-full ml-1 top-0 flex flex-row gap-2 bg-white p-0.5 rounded-md border border-gray-300 z-50 animate-fadein whitespace-nowrap">
+                        @for(child of sq.children; track child.id; let cIdx = $index) {
+                            <button (click)="selectPart(child.id); expandedParentId.set(null)"
+                                [class.bg-primary]="activeStoreId() == child.id" 
+                                [class.text-white]="activeStoreId() == child.id" 
+                                [class.bg-gray-100]="activeStoreId() != child.id" 
+                                [class.text-black]="activeStoreId() != child.id" 
+                                class="flex rounded-md items-center justify-center font-semibold text-sm size-10 cursor-pointer border border-transparent hover:border-primary transition duration-200 outline-none">
+                                {{ getChildLabel(pIdx, cIdx) }}
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        } @else {
+            <button (click)="selectPart(sq.id)"
+                [class.bg-primary]="activeStoreId() == sq.id" 
+                [class.text-white]="activeStoreId() == sq.id" 
+                [class.bg-white]="activeStoreId() != sq.id" 
+                [class.text-black]="activeStoreId() != sq.id" 
+                class="flex rounded-md items-center justify-center font-semibold text-sm size-10 cursor-pointer border border-transparent hover:border-primary transition duration-200 outline-none">
+                {{ getParentLabel(pIdx) }}
+            </button>
+        }
+    }
+</div>

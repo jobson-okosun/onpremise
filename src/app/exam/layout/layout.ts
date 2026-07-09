@@ -423,7 +423,7 @@ export default class Layout implements OnDestroy {
     const itemTypeContainer = document.getElementById('itemTypesContainer') as HTMLElement;
     const configUpdate = {
       ...this.store().drawingAndWritingConfig,
-      layoutFullModeWidth: itemTypeContainer.offsetWidth,
+      layoutFullModeWidth: itemTypeContainer.offsetWidth - 56, // sub question container width
       canvasContainerHeight: itemTypeContainer.offsetHeight - 54
     }
 
