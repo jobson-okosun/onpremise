@@ -49,7 +49,7 @@ export class CanvasService {
         this.loaded.set(true)
     }
 
-    initializeCanvas() {
+    async initializeCanvas(): Promise<void> {
         const stageContainer = document.getElementById('stage')
         if (!stageContainer) {
             return

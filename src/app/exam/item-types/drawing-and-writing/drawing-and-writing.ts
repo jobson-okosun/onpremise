@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, model, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, model, signal, untracked, viewChild } from '@angular/core';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { MenuModule } from 'primeng/menu';
 import { Store } from '../../../store/store';
@@ -11,6 +11,7 @@ import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { SubQuestionNavigation } from '../../sub-question-navigation/sub-question-navigation';
 import { getAlphabetChar, getRomanNumeral } from '../../../utils/helper';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-drawing-and-writing',
@@ -23,6 +24,8 @@ export class DrawingAndWriting {
   private _canvasService = inject(CanvasService)
   private _drawingStore = inject(DrawingAndWritingStore)
   private _konvaEventTools = inject(KonvaToolsEvent)
+
+  private _questionTools = viewChild(QuestionTools)
 
   showClearPageModal = false;
   showDeletePageModal = false;
@@ -148,8 +151,11 @@ export class DrawingAndWriting {
       this._drawingStore.setActiveStoreId('default');
     }
 
-    this._canvasService.initializeCanvas();
-
+    this._canvasService.initializeCanvas()
+    .then(() => {
+      this._questionTools()?.toggleLayout()
+      this._questionTools()?.toggleLayout()
+    });
   }
 
   toggleLayout() {

@@ -9,6 +9,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/event.service';
 import { EventService } from '../../services/event';
 import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
+import { getParentLabel as getParentLabelHelper, getChildLabel as getChildLabelHelper } from '../../utils/helper';
 
 
 @Component({
@@ -62,6 +63,14 @@ export class QuestionTools {
       question_id: this.store().currentQuestion!.id,
       section_id: this.store().currentSection!.id
     })
+  }
+
+  getParentLabel(parentIndex: number): string {
+    return getParentLabelHelper(this.currentQuestionIndex(), parentIndex);
+  }
+
+  getChildLabel(childIndex: number): string {
+    return getChildLabelHelper(childIndex);
   }
 
   toggleLayout() {

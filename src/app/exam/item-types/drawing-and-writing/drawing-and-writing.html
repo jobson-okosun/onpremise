@@ -1,4 +1,4 @@
-<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode">
+<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.subQuestions && !store().drawingAndWritingConfig.roughWorkMode">
     <!-- question -->
     @if(!store().drawingAndWritingConfig.layoutFullMode) {
         <div class="lg:w-2/5 lg:h-full overflow-hidden">
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="flex flex-1 overflow-hidden border-t border-gray-300 border-dashed">
-                    @if(store().currentQuestion?.subQuestions) {
+                    @if(store().currentQuestion?.subQuestions && !store().drawingAndWritingConfig.roughWorkMode) {
                         <div class="h-full p-1">
                             <app-sub-question-navigation class="h-full"></app-sub-question-navigation>
                         </div>
@@ -38,7 +38,7 @@
         </div>
     }
 
-    @if(store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.subQuestions) {
+    @if(store().drawingAndWritingConfig.layoutFullMode && !store().drawingAndWritingConfig.roughWorkMode) {
         <div class="h-full p-1 bg-white rounded-md w-14">
             <app-sub-question-navigation class="h-full"></app-sub-question-navigation>
         </div>

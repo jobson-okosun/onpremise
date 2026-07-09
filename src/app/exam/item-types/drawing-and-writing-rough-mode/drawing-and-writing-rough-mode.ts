@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, model, signal } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
-import { ExamService } from '../../../services/exam';
 import { scrollContainers } from '../../../utils/helper';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { CanvasService } from './services/canvas.service';
@@ -12,17 +11,15 @@ import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { SubQuestionNavigation } from '../../sub-question-navigation/sub-question-navigation';
 import { getAlphabetChar, getRomanNumeral } from '../../../utils/helper';
-import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-drawing-and-writing-rough-mode',
   imports: [QuestionTools, MenuModule, Dialog, SafeHtmlPipe, SubQuestionNavigation],
   templateUrl: '../drawing-and-writing/drawing-and-writing.html',
   styleUrl: '../drawing-and-writing/drawing-and-writing.css',
-}) 
+})
 export class DrawingAndWritingRoughMode {
   private _store = inject(Store)
-  private _exam = inject(ExamService)
   private _canvasService = inject(CanvasService)
   private _drawingStore = inject(DrawingAndWritingStore)
   private _konvaEventTools = inject(KonvaToolsEvent)
@@ -53,7 +50,7 @@ export class DrawingAndWritingRoughMode {
   currentPage = computed(() => this._drawingStore.store().currentPage)
   currentPageData = computed(() => this._drawingStore.getStoreData().pages[this.currentPage()])
 
-  activeStoreId = computed(() => 'default') 
+  activeStoreId = computed(() => 'default')
   parentSubQuestions = computed<any[]>(() => [])
 
   activeSubQuestionContent = computed(() => {
@@ -110,6 +107,10 @@ export class DrawingAndWritingRoughMode {
     }
 
     this._canvasService.initializeCanvas()
+    .then(() => {
+        this.toggleLayout()
+        this.toggleLayout()
+    })
   }
 
   toggleLayout() {
@@ -239,7 +240,7 @@ export class DrawingAndWritingRoughMode {
   undo() { }
 
   redo() { }
- 
+
   selectbrushColor(color: string) {
     this._canvasService.brushColor.set(color)
   }
