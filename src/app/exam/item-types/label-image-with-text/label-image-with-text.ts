@@ -4,7 +4,6 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { EventService } from '../../../services/event';
-import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 
 
@@ -33,16 +32,7 @@ export class LabelImageWithText {
       return
     };
 
-    // const oldAnswers = [...currentQuestion.responses];
     currentQuestion.responses[index] = value;
-
-    // this._eventService.logEvent({
-    //   event_type: oldAnswers[index] ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
-    //   question_id: currentQuestion.id,
-    //   section_id: this.store().currentSection!.id,
-    //   answer: value,
-    //   old_answer: oldAnswers.join(',')
-    // })
     currentQuestion.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })
