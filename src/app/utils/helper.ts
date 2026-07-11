@@ -114,8 +114,8 @@ export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): I
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
     const autoSaveData: ICandidateAutoSave = {
-        sections_map: new Map() as any,
-        section_times: new Map() as any,
+        sections_map: {},
+        section_times: {},
         minutes: timeDisplay.min,
         seconds: timeDisplay.sec,
         cand_id: candidateId,
@@ -155,13 +155,13 @@ export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): I
                 }
 
                 sectionItems.push(autosaveItem)
-            });
+            })
 
-        (autoSaveData.sections_map as Map<any, any>).set(section.id, sectionItems);
-        (autoSaveData.section_times as Map<any, any>).set(section.id, {
+        autoSaveData.sections_map[section.id] = sectionItems;
+        autoSaveData.section_times[section.id] = {
             minutes: sectionItem!.section_settings.minutes_left,
             seconds: sectionItem!.section_settings.seconds_left,
-        });
+        };
     })
 
     autoSaveData.pending_events = _exam._eventService.getPendingEvents();
@@ -174,8 +174,8 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
     const candidateId = _store.getStore().loginData!.candidate_data.id
 
     const autoSaveData: ICandidateAutoSave = {
-        sections_map: new Map() as any,
-        section_times: new Map() as any,
+        sections_map: {},
+        section_times: {},
         minutes: timeDisplay.min,
         seconds: timeDisplay.sec,
         cand_id: candidateId,
@@ -214,13 +214,13 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
                 }
 
                 sectionItems.push(autosaveItem)
-            });
+            })
 
-        (autoSaveData.sections_map as Map<any, any>).set(section.id, sectionItems);
-        (autoSaveData.section_times as Map<any, any>).set(section.id, {
+        autoSaveData.sections_map[section.id] = sectionItems;
+        autoSaveData.section_times[section.id] = {
             minutes: sectionItem!.section_settings.minutes_left,
             seconds: sectionItem!.section_settings.seconds_left,
-        });
+        };
     })
 
     autoSaveData.pending_events = _exam._eventService.getPendingEvents();
@@ -229,24 +229,15 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
 }
 
 export const formatExamResponseData = (data: ICandidateEndExamData): ICandidateEndExamData => {
-    let entries;
-    if (data.autosave.sections_map instanceof Map) {
-        entries = Array.from(data.autosave.sections_map.entries());
-    } else {
-        entries = Object.entries(data.autosave.sections_map);
-    }
-    
-    let isMap = data.autosave.sections_map instanceof Map;
-
-    const formattedEntries = (entries as any[]).map(
-        ([sectionKey, items]: any) => [sectionKey, items.map((item: any) => {
-            const hasValidAnswer = Array.isArray(item.answers) && item.answers.some((ans: any) => typeof ans === 'string' && ans.trim() !== '');
+    const formattedSectionsMap = Object.fromEntries(
+        Object.entries(data.autosave.sections_map).map(
+            ([sectionKey, items]) => [sectionKey, items.map((item) => {
+                const hasValidAnswer = Array.isArray(item.answers) && item.answers.some((ans) => typeof ans === 'string' && ans.trim() !== '');
 
             return { ...item, answers: hasValidAnswer ? item.answers : [] };
         })]
+        )
     );
-
-    const formattedSectionsMap = isMap ? new Map(formattedEntries as any) : Object.fromEntries(formattedEntries);
 
     return {
         ...data,

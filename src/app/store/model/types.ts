@@ -274,8 +274,8 @@ export interface BatteryStatus {
 }
 
 export interface ICandidateAutoSave {
-  sections_map: Record<string, Array<ICandidateAutoSaveItems>> | Map<any, Array<ICandidateAutoSaveItems>>;
-  section_times: Record<string, ICandidateSectionTimes> | Map<any, ICandidateSectionTimes>;
+  sections_map: Record<string, Array<ICandidateAutoSaveItems>>;
+  section_times: Record<string, ICandidateSectionTimes>;
   minutes: number;
   seconds: number;
   cand_id: string;

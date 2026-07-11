@@ -1,21 +1,19 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { pack, unpack } from 'msgpackr';
+import { encode, decode } from '@msgpack/msgpack';
 
-export const messagePackInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+export const messagePackInterceptor:HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+  
   let modifiedReq = req;
 
   if (req.url.includes('/candidate/auto_save/') || req.url.includes('/candidate/end_exam/')) {
     if (req.body) {
-      
       try {
-        const encodedBody = pack(req.body);
+        const encodedBody = encode(req.body, { ignoreUndefined: true });
         modifiedReq = req.clone({
-          body: encodedBody,
-          headers: req.headers
-            .set('Content-Type', 'application/msgpack')
-            .set('Accept', 'application/msgpack')
+          body: new Blob([encodedBody], { type: 'application/msgpack' }),
+          headers: req.headers.set('Content-Type', 'application/msgpack')
         });
       } catch (error) {
         console.error('Error encoding MessagePack payload:', error);
@@ -34,7 +32,7 @@ export const messagePackInterceptor: HttpInterceptorFn = (req: HttpRequest<unkno
       if (event instanceof HttpResponse && req.url.includes('/auth/candidate_login')) {
         if (event.body instanceof ArrayBuffer) {
           try {
-            const decodedBody = unpack(new Uint8Array(event.body));
+            const decodedBody = decode(new Uint8Array(event.body));
             return event.clone({ body: decodedBody });
           } catch (error) {
             console.error('Error decoding MessagePack response:', error);
