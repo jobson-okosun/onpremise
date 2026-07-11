@@ -15,10 +15,10 @@
             </div>
             <div [style.fontSize.px]="fontSize()" class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
                 @if(store().currentQuestion?.passage_stimulus) {
-                    <div [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
+                    <div class="editor-content" [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
                 }
                 @if(store().currentQuestion?.stimulus) {
-                    <div [innerHTML]="store().currentQuestion?.stimulus | safeHtml" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
+                    <div class="editor-content" [innerHTML]="store().currentQuestion?.stimulus | safeHtml" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
                 }
             </div>
         </div>

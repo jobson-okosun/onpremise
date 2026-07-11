@@ -7,7 +7,7 @@ import { MenuModule } from 'primeng/menu';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/auto-proctoring/proctor';
-import { DeliveryMethod, ExamType, ItemType, StoreSection } from '../../store/model/types';
+import { AttemptRule, DeliveryMethod, ExamType, ItemType, SectionType, StoreSection } from '../../store/model/types';
 import { CandidateEventType } from '../../store/model/events/events.enum';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
 import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
@@ -83,6 +83,8 @@ export default class Layout implements OnDestroy {
   questionFontSize = signal(16)
   itemTypes = signal(ItemType);
   deliveryMethods = signal(DeliveryMethod)
+  attemptRules = signal(AttemptRule)
+  sectionTypes = signal(SectionType)
   examTypes = Object.values(ExamType)
   paginator = viewChild(Paginator)
   standardChoice = viewChild(SingleChoice)

@@ -65,7 +65,7 @@ export interface ICandidateData {
   section_ids: Array<string>;
   login_times: Array<string>;
   passport: string;
-  participant_id? : string
+  participant_id?: string
 }
 
 export interface ICandidateSectionsOverview {
@@ -98,6 +98,12 @@ export interface ICandidateSectionQuestions {
   name: string;
   section_settings: ICandidateSectionSettings;
   question_blocks: Array<ICandidateSectionBlocks>;
+  section_type: SectionType
+}
+
+export enum SectionType {
+  OBJECTIVE = "OBJECTIVE",
+  THEORY = "THEORY"
 }
 
 export enum AssessmentFont {
@@ -126,6 +132,16 @@ export interface ICandidateSectionBlocks {
   block_type: BlockType;
   items: Array<ICandidateItem>;
   passages: Array<ICandidatePassageItem>;
+
+  name: string
+  attempt_rule: AttemptRule
+  items_to_attempt: number
+  instruction?: string
+}
+
+export enum AttemptRule {
+  ATTEMPT_ALL = "ATTEMPT_ALL",
+  ATTEMPT_ANY = "ATTEMPT_ANY"
 }
 
 export enum BlockType {
@@ -141,6 +157,7 @@ export class ICandidateItem {
   stems?: Array<string>;
   possible_responses?: Array<IPossibleResponse>;
   response_positions?: Array<IResponsePosition>;
+  distractors?: Array<IOptionDTO>;
   item_type: ItemType;
   numerical?: boolean;
   case_sensitive?: boolean;
@@ -164,14 +181,14 @@ export class ICandidateItem {
   lastUpdated?: any
   isPassageItem: boolean
   roughWorkResponse: string[]
-  subQuestions?: SubQuestionUI[]
+  sub_questions?: SubQuestionUI[]
 }
 
 export interface SubQuestionUI {
   id: string;
   stimulus: string;
   score: number;
-  backgroundType: string;
+  background_type: string;
   children: SubQuestionUI[];
 }
 
@@ -187,13 +204,18 @@ export interface IOptionDTO {
 }
 
 export interface IPossibleResponse {
-  responses: Array<string> | Array<IOptionDTO> | Array<any>;
+  responses: Array<IOptionDTO>;
 }
 export interface IResponsePosition {
   x: number;
   y: number;
+  direction: ResponsePositionDirection
 }
 
+export enum ResponsePositionDirection {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT'
+}
 
 export enum ItemType {
   MCQ = 'MCQ',
@@ -202,7 +224,7 @@ export enum ItemType {
   ESSAY_RICH_TEXT = 'ESSAY_RICH_TEXT',
   CLOZE_TEXT = 'CLOZE_TEXT',
   CLOZE_DROPDOWN = 'CLOZE_DROPDOWN',
-  CLOZE_RADIO = 'CLOZE_RADIO',
+  CLOZE_RADIO = 'CLOZERADIO',
   SHORT_TEXT = 'SHORT_TEXT',
   TRUE_FALSE = 'TRUE_FALSE',
   YES_NO = 'YES_NO',
@@ -221,7 +243,15 @@ export const AlphabetList: string[] = ["(A)", "(B)", "(C)", "(D)", "(E)", "(F)",
 export interface StoreSection {
   id: string,
   name: string,
-  items: ICandidateItem[]
+  items: ICandidateItem[],
+  section_type: SectionType,
+  blocks: Array<{
+    attempt_rule: AttemptRule
+    instruction?: string
+    questions: ICandidateItem[]
+    items_to_attempt: number,
+    id: number
+  }>
 }
 
 export interface Ping {
@@ -244,8 +274,8 @@ export interface BatteryStatus {
 }
 
 export interface ICandidateAutoSave {
-  sections_map: Record<string, Array<ICandidateAutoSaveItems>>;
-  section_times: Record<string, ICandidateSectionTimes>;
+  sections_map: Record<string, Array<ICandidateAutoSaveItems>> | Map<any, Array<ICandidateAutoSaveItems>>;
+  section_times: Record<string, ICandidateSectionTimes> | Map<any, ICandidateSectionTimes>;
   minutes: number;
   seconds: number;
   cand_id: string;

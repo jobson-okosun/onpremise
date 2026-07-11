@@ -15,11 +15,11 @@
             <div [style.fontSize.px]="fontSize()"
                 class="flex-1 overflow-y-auto p-3 border-t border-gray-300 border-dashed">
                 @if(store().currentQuestion?.passage_stimulus) {
-                <div [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
+                <div class="editor-content" [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
                 }
 
                 @if(store().currentQuestion?.stimulus) {
-                <div [innerHTML]="store().currentQuestion?.stimulus | safeHtml"
+                <div class="editor-content" [innerHTML]="store().currentQuestion?.stimulus | safeHtml"
                     [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
                 }
             </div>
@@ -51,9 +51,12 @@
                                 <div class="absolute inset-0 pointer-events-none">
                                     @for(pos of store().currentQuestion?.response_positions; track pos; let i = $index) {
 
-                                        <div class="w-max absolute" [style.left.%]="pos.x" [style.top.%]="pos.y">
-                                            <div class="flex items-center">
-                                                <div class="w-3 h-3 ring-offset-1 rounded-full bg-primary ring-2 z-10 ring-primary border-2 border-white shadow"></div>
+                                        <div class="absolute" [style.left.%]="pos.x" [style.top.%]="pos.y">
+                                            <div class="w-3 h-3 ring-offset-1 rounded-full bg-primary ring-2 z-10 ring-primary border-2 border-white shadow"></div>
+                                            <div class="flex items-center absolute top-1/2 -translate-y-1/2 w-max"
+                                                 [class.flex-row-reverse]="pos.direction === 'LEFT'"
+                                                 [class.right-3]="pos.direction === 'LEFT'"
+                                                 [class.left-3]="pos.direction !== 'LEFT'">
                                                 <div class="h-1 bg-white border border-gray-300 w-2.5"></div>
                                                 <div cdkDropList [id]="'point-' + i" [cdkDropListConnectedTo]="getConnectedDropLists()" (cdkDropListDropped)="dropToPoint($event)" style="pointer-events: auto;">
                                                     @if(labels()[i]) {
@@ -76,7 +79,7 @@
                         </div>
                     </div>
                     <div class="w-full lg:w-1/4">
-                        <div class="bg-gray-100 p-3 max-h-full overflow-y-auto">
+                        <div class="bg-gray-100 p-3 max-h-full overflow-y-auto border-l-2 border-white">
                             <div class="font-semibold mb-2">Options</div>
 
                             <div cdkDropList id="option-list" [cdkDropListData]="options()" [cdkDropListConnectedTo]="labelIds()" (cdkDropListDropped)="dropToPoint($event)" class="flex flex-col gap-3 p-2">

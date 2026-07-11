@@ -19,32 +19,18 @@
             <div [style.fontSize.px]="fontSize()" class="overflow-auto h-[400px] lg:h-full p-3 border-t border-gray-300 border-dashed">
 
                 @if (store().currentQuestion?.passage_stimulus) {
-                    <div [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
+                    <div class="editor-content" [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>
                 }
 
-                <div class="mt-3 hidden md:block">
-                    @for(item of clozeRenderArray(); track item; let i = $index) {
-                         <!-- Plain Text -->
-                        <span [style.fontSize.px]="fontSize()" [innerHTML]="item.text.replaceAll('<p>', '').replaceAll('</p>', '') | safeHtml"></span>
+            <div class="mt-3 editor-content" #contentContainer [innerHTML]="formattedStimulus() | safeHtml"></div>
 
-                        <!-- Dropdown -->
-                        @if(item.dropBox) {
-                            <input [style.fontSize.px]="fontSize()" [value]="store().currentQuestion?.responses?.[i] ?? ''" class="border border-gray-300 rounded-md outline-none ring-0 text-sm p-2 m-1 inline close-item" #dropRef (input)="captureResponses(i, dropRef.value)">   
-                        }
-                    }
-                </div>
-
-                <div class="md:hidden overflow-auto h-full pb-50 text-justify">
-                    @for(item of clozeRenderArray(); track item; let i = $index) {
-                         <!-- Plain Text -->
-                        <span [style.fontSize.px]="fontSize()" [innerHTML]="item.text.replaceAll('<p>', '').replaceAll('</p>', '') | safeHtml"></span>
-
-                        <!-- Dropdown -->
-                        @if(item.dropBox) {
-                            <input [style.fontSize.px]="fontSize()" [value]="store().currentQuestion?.responses?.[i] ?? ''" class="block border border-gray-300 rounded-md outline-none ring-0 text-sm p-2 m-1 close-item" #dropRef (input)="captureResponses(i, dropRef.value)">   
-                        }
-                    }
-                </div>
+            <div class="hidden">
+                @for(i of clozeRenderArray(); track $index) {
+                    <span #clozeDropdown class="inline-block align-middle">
+                        <input [style.fontSize.px]="fontSize()" [value]="store().currentQuestion?.responses?.[i] ?? ''" class="border border-gray-300 rounded-md outline-none ring-0 text-sm p-2 m-1 inline close-item md:w-auto w-full" #dropRef (input)="captureResponses(i, dropRef.value)">   
+                    </span>
+                }
+            </div>
             </div>
 
         </div>

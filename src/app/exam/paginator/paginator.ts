@@ -12,7 +12,7 @@ import { CandidateEventType, NavigationMethod } from '../../store/model/events/e
 })
 export class Paginator {
   private _store = inject(Store)
-  private _exam = inject(ExamService)
+  private _exam = inject(ExamService) 
   private _eventService = inject(EventService)
 
   isMobile = signal(true)

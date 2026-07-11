@@ -1,8 +1,10 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 
 @Component({
@@ -11,15 +13,32 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
   templateUrl: './close-with-text.html',
   styleUrl: './close-with-text.css',
 })
-export class CloseWithText {
+export class CloseWithText implements OnInit, AfterViewChecked, OnDestroy {
   private _store = inject(Store);
+  private renderer = inject(Renderer2);
   
   store = computed(() => this._store.store());
   fontSize = model(16);
-  clozeRenderArray = signal<{ text: string; dropBox: boolean }[]>([]);
+  
+  formattedStimulus = signal<string>('');
+
+  contentContainer = viewChild<ElementRef>('contentContainer');
+  dropdowns = viewChildren<ElementRef>('clozeDropdown');
+
+  private responseSubject = new Subject<{index: number, value: string}>();
+  private subscription?: Subscription;
 
   ngOnInit() {
     this.formatStimulus();
+    this.subscription = this.responseSubject.pipe(
+      debounceTime(500)
+    ).subscribe(({index, value}) => {
+      this.saveResponse(index, value);
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 
   formatStimulus() {
@@ -28,24 +47,39 @@ export class CloseWithText {
       return
     }
 
-    const parts = currentQuestion.stimulus.split('{{response}}');
-    const arr: { text: string; dropBox: boolean; }[] = [];
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+       i++;
+    }
 
-    parts.forEach((text, i) => {
-      if (i == parts.length - 1) {
-        const entry = { text: text, dropBox: false };
-        arr.push(entry);
-      } else {
-        const entry = { text: text, dropBox: true };
-        arr.push(entry);
-      }
-    });
-
-    this.clozeRenderArray.set(arr);
+    this.formattedStimulus.set(stim);
+    this.clozeRenderArray.set(Array.from({ length: i }, (_, idx) => idx));
   }
 
+  clozeRenderArray = signal<number[]>([]);
+
+  ngAfterViewChecked() {
+    const container = this.contentContainer()?.nativeElement;
+    const drops = this.dropdowns();
+
+    if (container && drops.length > 0) {
+      const placeholders = container.querySelectorAll('.cloze-placeholder');
+      placeholders.forEach((placeholder: HTMLElement, i: number) => {
+        const dropEl = drops[i]?.nativeElement;
+        if (dropEl && !placeholder.contains(dropEl)) {
+          this.renderer.appendChild(placeholder, dropEl);
+        }
+      });
+    }
+  }
 
   captureResponses(index: number, value: string) {
+    this.responseSubject.next({index, value});
+  }
+
+  saveResponse(index: number, value: string) {
     const currentQuestion = this.store().currentQuestion;
     if (!currentQuestion) {
       return

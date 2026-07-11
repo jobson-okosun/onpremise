@@ -41,9 +41,18 @@ export class ClassifyByOrdering implements AfterViewInit {
       this.rightItems.set(restored as any);
     }
 
-    // First time answering → load options in original order
+    // First time answering → load options (and shuffle if needed)
     else {
-      this.rightItems.set([...opts]);
+      // this.rightItems.set([...opts]);
+      
+      let shuffled = [...opts];
+      if (q.shuffle_options !== false) {
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+      }
+      this.rightItems.set(shuffled);
     }
 
     this.refresh.update(v => v + 1);

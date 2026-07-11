@@ -215,6 +215,15 @@ export default class PreviewModeLayout implements OnDestroy {
           exam_type: (settings.examType || 'EXAMALPHA') as ExamType
         };
 
+        const mapSubQuestions = (sqs: any[]): any[] => {
+          if (!sqs || !Array.isArray(sqs)) return [];
+          return sqs.map(sq => ({
+            ...sq,
+            background_type: sq.backgroundType || sq.background_type,
+            children: sq.children ? mapSubQuestions(sq.children) : []
+          }));
+        };
+
         const mapItem = (item: any, blockId: number) => {
           return {
             id: item.id,
@@ -224,8 +233,17 @@ export default class PreviewModeLayout implements OnDestroy {
               label: opt.label,
               value: opt.value
             })),
+            distractors: item.distractors ? item.distractors.map((opt: any) => ({
+              label: opt.label,
+              value: opt.value
+            })) : undefined,
             stems: item.stems || undefined,
-            possible_responses: item.possibleResponses || undefined,
+            possible_responses: item.possibleResponses ? item.possibleResponses.map((pr: any) => ({
+              responses: (pr.responses || []).map((resp: any) => ({
+                label: typeof resp === 'string' ? resp : (resp.label || resp),
+                value: typeof resp === 'string' ? resp : (resp.value || resp)
+              }))
+            })) : undefined,
             response_positions: item.responsePositions || undefined,
             item_type: item.itemType as ItemType,
             numerical: item.numerical ?? false,
@@ -251,7 +269,8 @@ export default class PreviewModeLayout implements OnDestroy {
             background_type: item.backgroundType || undefined,
             drawing_writing_split_type: item.drawingWritingSplitType || "NONE",
             roughWorkResponse: [],
-            isPassageItem: !!item.passageId
+            isPassageItem: !!item.passageId,
+            sub_questions: item.subQuestions ? mapSubQuestions(item.subQuestions) : undefined
           };
         };
 

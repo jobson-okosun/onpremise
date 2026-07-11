@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
@@ -14,15 +14,20 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
   templateUrl: './close-with-select.html',
   styleUrl: './close-with-select.css',
 })
-export class CloseWithSelect {
+export class CloseWithSelect implements OnInit, AfterViewChecked {
   private _store = inject(Store);
   private _eventService = inject(EventService)
+  private renderer = inject(Renderer2);
 
   store = computed(() => this._store.store());
   fontSize = model(16);
-  clozeRenderArray = signal<{ text: string; dropBox: boolean }[]>([]);
   alphabetList: typeof AlphabetList = AlphabetList;
   isMobile = signal(false)
+  
+  formattedStimulus = signal<string>('');
+
+  contentContainer = viewChild<ElementRef>('contentContainer');
+  dropdowns = viewChildren<ElementRef>('clozeDropdown');
 
   ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 767px)').matches
@@ -37,20 +42,29 @@ export class CloseWithSelect {
       return
     }
 
-    const parts = currentQuestion.stimulus.split('{{response}}');
-    const arr: { text: string; dropBox: boolean; }[] = [];
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+       i++;
+    }
 
-    parts.forEach((text, i) => {
-      if (i == parts.length - 1) {
-        const entry = { text: text, dropBox: false };
-        arr.push(entry);
-      } else {
-        const entry = { text: text, dropBox: true };
-        arr.push(entry);
-      }
-    });
+    this.formattedStimulus.set(stim);
+  }
 
-    this.clozeRenderArray.set(arr);
+  ngAfterViewChecked() {
+    const container = this.contentContainer()?.nativeElement;
+    const drops = this.dropdowns();
+
+    if (container && drops.length > 0) {
+      const placeholders = container.querySelectorAll('.cloze-placeholder');
+      placeholders.forEach((placeholder: HTMLElement, i: number) => {
+        const dropEl = drops[i]?.nativeElement;
+        if (dropEl && !placeholder.contains(dropEl)) {
+          this.renderer.appendChild(placeholder, dropEl);
+        }
+      });
+    }
   }
 
 

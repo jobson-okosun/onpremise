@@ -1,4 +1,4 @@
-<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.subQuestions && !store().drawingAndWritingConfig.roughWorkMode">
+<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.sub_questions && !store().drawingAndWritingConfig.roughWorkMode">
     <!-- question -->
     @if(!store().drawingAndWritingConfig.layoutFullMode) {
         <div class="lg:w-2/5 lg:h-full overflow-hidden">
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="flex flex-1 overflow-hidden border-t border-gray-300 border-dashed">
-                    @if(store().currentQuestion?.subQuestions && !store().drawingAndWritingConfig.roughWorkMode) {
+                    @if(store().currentQuestion?.sub_questions && !store().drawingAndWritingConfig.roughWorkMode) {
                         <div class="h-full p-1">
                             <app-sub-question-navigation class="h-full"></app-sub-question-navigation>
                         </div>
@@ -24,13 +24,13 @@
                     <div [style.fontSize.px]="fontSize()"
                         class="flex-1 overflow-y-auto p-1">
                         @if(currentQuestion()?.passage_stimulus) {
-                        <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"> </div>
+                        <div class="editor-content" [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"> </div>
                         }
                         @if(currentQuestion()?.stimulus) {
-                        <div [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
+                        <div class="editor-content" [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
                         }
                         @if(activeSubQuestionContent()) {
-                        <div [innerHTML]="activeSubQuestionContent() | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus || currentQuestion()?.stimulus"></div>
+                        <div class="editor-content" [innerHTML]="activeSubQuestionContent() | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus || currentQuestion()?.stimulus" class="p-1 bg-gray-100 border-l-2 border-primary pl-2"></div>
                         }
                     </div>
                 </div>

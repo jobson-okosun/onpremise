@@ -16,7 +16,7 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
   templateUrl: './label-image-with-drag-and-drop.html',
   styleUrl: './label-image-with-drag-and-drop.css',
 })
-export class LabelImageWithDragAndDrop implements AfterViewInit {
+export class LabelImageWithDragAndDrop {
   private _store = inject(Store)
   private _toast = inject(HotToastService)
   private _eventService = inject(EventService)
@@ -30,9 +30,13 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
   labelIds = computed(() => this.labels().map((_, i) => `point-${i}`))
 
   options = computed(() => {
-    const all = this.store().currentQuestion?.options ?? []
-    const used = this.labels().filter(x => x !== null).map(x => x!.value)
-    return all.filter(o => !used.includes(o.value))
+    const q = this.store().currentQuestion;
+    const allOptions = q?.options ?? [];
+    const distractors = q?.distractors ?? [];
+    const all = [...allOptions, ...distractors];
+    
+    const used = this.labels().filter(x => x !== null).map(x => x!.value);
+    return all.filter(o => !used.includes(o.value));
   })
 
   constructor() {
@@ -40,13 +44,13 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
       const q = this.store().currentQuestion;
       if (!q) return;
 
-      const opts = q.options ?? [];
+      const allOpts = [...(q.options ?? []), ...(q.distractors ?? [])];
       const responses = q.responses ?? [];
 
       // restore saved responses
       if (responses.length > 0 && responses.some(r => r !== '')) {
         const restored = responses.map(val =>
-          opts.find(o => o.value === val) ?? null
+          allOpts.find(o => o.value === val) ?? null
         );
         this.labels.set(restored);
         return;
@@ -58,8 +62,6 @@ export class LabelImageWithDragAndDrop implements AfterViewInit {
     });
   }
 
-
-  ngAfterViewInit() { }
 
   getConnectedDropLists() {
     return ['option-list', ...this.labelIds()]

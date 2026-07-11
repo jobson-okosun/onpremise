@@ -75,4 +75,31 @@ button:disabled {
   --keyboard-zindex: 1000000 !important;
 }
 
+/* Restore basic styling for TinyMCE/WYSIWYG HTML output */
+.editor-content table {
+  @apply border-collapse w-full;
+}
+
+.editor-content table,
+.editor-content th,
+.editor-content td {
+  @apply border border-gray-400 p-2;
+}
+
+.editor-content ul {
+  @apply list-disc ml-5 my-2;
+}
+
+.editor-content ol {
+  @apply list-decimal ml-5 my-2;
+}
+
+.editor-content p {
+  @apply my-2;
+}
+
+.editor-content p:last-child {
+  @apply mb-0;
+}
+
 

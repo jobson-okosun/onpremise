@@ -69,6 +69,7 @@ export class PostLogin {
 
             const sections = data.sections_questions.map(s => {
                 const items = this.getSectionItems(s)
+                
 
                 items.forEach(item => {
                     if (item.item_type == ItemType.MCQ || item.item_type == ItemType.TRUE_FALSE || item.item_type == ItemType.YES_NO) {
@@ -89,7 +90,28 @@ export class PostLogin {
 
                 })
 
-                const section: StoreSection = { id: s.id, name: s.name, items }
+                const sectionBlocks = s.question_blocks.map( b => {
+                    const attempt_rule = b.attempt_rule
+                    const questions = items.filter(item => item.block_id == b.id)
+                    const instruction = b?.instruction ?? ''
+                    const items_to_attempt = b.items_to_attempt ?? 0
+
+                    return { 
+                        attempt_rule: attempt_rule,
+                        questions,
+                        items_to_attempt,
+                        instruction,
+                        id: b.id,
+                    }
+                })
+
+                const section: StoreSection = { 
+                    id: s.id, 
+                    name: s.name, 
+                    items,
+                    section_type: s?.section_type,
+                    blocks: sectionBlocks
+                }
                 return section
             })
 

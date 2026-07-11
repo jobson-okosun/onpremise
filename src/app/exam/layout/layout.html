@@ -95,7 +95,28 @@
                     </div>
                 </div>
                 
-                <app-paginator class="w-full lg:w-max"></app-paginator>
+                <div class="w-full lg:w-max -translate-y-[4px]">
+                    <app-paginator class="w-full"></app-paginator>
+                    
+                    @if(store().currentSection?.section_type == sectionTypes().THEORY) {
+                        <div class="relative flex justify-center items-center gap-4 w-max mx-auto translate-y-[2px]">
+                            <div class="absolute top-1/2 left-6 right-6 h-[2px] bg-gray-400 -translate-y-1/2"></div>
+
+                            @for(item of store().currentSection?.blocks; track item.id) {
+                                @if(item.attempt_rule == attemptRules().ATTEMPT_ALL) {
+                                    <div class="relative z-10 bg-white flex items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
+                                        <div class="text-sm font-medium text-primary">Attempt all in </div>
+                                        <div class="flex items-center gap-0.5">
+                                            @for(q of item.questions; track q.id) {
+                                                <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">1</button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
 
                 <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
                     <div class="flex flex-col items-center justify-center">
@@ -149,7 +170,6 @@
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
                 <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
-                 <!-- <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> -->
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {

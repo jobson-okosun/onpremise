@@ -274,7 +274,7 @@ export class CanvasService {
             const h = stage?.height();
             if (!w || !h) return;
 
-            const marginSize = 40; 
+            const marginSize = 40;
 
             const marginGroup = new Konva.Group({
                 listening: false,
@@ -346,13 +346,16 @@ export class CanvasService {
                 default:
                     break;
             }
-            
+
             drawPageMargins();
 
         }
 
         const resizeStage = () => {
             const answerSpace = document.querySelector('.answer-space') as HTMLElement
+            if(!answerSpace) {
+                return
+            }
 
             const parent = document.getElementById('stage-parent')!;
             parent.style.height = (answerSpace.offsetHeight - 10) + 'px';
@@ -1141,6 +1144,27 @@ export class CanvasService {
             drawingLayer.draw();
         });
 
+        const getActiveBackgroundType = (): string => {
+            const activeId = this.store().activeSubQuestionId;
+            const question = this.store().currentQuestion;
+            if (!activeId || !question?.sub_questions) {
+                return question?.background_type || 'NONE';
+            }
+
+            const findType = (sqs: any[]): string | null => {
+                for (const sq of sqs) {
+                    if (sq.id === activeId) return sq.background_type;
+                    if (sq.children) {
+                        const found = findType(sq.children);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+
+            return findType(question.sub_questions) || question.background_type || 'NONE';
+        };
+
         stage.on('mouseenter', () => {
             if (this.currentTool() === 'brush') {
                 document.body.style.cursor = 'url("pen-tool-02-stroke-rounded.svg") 12 24, auto';
@@ -1183,7 +1207,7 @@ export class CanvasService {
             next: () => {
                 loadCurrentPageStrokes()
                 scrollContainers()
-                this.backgroundType.set(this.store().currentQuestion!.background_type as any)
+                this.backgroundType.set(getActiveBackgroundType() as any)
                 this._konvaEventTools._backgroundChange$.next(this.backgroundType())
             }
         })
@@ -1218,6 +1242,8 @@ export class CanvasService {
         this.subQuestionSelectEvent$ = this._konvaEventTools.subQuestionSelectEvent$.subscribe({
             next: () => {
                 loadCurrentPageStrokes()
+                this.backgroundType.set(getActiveBackgroundType() as any)
+                this._konvaEventTools._backgroundChange$.next(this.backgroundType())
             }
         })
 
@@ -1317,6 +1343,7 @@ export class CanvasService {
         });
 
         createEraserTool()
+        this.backgroundType.set(getActiveBackgroundType() as any)
         setBackgroundType()
         loadCurrentPageStrokes()
     }

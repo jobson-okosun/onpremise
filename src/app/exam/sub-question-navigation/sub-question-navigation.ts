@@ -14,7 +14,7 @@ export class SubQuestionNavigation {
   questionIndex = computed(() => this._store.store().currentQuestionIndex);
   activeStoreId = computed(() => this._store.store().activeSubQuestionId || 'default');
   
-  subQuestions = computed<any[]>(() => (this.currentQuestion() as any)?.subQuestions || []);
+  subQuestions = computed<any[]>(() => (this.currentQuestion())?.sub_questions || []);
 
   expandedParentId = signal<string | null>(null);
 

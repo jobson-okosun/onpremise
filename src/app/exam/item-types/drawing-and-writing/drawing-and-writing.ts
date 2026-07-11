@@ -54,7 +54,7 @@ export class DrawingAndWriting {
   currentPageData = computed(() => this._drawingStore.getStoreData().pages[this.currentPage()])
 
   activeStoreId = computed(() => this._drawingStore.getActiveStoreId())
-  parentSubQuestions = computed<any[]>(() => (this.currentQuestion() as any)?.subQuestions || [])
+  parentSubQuestions = computed<any[]>(() => (this.currentQuestion())?.sub_questions || [])
   activeSubQuestionId = computed(() => this._store.store().activeSubQuestionId);
 
   activeSubQuestionContent = computed(() => {
@@ -128,7 +128,7 @@ export class DrawingAndWriting {
     } else {
       this._drawingStore.clearStoreData();
 
-      const sqs = currentQuestion?.subQuestions || [];
+      const sqs = currentQuestion?.sub_questions || [];
       if (sqs.length > 0) {
         // Pre-initialize empty stores for each subquestion part
         sqs.forEach(sq => {
@@ -142,7 +142,7 @@ export class DrawingAndWriting {
       }
     }
 
-    const sqs = currentQuestion?.subQuestions || [];
+    const sqs = currentQuestion?.sub_questions || [];
     if (sqs.length > 0) {
       this._store.updateStore({ activeSubQuestionId: sqs[0].id });
       this._drawingStore.setActiveStoreId(sqs[0].id);

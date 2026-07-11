@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2 } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
@@ -13,13 +13,18 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
   templateUrl: './close-with-dropdown.html',
   styleUrl: './close-with-dropdown.css',
 })
-export class CloseWithDropdown {
+export class CloseWithDropdown implements AfterViewChecked {
   private _store = inject(Store);
   private _eventService = inject(EventService);
+  private renderer = inject(Renderer2);
 
   store = computed(() => this._store.store());
   fontSize = model(16);
-  clozeRenderArray = signal<{ text: string; dropBox: boolean }[]>([]);
+  
+  formattedStimulus = signal<string>('');
+
+  contentContainer = viewChild<ElementRef>('contentContainer');
+  dropdowns = viewChildren<ElementRef>('clozeDropdown');
 
   ngOnInit() {
     this.formatStimulus();
@@ -28,23 +33,34 @@ export class CloseWithDropdown {
   formatStimulus() {
     const currentQuestion = this.store().currentQuestion;
     if (!currentQuestion?.stimulus) {
-      return
+      return;
     }
 
-    const parts = currentQuestion.stimulus.split('{{response}}');
-    const arr: { text: string; dropBox: boolean; }[] = [];
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+       // Replace each occurrence sequentially with an incrementing index
+       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+       i++;
+    }
 
-    parts.forEach((text, i) => {
-      if (i == parts.length - 1) {
-        const entry = { text: text, dropBox: false };
-        arr.push(entry);
-      } else {
-        const entry = { text: text, dropBox: true };
-        arr.push(entry);
-      }
-    });
+    this.formattedStimulus.set(stim);
+  }
 
-    this.clozeRenderArray.set(arr);
+  ngAfterViewChecked() {
+    const container = this.contentContainer()?.nativeElement;
+    const drops = this.dropdowns();
+
+    if (container && drops.length > 0) {
+      const placeholders = container.querySelectorAll('.cloze-placeholder');
+      
+      placeholders.forEach((placeholder: HTMLElement, i: number) => {
+        const dropEl = drops[i]?.nativeElement;
+        if (dropEl && !placeholder.contains(dropEl)) {
+          this.renderer.appendChild(placeholder, dropEl);
+        }
+      });
+    }
   }
 
 
