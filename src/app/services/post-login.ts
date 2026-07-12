@@ -11,26 +11,39 @@ export class PostLogin {
     cummulativeExamDuration = signal(0)
 
     getSectionItems(section: ICandidateSectionQuestions): ICandidateItem[] {
-        const items = section.question_blocks.flatMap(block => {
+        let index = 0;
+        const items = section.question_blocks.flatMap((block) => {
 
             if (block.block_type === BlockType.SINGLE_QUESTIONS) {
-                return block.items.map(item => ({
-                    ...item,
-                    block_id: block.id,
-                    isPassageItem: false,
-                    roughWorkResponse: []
-                }));
+                return block.items.map((item) => {
+                    const i =  {
+                        ...item,
+                        block_id: block.id,
+                        isPassageItem: false,
+                        roughWorkResponse: [],
+                        storeMapIdex: index
+                    }
+
+                    index++
+                    return i;
+                });
             }
 
             if (block.block_type === BlockType.PASSAGES) {
                 return block.passages.flatMap(passage =>
-                    passage.items.map(item => ({
-                        ...item,
-                        block_id: block.id,
-                        passage_stimulus: passage.stimulus,
-                        isPassageItem: true,
-                        roughWorkResponse: []
-                    }))
+                    passage.items.map((item) => {
+                        const i = {
+                            ...item,
+                            block_id: block.id,
+                            passage_stimulus: passage.stimulus,
+                            isPassageItem: true,
+                            roughWorkResponse: [],
+                            storeMapIdex: index
+                        }   
+
+                        index++
+                        return i
+                    })
                 );
             }
 

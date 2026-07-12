@@ -6,7 +6,7 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHotToastConfig } from '@ngxpert/hot-toast';
-import { messagePackInterceptor } from './interceptors/messagepack.interceptor';
+import { protobufInterceptor } from './interceptors/protobuf.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(), 
     provideZonelessChangeDetection(),
     provideRouter(routes, withHashLocation()),
-    provideHttpClient(withInterceptors([messagePackInterceptor])),
+    provideHttpClient(withInterceptors([protobufInterceptor])),
     provideHotToastConfig(),
     provideAnimationsAsync(),
     providePrimeNG({

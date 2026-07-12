@@ -1,0 +1,3 @@
+mkdir -p src/app/store/model/protobuf
+npx pbjs -t static-module -w es6 --keep-case -o src/app/store/model/protobuf/candidate_http.js c:\Users\DELL\Downloads\candidate_http.proto
+npx pbts -o src/app/store/model/protobuf/candidate_http.d.ts src/app/store/model/protobuf/candidate_http.js

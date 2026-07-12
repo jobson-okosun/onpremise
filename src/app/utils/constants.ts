@@ -234,7 +234,7 @@ export const loginData = {
           "total_questions": 3,
           "name": "",
           "attempt_rule": "ATTEMPT_ALL",
-          "items_to_attempt": 0,
+          "items_to_attempt": 1,
           "instruction": "Answer all in this block",
           "items": [
             {
@@ -342,7 +342,7 @@ export const loginData = {
           "passages": []
         },
         {
-          "id": 101,
+          "id": 102,
           "index": 1,
           "block_type": "SINGLE_QUESTIONS",
           "total_questions": 3,
@@ -400,7 +400,7 @@ export const loginData = {
               "revisit": false
             },
             {
-              "id": "ENG-Q9132",
+              "id": "ENG-Q9133",
               "stimulus": "Which word is a noun?",
               "options": [
                 { "label": "Run", "value": "run" },
@@ -538,10 +538,12 @@ export const loginData = {
           "passages": []
         },
         {
-          "id": 102,
+          "id": 103,
           "index": 2,
           "block_type": "PASSAGES",
           "total_questions": 2,
+          "attempt_rule": "ATTEMPT_ANY",
+          "items_to_attempt": 0,
           "items": [],
           "passages": [
             {

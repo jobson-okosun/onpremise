@@ -151,6 +151,8 @@ export default class Login implements AfterViewInit {
   }
 
   onSuccessfullLogin(value: ICandidateLoginResponse) {
+    console.log('login data [sections_questions] => ', value.sections_questions)
+    
     this._postLoginService.formatLoginDataToStore(value).then(async () => {
       this._eventService.syncSequence(value.last_sequence);
       this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_SUCCEEDED });

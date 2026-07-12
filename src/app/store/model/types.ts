@@ -182,6 +182,7 @@ export class ICandidateItem {
   isPassageItem: boolean
   roughWorkResponse: string[]
   sub_questions?: SubQuestionUI[]
+  storeMapIdex: number
 }
 
 export interface SubQuestionUI {
