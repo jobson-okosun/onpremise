@@ -259,7 +259,7 @@ export default class Layout implements OnDestroy {
       this._exam.startProctoringNetworkMonitor()
     }
 
-    // this.initiateExam()
+    this.initiateExam()
   }
 
   private initiateExam() {
