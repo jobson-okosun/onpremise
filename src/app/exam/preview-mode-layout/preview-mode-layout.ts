@@ -246,7 +246,7 @@ export default class PreviewModeLayout implements OnDestroy {
             })) : undefined,
             response_positions: item.responsePositions || undefined,
             item_type: item.itemType as ItemType,
-            numerical: item.numerical ?? false,
+            numerical: true,
             case_sensitive: item.caseSensitive ?? false,
             shuffle_options: item.shuffleOptions ?? true,
             multiple_response: item.multipleResponse ?? false,

@@ -1,10 +1,9 @@
-import { Component, computed, effect, ElementRef, HostListener, inject, model, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, model, viewChild } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { EventService } from '../../../services/event';
-import { UsageEvents } from '../../../store/model/types';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 
 
@@ -51,28 +50,40 @@ export class ShortText {
   captureResponses(input: HTMLTextAreaElement) {
     const currentQuestion = this.store().currentQuestion;
     if (!currentQuestion) {
-      return
-    };
-
-    let words = input.value.trim().split(/\s+/).filter(Boolean);
-    const maxWords = typeof currentQuestion.max_words === 'number' ? currentQuestion.max_words : Infinity;
-    if (words.length > maxWords) {
-      this._toast.warning("You've reached the maximum word limit")
-      input.value = this.store().currentQuestion?.responses[0] ?? '';
-      return
+      return;
     }
 
-    const value = input.value;
+    let value = input.value;
+
+    if (currentQuestion.numerical) {
+      // Only allow numbers (digits, decimal, and minus sign)
+      const cleanValue = value.replace(/[^0-9.-]/g, '');
+      if (value !== cleanValue) {
+        input.value = cleanValue;
+        value = cleanValue;
+      }
+
+      // Enforce max length
+      const maxLength = typeof currentQuestion.max_length === 'number' ? currentQuestion.max_length : 0;
+      if (maxLength > 0 && value.length > maxLength) {
+        this._toast.warning("You've reached the maximum length limit");
+        input.value = currentQuestion.responses[0] || '';
+        return;
+      }
+    } else {
+      // Enforce max words
+      let words = value.trim().split(/\s+/).filter(Boolean);
+      const maxWords = typeof currentQuestion.max_words === 'number' ? currentQuestion.max_words : 0;
+      if (maxWords > 0 && words.length > maxWords) {
+        this._toast.warning("You've reached the maximum word limit");
+        input.value = currentQuestion.responses[0] || '';
+        return;
+      }
+    }
+
     currentQuestion.responses[0] = value;
-    currentQuestion.lastUpdated = new Date()
+    currentQuestion.lastUpdated = new Date();
 
-    this._store.updateStore({ currentQuestion })
-
-    // this._eventService.logEvent({
-    //   event_type: currentQuestion!.responses[0] ? UsageEvents.ANSWER_SELECTED_CHANGED : UsageEvents.ANSWER_SELECTED,
-    //   current_question_id: currentQuestion?.id,
-    //   current_section_id: this.store().currentSection?.id,
-    //   timestamp: new Date()
-    // })
+    this._store.updateStore({ currentQuestion });
   }
 }
