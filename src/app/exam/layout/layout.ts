@@ -4,6 +4,7 @@ import { ExamTools } from '../exam-tools/exam-tools';
 import { Paginator } from '../paginator/paginator';
 import { Dialog } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
+import { TheoryPaginator } from '../theory-paginator/theory-paginator';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { ProctorService } from '../../services/auto-proctoring/proctor';
@@ -52,7 +53,7 @@ import { EventService } from '../../services/event';
     SingleChoice, DrawingAndWriting, DrawingAndWritingRoughMode, CloseWithDropdown, CloseWithText, CloseWithSelect,
     ShortText, EssayRichText, EssayPlainText, ClassifyByMatching, ClassifyByOrdering, LabelImageWithText, LabelImageWithDropdownselect,
     LabelImageWithDragAndDrop, ChoiceMatrix, MultipleResponse, TrueOrFalse, YesOrNo,
-    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator, ProctorPreview, PopoverModule, Overview
+    ExamTools, Paginator, Dialog, MenuModule, Dialog, NgClass, CdkDrag, Calculator, ScientificCalculator, ProctorPreview, PopoverModule, Overview, TheoryPaginator
   ]
 })
 export default class Layout implements OnDestroy {
@@ -101,6 +102,27 @@ export default class Layout implements OnDestroy {
   currentSectionSummary = computed(() => this._exam.currentSectionSummary())
   showUnattemptedModal = linkedSignal(() => this._exam.showUnattemptedModal())
   currentSectionIndex = computed(() => this.store().sections.findIndex(sec => sec.id === this.store().currentSection?.id))
+
+  isLiveProctoring = computed(() => this._exam.isLiveProctoring())
+  isAutoProctoring = computed(() => this._exam.isAutoProctoring())
+  isProctoredExam = computed(() => this._exam.isProctoredExam())
+
+  isExamAlpha = computed(() => this._exam.isExamAlpha())
+  isAutoSaving = computed(() => this._exam.isAutoSaving())
+  isAutoSaveSuccessful = computed(() => this._exam.isAutoSaveSuccessful())
+  connectionStatus = computed(() => this._exam.connectionStatus())
+  screenWidth = computed(() => this._exam.screenWidth())
+  canEndExam = computed(() => this._exam.canEndExam())
+  examEnded = computed(() => this._exam.examEnded())
+
+  proctoringNetworkSpeed = computed(() => this._exam.proctoringNetworkSpeed())
+  proctoringLatencyStatus = computed(() => this._exam.proctoringLatencyStatus())
+  isCheckingProctoringNetwork = computed(() => this._exam.isCheckingProctoringNetwork())
+  proctoringNetworkRetryCountdown = computed(() => this._exam.proctoringNetworkRetryCountdown())
+  isProctoringNetworkRetryActive = computed(() => this._exam.isProctoringNetworkRetryActive())
+  hasSharedFullScreen = computed(() => this._liveProctoring.hasSharedFullScreen())
+  DOWNLOAD_SPEED = MINIMUM_REASONABLE_DOWNLOAD_SPEED
+
   showNextSectionButton = computed(() => {
     if (!this.store().sections.length) {
       return false
@@ -151,26 +173,6 @@ export default class Layout implements OnDestroy {
     const name = this.store().loginData?.candidate_data?.name! ?? ''
     return name.length > 15 ? name.slice(0, 15).concat('...') : name
   })
-
-  isLiveProctoring = computed(() => this._exam.isLiveProctoring())
-  isAutoProctoring = computed(() => this._exam.isAutoProctoring())
-  isProctoredExam = computed(() => this._exam.isProctoredExam())
-
-  isExamAlpha = computed(() => this._exam.isExamAlpha())
-  isAutoSaving = computed(() => this._exam.isAutoSaving())
-  isAutoSaveSuccessful = computed(() => this._exam.isAutoSaveSuccessful())
-  connectionStatus = computed(() => this._exam.connectionStatus())
-  screenWidth = computed(() => this._exam.screenWidth())
-  canEndExam = computed(() => this._exam.canEndExam())
-  examEnded = computed(() => this._exam.examEnded())
-
-  proctoringNetworkSpeed = computed(() => this._exam.proctoringNetworkSpeed())
-  proctoringLatencyStatus = computed(() => this._exam.proctoringLatencyStatus())
-  isCheckingProctoringNetwork = computed(() => this._exam.isCheckingProctoringNetwork())
-  proctoringNetworkRetryCountdown = computed(() => this._exam.proctoringNetworkRetryCountdown())
-  isProctoringNetworkRetryActive = computed(() => this._exam.isProctoringNetworkRetryActive())
-  hasSharedFullScreen = computed(() => this._liveProctoring.hasSharedFullScreen())
-  DOWNLOAD_SPEED = MINIMUM_REASONABLE_DOWNLOAD_SPEED
 
   constructor() {
     this.sub = this.breakpointObserver
@@ -226,10 +228,10 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    if (!this.store().loginData) {
-      this._authService.setPreLoginData(preloginData as any);
-      this._postLoginService.formatLoginDataToStore(loginData as any)
-    }
+    // if (!this.store().loginData) {
+    //   this._authService.setPreLoginData(preloginData as any);
+    //   this._postLoginService.formatLoginDataToStore(loginData as any)
+    // }
 
     if (!this.store().platformIsTauri) {
       fullscreen(this._eventService)
@@ -271,7 +273,7 @@ export default class Layout implements OnDestroy {
 
     // this._eventService.initializeSession()
     // this._eventService.logEvent({ event_type: CandidateEventType.SESSION_STARTED });
-    
+
     this._eventService.logEvent({ event_type: CandidateEventType.EXAM_STARTED });
     this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: this.store().currentQuestion!.id, section_id: this.store().currentSection!.id });
     this._eventService.updatePastEventsSessionId();
@@ -297,7 +299,7 @@ export default class Layout implements OnDestroy {
     section = this.store().sections.find(item => item.id == section.id) as StoreSection
     this._store.updateStore({ currentQuestionIndex: 0, currentSection: section, currentQuestion })
 
-    
+
     if (currentSection) {
       this._eventService.logEvent({ event_type: CandidateEventType.SECTION_EXITED, section_id: currentSection.id });
     }
@@ -506,10 +508,10 @@ export default class Layout implements OnDestroy {
   onWindowFocus() {
     let duration_ms: number | undefined = undefined;
     if (this._blurTimestamp) {
-        duration_ms = Date.now() - this._blurTimestamp;
-        this._blurTimestamp = null;
+      duration_ms = Date.now() - this._blurTimestamp;
+      this._blurTimestamp = null;
     }
-    
+
     if (duration_ms !== undefined) {
       this._eventService.logEvent({ event_type: CandidateEventType.WINDOW_BLURRED, duration_ms });
     }

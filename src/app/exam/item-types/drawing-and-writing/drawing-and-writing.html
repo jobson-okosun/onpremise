@@ -1,4 +1,4 @@
-<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode && store().currentQuestion?.sub_questions && !store().drawingAndWritingConfig.roughWorkMode">
+<div class="h-full w-full overflow-hidden flex flex-col lg:flex-row gap-3 2xl:gap-5" [class.gap-1!]="store().drawingAndWritingConfig.layoutFullMode && !store().drawingAndWritingConfig.roughWorkMode">
     <!-- question -->
     @if(!store().drawingAndWritingConfig.layoutFullMode) {
         <div class="lg:w-2/5 lg:h-full overflow-hidden">
@@ -29,8 +29,36 @@
                         @if(currentQuestion()?.stimulus) {
                         <div class="editor-content" [innerHTML]="currentQuestion()?.stimulus | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus"></div>
                         }
+
+                        @if(activeParentQuestion()?.children?.length > 0) {
+                            <div class="flex flex-row gap-2 bg-white p-0.5 rounded-md border border-gray-300 z-50 animate-fadein whitespace-nowrap w-max mb-2"[class.mt-5]="currentQuestion()?.passage_stimulus || currentQuestion()?.stimulus">
+                            <button (click)="selectPart(activeParentQuestion()!.id)"
+                                [class.bg-primary]="activeStoreId() == activeParentQuestion()!.id" 
+                                [class.text-white]="activeStoreId() == activeParentQuestion()!.id" 
+                                [class.bg-white]="activeStoreId() != activeParentQuestion()!.id" 
+                                [class.text-black]="activeStoreId() != activeParentQuestion()!.id" 
+                                class="flex rounded-md items-center justify-center font-semibold text-sm size-8 cursor-pointer border border-transparent hover:border-primary transition duration-200 outline-none">
+                                {{ getParentLabel(activeParentIndex()) }}
+                            </button>
+                            
+                            @for(child of activeParentQuestion()!.children; track child.id; let cIdx = $index) {
+                                <button (click)="selectPart(child.id)"
+                                    [class.bg-primary]="activeStoreId() == child.id" 
+                                    [class.text-white]="activeStoreId() == child.id" 
+                                    [class.bg-gray-100]="activeStoreId() != child.id" 
+                                    [class.text-black]="activeStoreId() != child.id" 
+                                    class="flex rounded-md items-center justify-center font-semibold text-sm size-8 cursor-pointer border border-transparent hover:border-primary transition duration-200 outline-none">
+                                    {{ getChildLabel(activeParentIndex(), cIdx) }}
+                                </button>
+                            }
+                        </div>
+                        }
+
                         @if(activeSubQuestionContent()) {
-                        <div class="editor-content" [innerHTML]="activeSubQuestionContent() | safeHtml" [class.mt-5]="currentQuestion()?.passage_stimulus || currentQuestion()?.stimulus" class="p-1 bg-gray-100 border-l-2 border-primary pl-2"></div>
+                            <div class="p-1 bg-gray-100 border-l-2 border-primary pl-2 mt-2" >
+                                <div class="font-bold text-primary">{{ activeSubQuestionLabel() }}</div>
+                                <div class="editor-content" [innerHTML]="activeSubQuestionContent() | safeHtml"></div>
+                            </div>
                         }
                     </div>
                 </div>

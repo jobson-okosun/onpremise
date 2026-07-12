@@ -543,7 +543,7 @@ export const loginData = {
           "block_type": "PASSAGES",
           "total_questions": 2,
           "attempt_rule": "ATTEMPT_ANY",
-          "items_to_attempt": 0,
+          "items_to_attempt": 1,
           "items": [],
           "passages": [
             {
@@ -903,7 +903,7 @@ export const loginData = {
             {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
-              "item_type": "CLOZE_RADIO",
+              "item_type": "CLOZERADIO",
               "responses": ["", "", "", "", "", "", "", "", "", "", ""],
               "max_responses": 10,
               "passage_stimulus": "",
@@ -1808,7 +1808,7 @@ export const loginData = {
             {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
-              "item_type": "CLOZE_RADIO",
+              "item_type": "CLOZERADIO",
               "responses": ["", "", "", "", "", "", "", "", "", "", ""],
               "max_responses": 10,
               "passage_stimulus": "",
@@ -2713,7 +2713,7 @@ export const loginData = {
             {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
-              "item_type": "CLOZE_RADIO",
+              "item_type": "CLOZERADIO",
               "responses": ["", "", "", "", "", "", "", "", "", "", ""],
               "max_responses": 10,
               "passage_stimulus": "",

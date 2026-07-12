@@ -17,7 +17,7 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
           headers: req.headers.set('Content-Type', 'application/x-protobuf')
         });
       } catch (error) {
-        console.error('Error encoding Protobuf auto_save payload:', error);
+        console.error('Error encoding Protobuf auto_save payload:');
       }
     }
   } else if (req.url.includes('/candidate/end_exam/')) {
@@ -29,7 +29,7 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
           headers: req.headers.set('Content-Type', 'application/x-protobuf')
         });
       } catch (error) {
-        console.error('Error encoding Protobuf end_exam payload:', error);
+        console.error('Error encoding Protobuf end_exam payload:');
       }
     }
   }
@@ -46,7 +46,7 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
             const decodedBody = protobufService.decodeLoginResponse(event.body);
             return event.clone({ body: decodedBody });
           } catch (error) {
-            console.error('Error decoding Protobuf response:', error);
+            console.error('Error decoding Protobuf response:');
           }
         }
       }

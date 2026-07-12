@@ -95,53 +95,11 @@
                     </div> 
                 </div>
                 
-                <div class="w-full lg:w-max -translate-y-[4px]">
+                <div class="w-full lg:w-max" [class.-translate-y-[4px]]="store().currentSection?.section_type == sectionTypes().THEORY">
                     <app-paginator class="w-full"></app-paginator>
                     
                     @if(store().currentSection?.section_type == sectionTypes().THEORY) {
-                        <div class="relative flex justify-center items-center gap-4 w-max mx-auto translate-y-[2px]">
-                            <div class="absolute top-1/2 left-6 right-6 h-[2px] bg-gray-400 -translate-y-1/2"></div>
-
-                            @for(item of store().currentSection?.blocks; track $index) {
-                                @if(item.attempt_rule == attemptRules().ATTEMPT_ALL) {
-                                    <div class="relative z-10 bg-white flex items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                                        <div class="text-sm font-medium text-primary">Attempt all in </div>
-                                        @if(item.questions.length <= 5) {
-                                            <div class="flex items-center gap-0.5">
-                                                @for(q of item.questions; track q.id) {
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ q.storeMapIdex + 1 }}</button>
-                                                }
-                                            </div>
-                                        }@else {
-                                            <div class="flex items-center gap-0.5">
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ item.questions[0].storeMapIdex + 1 }}</button>
-                                                    <span class="text-sm px-1">To</span>
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ item.questions[item.questions.length - 1].storeMapIdex + 1 }}</button>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-
-                                @if(item.attempt_rule == attemptRules().ATTEMPT_ANY) {
-                                    <div class="relative z-10 bg-white flex items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                                        <div class="text-sm font-medium text-primary">Attempt any <b>{{ item.items_to_attempt }} </b> from </div>
-                                        @if(item.questions.length <= 5) {
-                                            <div class="flex items-center gap-0.5">
-                                                @for(q of item.questions; track q.id) {
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ q.storeMapIdex + 1 }}</button>
-                                                }
-                                            </div>
-                                        }@else {
-                                            <div class="flex items-center gap-0.5">
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ item.questions[0].storeMapIdex + 1 }}</button>
-                                                    <span class="text-sm px-1">To</span>
-                                                    <button class="rounded-full size-5 text-center align-middle text-xs font-bold bg-green-300 text-green-800 flex items-center justify-center">{{ item.questions[item.questions.length - 1].storeMapIdex + 1 }}</button>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            }
-                        </div>
+                        <app-theory-paginator class="w-full"></app-theory-paginator>
                     }
                 </div>
 

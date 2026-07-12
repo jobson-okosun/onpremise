@@ -21,7 +21,8 @@
             "allowedCommonJsDependencies": [
               "simplify-js",
               "sweetalert2",
-              "mediasoup-client"
+              "mediasoup-client",
+              "protobufjs"
             ],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",

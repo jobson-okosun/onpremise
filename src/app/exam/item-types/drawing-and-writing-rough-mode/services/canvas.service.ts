@@ -157,9 +157,15 @@ export class CanvasService {
         }
 
         const resizeStage = () => {
-            const parent = document.getElementById('stage-parent')!;
-
             const answerSpace = document.querySelector('.answer-space') as HTMLElement
+            if (!answerSpace) {
+                return
+            }
+
+            const parent = document.getElementById('stage-parent')!;
+            if (!parent) {
+                return
+            }
             parent.style.height = (answerSpace.offsetHeight - 2) + 'px';
 
             const currentWidth = this.store().drawingAndWritingConfig.layoutFullModeWidth
@@ -800,7 +806,7 @@ export class CanvasService {
 
                 if (tool == 'all') {
                     this.ruler()?.destroy()
-                    this.ruler.set(null) 
+                    this.ruler.set(null)
                     this.protractor()?.destroy()
                     this.protractor.set(null)
                     toolLayer.destroyChildren()

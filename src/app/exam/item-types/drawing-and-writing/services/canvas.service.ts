@@ -358,6 +358,10 @@ export class CanvasService {
             }
 
             const parent = document.getElementById('stage-parent')!;
+            if(!parent) {
+                return
+            }
+            
             parent.style.height = (answerSpace.offsetHeight - 10) + 'px';
 
             const currentWidth = this.store().drawingAndWritingConfig.layoutFullModeWidth

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, HostListener } from '@angular/core';
 import { getAlphabetChar, getRomanNumeral, getParentLabel, getChildLabel } from '../../utils/helper';
 import { Store } from '../../store/store';
 
@@ -46,5 +46,15 @@ export class SubQuestionNavigation {
 
   getChildLabel(parentIndex: number, childIndex: number): string {
     return getChildLabel(childIndex);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (this.expandedParentId() !== null) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.sub-question-parent')) {
+        this.expandedParentId.set(null);
+      }
+    }
   }
 }

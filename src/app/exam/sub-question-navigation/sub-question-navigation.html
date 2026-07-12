@@ -1,7 +1,7 @@
 <div class="h-full overflow-visible bg-gray-100 p-1 rounded-md flex flex-col gap-2 items-center z-50">
     @for(sq of subQuestions(); track sq.id; let pIdx = $index) {
         @if(sq.children && sq.children.length > 0) {
-            <div class="relative w-full flex justify-center">
+            <div class="relative w-full flex justify-center sub-question-parent">
                 <button (click)="toggleParent(sq.id)"
                     [class.bg-primary]="isChildActive(sq)" 
                     [class.text-white]="isChildActive(sq)" 

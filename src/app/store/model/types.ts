@@ -246,13 +246,15 @@ export interface StoreSection {
   name: string,
   items: ICandidateItem[],
   section_type: SectionType,
-  blocks: Array<{
-    attempt_rule: AttemptRule
-    instruction?: string
-    questions: ICandidateItem[]
-    items_to_attempt: number,
-    id: number
-  }>
+  blocks: StoreSectionBlock[]
+}
+
+export interface StoreSectionBlock {
+  attempt_rule: AttemptRule
+  instruction?: string
+  questions: Pick<ICandidateItem, 'storeMapIdex' | 'id'>[]
+  items_to_attempt: number,
+  id: number
 }
 
 export interface Ping {

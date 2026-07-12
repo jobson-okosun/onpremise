@@ -10,8 +10,7 @@ import { scrollContainers } from '../../../utils/helper';
 import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { SubQuestionNavigation } from '../../sub-question-navigation/sub-question-navigation';
-import { getAlphabetChar, getRomanNumeral } from '../../../utils/helper';
-import { timer } from 'rxjs';
+import { getAlphabetChar, getRomanNumeral, getChildLabel, getParentLabel } from '../../../utils/helper';
 
 @Component({
   selector: 'app-drawing-and-writing',
@@ -56,6 +55,36 @@ export class DrawingAndWriting {
   activeStoreId = computed(() => this._drawingStore.getActiveStoreId())
   parentSubQuestions = computed<any[]>(() => (this.currentQuestion())?.sub_questions || [])
   activeSubQuestionId = computed(() => this._store.store().activeSubQuestionId);
+
+  activeParentIndex = computed(() => {
+    const activeId = this.activeStoreId();
+    const subQuestions = this.parentSubQuestions();
+    for (let i = 0; i < subQuestions.length; i++) {
+      const sq = subQuestions[i];
+      if (sq.id === activeId || sq.children?.some((c: any) => c.id === activeId)) {
+        return i;
+      }
+    }
+    return -1;
+  });
+
+  activeParentQuestion = computed(() => {
+    const idx = this.activeParentIndex();
+    return idx >= 0 ? this.parentSubQuestions()[idx] : null;
+  });
+
+  getParentLabel(parentIndex: number): string {
+    return getParentLabel(this.currentQuestionIndex(), parentIndex);
+  }
+
+  getChildLabel(parentIndex: number, childIndex: number): string {
+    return getChildLabel(childIndex);
+  }
+
+  selectPart(id: string) {
+    this._store.updateStore({ activeSubQuestionId: id });
+  }
+  
 
   activeSubQuestionContent = computed(() => {
     const activeId = this.activeStoreId();
@@ -113,8 +142,8 @@ export class DrawingAndWriting {
 
     this._konvaEventTools._backgroundChange$.next(backgroundType)
 
-    if (currentQuestion!.responses.length) {
-      const jsonResponse = JSON.parse(currentQuestion!.responses[0])
+    if (currentQuestion?.responses && currentQuestion?.responses?.length) {
+      const jsonResponse = JSON.parse(currentQuestion?.responses?.[0] as string || "{}")
 
       if (jsonResponse.pages) {
         const storeData = { ...jsonResponse, currentPage: 0 }

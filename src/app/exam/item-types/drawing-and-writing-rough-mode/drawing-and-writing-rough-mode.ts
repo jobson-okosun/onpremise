@@ -10,7 +10,7 @@ import { Store } from '../../../store/store';
 import { DRAWING_AND_WRITING_BRUSH_COLORS } from '../../../utils/constants';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { SubQuestionNavigation } from '../../sub-question-navigation/sub-question-navigation';
-import { getAlphabetChar, getRomanNumeral } from '../../../utils/helper';
+import { getAlphabetChar, getRomanNumeral, getChildLabel, getParentLabel } from '../../../utils/helper';
 
 @Component({
   selector: 'app-drawing-and-writing-rough-mode',
@@ -52,6 +52,19 @@ export class DrawingAndWritingRoughMode {
 
   activeStoreId = computed(() => 'default')
   parentSubQuestions = computed<any[]>(() => [])
+
+  activeParentIndex = computed(() => -1);
+  activeParentQuestion = computed<any>(() => null);
+
+  getParentLabel(parentIndex: number): string {
+    return getParentLabel(this.currentQuestionIndex(), parentIndex);
+  }
+
+  getChildLabel(parentIndex: number, childIndex: number): string {
+    return getChildLabel(childIndex);
+  }
+
+  selectPart(id: string) {}
 
   activeSubQuestionContent = computed(() => {
     const activeId = this.activeStoreId();
@@ -100,7 +113,7 @@ export class DrawingAndWritingRoughMode {
     this._konvaEventTools._backgroundChange$.next(backgroundType)
 
     if (currentQuestion?.roughWorkResponse.length) {
-      const jsonResponse = JSON.parse(currentQuestion!.roughWorkResponse[0])
+      const jsonResponse = JSON.parse(currentQuestion?.roughWorkResponse?.[0] ?? "{}")
 
       const storeData = { ...jsonResponse, currentPage: 0 }
       this._drawingStore.updateStore(storeData)
