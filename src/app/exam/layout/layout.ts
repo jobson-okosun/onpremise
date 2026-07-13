@@ -274,7 +274,7 @@ export default class Layout implements OnDestroy {
     this.disableContextMenu()
     this.disableCopyAndPaste()
     this.disablePrintAndScreenshot()
-
+ 
     this._exam.startExam()
 
     // this._eventService.initializeSession()

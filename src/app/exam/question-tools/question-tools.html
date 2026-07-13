@@ -31,6 +31,17 @@
     }
     
 
+    @if(isScreenReaderModeEnabled()) {
+        <button (click)="readCurrentQuestion()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer" title="Read Question">
+            <span class="hidden lg:inline">Read Question</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+        </button>
+    }
+
     <button (click)="showIntructionDrawer.set(!showIntructionDrawer())" class="rounded-full size-10 flex items-center justify-center transition duration-150 bg-white border border-transparent hover:border-primary cursor-pointer">
         <svg class="w-6 h-6 text-[#4a4a4a]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>

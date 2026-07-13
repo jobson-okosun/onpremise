@@ -1,6 +1,5 @@
 import { Component, computed, effect, inject, linkedSignal, model } from '@angular/core';
 import { Store } from '../../../store/store';
-import { ExamService } from '../../../services/exam';
 import { AlphabetList } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { QuestionTools } from '../../question-tools/question-tools';
@@ -18,7 +17,6 @@ import { ScreenReaderService } from '../../../services/screen-reader';
 })
 export class MultipleResponse {
   private _store = inject(Store);
-  private _exam = inject(ExamService);
   private _eventService = inject(EventService);
   private _screenReaderService = inject(ScreenReaderService);
 

@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, linkedSignal, signal, untracked } from "@angular/core";
 import { Store } from "../store/store";
 import { DeliveryMethod, ExamType, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
-import { delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
+import { catchError, of, delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
 import { DataService } from "./data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
 import { HotToastService } from "@ngxpert/hot-toast";
@@ -595,6 +595,15 @@ export class ExamService {
 
         this.examSubmit$ = this._dataService.endExam(payload, this.examTimedOut(), hasDrawingAndWriting)
             .pipe(
+                catchError((error) => {
+                    if (error?.error?.code === 4000) {
+                        return of({
+                            end_instruction: error.error.message,
+                            pass_mark: null as any
+                        } as ICandidationEndExamResponse);
+                    }
+                    throw error;
+                }),
                 retryWhen((errors) =>
                     errors.pipe(
                         scan((retryCount, error) => {

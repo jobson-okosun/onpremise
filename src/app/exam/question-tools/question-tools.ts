@@ -10,6 +10,7 @@ import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/even
 import { EventService } from '../../services/event';
 import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
 import { getParentLabel as getParentLabelHelper, getChildLabel as getChildLabelHelper } from '../../utils/helper';
+import { ScreenReaderService } from '../../services/screen-reader';
 
 
 @Component({
@@ -23,7 +24,10 @@ export class QuestionTools {
   private _store = inject(Store)
   private _konvaEventTools = inject(KonvaToolsEvent)
   private _eventService = inject(EventService)
-  
+  private _screenReaderService = inject(ScreenReaderService)
+
+  isScreenReaderModeEnabled = computed(() => this._screenReaderService.isScreenReaderModeEnabled());
+
   itemTypes = signal(ItemType);
   store = computed(() => this._store.store())
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex)
@@ -56,13 +60,17 @@ export class QuestionTools {
 
   revisit() {
     this._exam.addQuestionForRevisit()
-    
+
     const isFlagged = this.store().currentQuestion?.revisit;
     this._eventService.logEvent({
       event_type: isFlagged ? CandidateEventType.QUESTION_FLAGGED : CandidateEventType.QUESTION_UNFLAGGED,
       question_id: this.store().currentQuestion!.id,
       section_id: this.store().currentSection!.id
     })
+  }
+
+  readCurrentQuestion() {
+    this._screenReaderService.announceCurrentQuestion();
   }
 
   getParentLabel(parentIndex: number): string {
