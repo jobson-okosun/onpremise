@@ -69,10 +69,11 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
             statusText: error.statusText,
             url: error.url || undefined
           });
-          return throwError(() => parsedError);
+          throw parsedError;
         } catch (e) { }
       }
-      return throwError(() => error);
+
+      throw error;
     })
   );
 }

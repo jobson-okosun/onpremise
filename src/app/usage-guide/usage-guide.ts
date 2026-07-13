@@ -61,6 +61,9 @@ export default class UsageGuide {
               return
             }
           }
+        },
+        error: (err) => {
+          this._toast.error('Unable to perform task. try again...');
         }
       })
   }
