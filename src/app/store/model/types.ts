@@ -277,7 +277,7 @@ export interface BatteryStatus {
 }
 
 export interface ICandidateAutoSave {
-  sections_map: Record<string, Array<ICandidateAutoSaveItems>>;
+  sections_map: Record<string, { items: Array<ICandidateAutoSaveItems> }>;
   section_times: Record<string, ICandidateSectionTimes>;
   minutes: number;
   seconds: number;

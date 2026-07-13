@@ -10,6 +10,7 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
 
   if (req.url.includes('/candidate/auto_save/')) {
     if (req.body) {
+      console.log('auto save data', req.body)
       try {
         const blob = protobufService.encodeAutoSave(req.body);
         modifiedReq = req.clone({

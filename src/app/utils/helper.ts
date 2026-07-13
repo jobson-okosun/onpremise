@@ -157,7 +157,7 @@ export function generatePayLoadForAutoSave(_exam: ExamService, _store: Store): I
                 sectionItems.push(autosaveItem)
             })
 
-        autoSaveData.sections_map[section.id] = sectionItems;
+        autoSaveData.sections_map[section.id] = { items: sectionItems };
         autoSaveData.section_times[section.id] = {
             minutes: sectionItem!.section_settings.minutes_left,
             seconds: sectionItem!.section_settings.seconds_left,
@@ -216,7 +216,7 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
                 sectionItems.push(autosaveItem)
             })
 
-        autoSaveData.sections_map[section.id] = sectionItems;
+        autoSaveData.sections_map[section.id] = { items: sectionItems };
         autoSaveData.section_times[section.id] = {
             minutes: sectionItem!.section_settings.minutes_left,
             seconds: sectionItem!.section_settings.seconds_left,
@@ -231,11 +231,13 @@ export function generatePayLoadWithAllData(_exam: ExamService, _store: Store): I
 export const formatExamResponseData = (data: ICandidateEndExamData): ICandidateEndExamData => {
     const formattedSectionsMap = Object.fromEntries(
         Object.entries(data.autosave.sections_map).map(
-            ([sectionKey, items]) => [sectionKey, items.map((item) => {
-                const hasValidAnswer = Array.isArray(item.answers) && item.answers.some((ans) => typeof ans === 'string' && ans.trim() !== '');
+            ([sectionKey, wrapper]) => [sectionKey, {
+                items: wrapper.items.map((item) => {
+                    const hasValidAnswer = Array.isArray(item.answers) && item.answers.some((ans) => typeof ans === 'string' && ans.trim() !== '');
 
-            return { ...item, answers: hasValidAnswer ? item.answers : [] };
-        })]
+                    return { ...item, answers: hasValidAnswer ? item.answers : [] };
+                })
+            }]
         )
     );
 
