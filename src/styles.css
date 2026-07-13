@@ -102,4 +102,21 @@ button:disabled {
   @apply mb-0;
 }
 
-
+/* Angular CDK LiveAnnouncer styles to hide text visually */
+.cdk-visually-hidden, .cdk-live-announcer-element {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+  outline: 0 !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  pointer-events: none !important;
+}

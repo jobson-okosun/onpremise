@@ -1,6 +1,6 @@
-<div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
+<div aria-hidden="true" class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
     <!-- top -->
-    <div>
+    <div aria-hidden="true">
         <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
@@ -212,7 +212,7 @@
     </div> 
 
     <!-- bottom -->
-    <div>
+    <div aria-hidden="true">
         <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
             <div class="flex justify-between items-center md:justify-between gap-3">
                 @if(store().currentQuestionIndex > 0) {
