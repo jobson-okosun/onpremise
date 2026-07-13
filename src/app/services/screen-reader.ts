@@ -12,6 +12,7 @@ export class ScreenReaderService {
   
   public isScreenReaderModeEnabled = signal<boolean>(true);
   private lastAnnouncedQuestionId: string | null = null;
+  private hasAnnouncedWelcome = false;
   private alphabetList: typeof AlphabetList = AlphabetList;
 
   public announce(message: string, politeness: 'polite' | 'assertive' = 'polite'): void {
@@ -22,6 +23,16 @@ export class ScreenReaderService {
 
   private isSupportedItemType(itemType: ItemType | string): boolean {
     return [ItemType.MCQ, ItemType.MRQ, ItemType.YES_NO, ItemType.TRUE_FALSE].includes(itemType as ItemType);
+  }
+
+  private getWelcomeMessage(): string {
+    return "Hello, welcome to the exam. " +
+      "Here is a quick guide on how to use the screen reader shortcuts. " +
+      "To read the options, press Alt plus Shift plus O. " +
+      "To select an answer, press Alt plus Shift plus the corresponding option letter. " +
+      "To navigate to the next question, press Alt plus Shift plus N. " +
+      "To navigate to the previous question, press Alt plus Shift plus P. " +
+      "To get started, press Alt plus Shift plus Q to read the current question.";
   }
 
   public autoAnnounceQuestion(): void {
@@ -35,9 +46,16 @@ export class ScreenReaderService {
         return;
       }
 
-      setTimeout(() => {
-        this.announceCurrentQuestion();
-      }, 500);
+      if (!this.hasAnnouncedWelcome) {
+        this.hasAnnouncedWelcome = true;
+        setTimeout(() => {
+          this.announce(this.getWelcomeMessage(), 'assertive');
+        }, 4000);
+      } else {
+        setTimeout(() => {
+          this.announceCurrentQuestion();
+        }, 500);
+      }
     }
   }
 

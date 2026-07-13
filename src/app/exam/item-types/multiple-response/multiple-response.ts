@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal, model } from '@angular/core';
+import { Component, computed, effect, inject, linkedSignal, model } from '@angular/core';
 import { Store } from '../../../store/store';
 import { ExamService } from '../../../services/exam';
 import { AlphabetList } from '../../../store/model/types';
@@ -7,6 +7,7 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+import { ScreenReaderService } from '../../../services/screen-reader';
 
 
 @Component({
@@ -18,7 +19,14 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 export class MultipleResponse {
   private _store = inject(Store);
   private _exam = inject(ExamService);
-  private _eventService = inject(EventService)
+  private _eventService = inject(EventService);
+  private _screenReaderService = inject(ScreenReaderService);
+
+  constructor() {
+    effect(() => {
+      this._screenReaderService.autoAnnounceQuestion();
+    });
+  }
 
 
   private multipleResponseAnswers = linkedSignal(() => this._store.store().currentQuestion?.responses!);
@@ -35,6 +43,15 @@ export class MultipleResponse {
   fontSize = model<number>();
   store = computed(() => this._store.store());
   alphabetList: typeof AlphabetList = AlphabetList;
+
+  selectOptionByIndex(index: number): boolean {
+    const question = this.store().currentQuestion;
+    if (!question || !question.options || index >= question.options.length) {
+      return false;
+    }
+    this.selectOption(question.options[index].value);
+    return true;
+  }
 
   selectOption(value: string) {
     const oldAnswers = [...(this.store().currentQuestion?.responses || [])];
