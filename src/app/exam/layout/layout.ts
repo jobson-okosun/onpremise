@@ -11,7 +11,7 @@ import { ProctorService } from '../../services/auto-proctoring/proctor';
 import { AttemptRule, DeliveryMethod, ExamType, ItemType, SectionType, StoreSection } from '../../store/model/types';
 import { CandidateEventType } from '../../store/model/events/events.enum';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
-import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
+import { blockContextMenuHandler, fullscreen, useShortcut, handleA11yShortcuts } from '../../utils/helper';
 import { NgClass } from '@angular/common';
 import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-dropdown';
 import { CloseWithText } from '../item-types/close-with-text/close-with-text';
@@ -44,6 +44,7 @@ import { LiveProctoringService } from '../../services/live-proctoring/live-proct
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 import { EventService } from '../../services/event';
+import { ScreenReaderService } from '../../services/screen-reader';
 
 @Component({
   selector: 'app-layout',
@@ -66,6 +67,7 @@ export default class Layout implements OnDestroy {
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private _eventService = inject(EventService)
+  private _screenReaderService = inject(ScreenReaderService)
   private sub!: Subscription;
 
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
@@ -175,6 +177,10 @@ export default class Layout implements OnDestroy {
   })
 
   constructor() {
+    effect(() => {
+      this._screenReaderService.autoAnnounceQuestion();
+    });
+
     this.sub = this.breakpointObserver
       .observe('(min-width: 1280px)')
       .subscribe(() => {
@@ -228,10 +234,10 @@ export default class Layout implements OnDestroy {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    // if (!this.store().loginData) {
-    //   this._authService.setPreLoginData(preloginData as any);
-    //   this._postLoginService.formatLoginDataToStore(loginData as any)
-    // }
+    if (!this.store().loginData) {
+      this._authService.setPreLoginData(preloginData as any);
+      this._postLoginService.formatLoginDataToStore(loginData as any)
+    }
 
     if (!this.store().platformIsTauri) {
       fullscreen(this._eventService)
@@ -411,6 +417,26 @@ export default class Layout implements OnDestroy {
     }
 
     useShortcut(event.key, this.store().currentQuestionIndex, this.paginator()!, this.totalSectionsQuestions(), this.store().currentQuestion!, component)
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    handleA11yShortcuts(
+      event,
+      this._screenReaderService,
+      this._store,
+      this.paginator(),
+      this.getCurrentQuestionComponent()
+    );
+  }
+
+  getCurrentQuestionComponent(): any {
+    if (!this.store().currentQuestion) return null;
+    if (this.store().currentQuestion!.item_type == this.itemTypes().MCQ) return this.standardChoice();
+    if (this.store().currentQuestion!.item_type == this.itemTypes().MRQ) return this.multipleChoice();
+    if (this.store().currentQuestion!.item_type == this.itemTypes().TRUE_FALSE) return this.trueOrFalse();
+    if (this.store().currentQuestion!.item_type == this.itemTypes().YES_NO) return this.yesOrNo();
+    return null;
   }
 
   isUnattempted(index: number, sectionSummary: any): boolean {

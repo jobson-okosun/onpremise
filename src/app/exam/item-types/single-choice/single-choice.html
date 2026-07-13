@@ -9,7 +9,7 @@
                         <div>Question {{ store().currentQuestionIndex + 1 }}</div>
                     </div>
                     @if(!store().isPreviewMode) {
-                        <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
+                        <app-question-tools aria-hidden="true" [showToggleLayoutButton]="true"></app-question-tools>
                     }
                 </div>
             </div>
@@ -20,7 +20,8 @@
                 @if(store().currentQuestion?.stimulus) {
                     <div class="editor-content" [innerHTML]="store().currentQuestion?.stimulus | safeHtml" [class.mt-5]="store().currentQuestion?.passage_stimulus"></div>
                 }
-            </div>
+            </div
+                >
         </div>
     </div>
 

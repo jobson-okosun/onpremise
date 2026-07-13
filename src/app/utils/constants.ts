@@ -212,407 +212,7 @@ export const loginData = {
     "exam_type": 'EXAMALPHA'
   },
   "sections_questions": [
-    {
-      "id": "SEC-ENG-1",
-      "name": "BIOLOGY",
-      "section_settings": {
-        "minutes_left": 40,
-        "seconds_left": 0,
-        "duration_in_minutes": 40,
-        "shuffle_items": false,
-        "shuffle_options": true,
-        "allow_calculator": false,
-        "shuffle_blocks": false,
-        "prevent_navigation_to_attempted_items": false,
-        "section_instruction": "Answer all questions."
-      },
-      "question_blocks": [
-        {
-          "id": 101,
-          "index": 1,
-          "block_type": "SINGLE_QUESTIONS",
-          "total_questions": 3,
-          "name": "",
-          "attempt_rule": "ATTEMPT_ALL",
-          "items_to_attempt": 1,
-          "instruction": "Answer all in this block",
-          "items": [
-            {
-              "id": "ENG-Q9",
-              "stimulus": `
-                An agricultural science student set up an experiment using three identical potted plants. Plant A was placed in a dark cupboard. Plant B was left in the open sunlight but its leaves were completely smeared with petroleum jelly (Vaseline). Plant C was left in the open sunlight with no treatment. All three plants were watered equally for five days.
-              `,
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "DRAWING_AND_WRITING",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false,
-              "sub_questions": [
-                {
-                  "id": "1a",
-                  "stimulus": "Explain the internal and external factors affecting plant nutrition in this setup.",
-                  "score": 10,
-                  "background_type": "LINE",
-                  "children": [
-                    {
-                      "id": "1a(i)",
-                      "stimulus": "State the main biological process being investigated in this experiment.",
-                      "score": 10,
-                      "background_type": "GRID",
-                      "children": []
-                    },
-                    {
-                      "id": "1a(ii)",
-                      "stimulus": "Explain the physiological condition of Plant A after five days.",
-                      "score": 10,
-                      "background_type": "LINE",
-                      "children": []
-                    },
-                    {
-                      "id": "1a(iii)",
-                      "stimulus": "What is the purpose of Plant C in this experiment?",
-                      "score": 10,
-                      "background_type": "GRAPH",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "id": "1b",
-                  "stimulus": " Analyze the structural and physiological disruptions occurring in the treated plants.",
-                  "score": 0,
-                  "background_type": "none",
-                  "children": [
-                    {
-                      "id": "1b(i)",
-                      "stimulus": "State two reasons why Plant B would show stunted growth",
-                      "score": 5,
-                      "background_type": "none",
-                      "children": []
-                    },
-                    {
-                      "id": "1b(ii)",
-                      "stimulus": "Name three structures in a plant leaf that are directly blocked by the petroleum jelly treatment on Plant B",
-                      "score": 5,
-                      "background_type": "none",
-                      "children": []
-                    },
-                    {
-                      "id": "1b(iii)",
-                      "stimulus": "Predict the effect of the petroleum jelly on the rate of transpiration in Plant B.",
-                      "score": 5,
-                      "background_type": "none",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "id": "1c",
-                  "stimulus": "Outline the environmental conditions and laboratory tests related to this experiment.",
-                  "score": 0,
-                  "backgroundType": "none",
-                  "children": []
-                }
-              ]
-            },
-            {
-              "id": "ENG-Q9132",
-              "stimulus": "Which word is a noun?",
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
-          ],
-          "passages": []
-        },
-        {
-          "id": 102,
-          "index": 1,
-          "block_type": "SINGLE_QUESTIONS",
-          "total_questions": 3,
-          "name": "",
-          "attempt_rule": "ATTEMPT_ANY",
-          "items_to_attempt": 3,
-          "instruction": "Answer all in this block",
-          "items": [
-            {
-              "id": "ENG-Q91",
-              "stimulus": "Which word is a noun?",
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
-            {
-              "id": "ENG-Q913",
-              "stimulus": "Which word is a noun?",
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
-            {
-              "id": "ENG-Q9131",
-              "stimulus": "Which word is a noun?",
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
-            {
-              "id": "ENG-Q9133",
-              "stimulus": "Which word is a noun?",
-              "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },  
-            {
-              "id": "ENG-IMG-MAP-002",
-              "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
-              "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
 
-              "item_type": "CLOZE_DROPDOWN_IMAGE",
-              "background_type": "IMAGE",
-
-              "image_data": {
-                "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
-                "width": 402,
-                "height": 361
-              },
-
-              "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
-              ],
-
-              "possible_responses": [
-                {
-                  "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
-                  ]
-                },
-                {
-                  "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
-                  ]
-                }
-              ],
-
-              "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
-              ],
-
-              "responses": [],
-
-              "max_words": 5,
-              "max_length": 50,
-              "allow_paste": false,
-              "allow_copy": false,
-              "max_responses": 1,
-
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
-          ],
-          "passages": []
-        },
-        {
-          "id": 103,
-          "index": 2,
-          "block_type": "PASSAGES",
-          "total_questions": 2,
-          "attempt_rule": "ATTEMPT_ANY",
-          "items_to_attempt": 1,
-          "items": [],
-          "passages": [
-            {
-              "id": "ENG-PASS-1",
-              "stimulus": "Climate change is caused primarily by greenhouse gases...",
-              "items": [
-                {
-                  "id": "ENG-P1-Q1",
-                  "stimulus": "According to the passage, what is the main cause of climate change?",
-                  "options": [
-                    {
-                      "label": "Natural cycles",
-                      "value": "natural"
-                    },
-                    {
-                      "label": "Human activities",
-                      "value": "human"
-                    },
-                    {
-                      "label": "Volcanoes",
-                      "value": "volcano"
-                    }
-                  ],
-                  "item_type": "MCQ",
-                  "responses": [],
-                  "max_responses": 1,
-                  "image_data": {
-                    "image": "",
-                    "width": null,
-                    "height": null
-                  },
-                  "drawing_writing_split_type": "NONE",
-                  "revisit": false
-                },
-                {
-                  "id": "ENG-P1-Q2",
-                  "stimulus": "What is the author’s tone?",
-                  "options": [
-                    {
-                      "label": "Critical",
-                      "value": "critical"
-                    },
-                    {
-                      "label": "Neutral",
-                      "value": "neutral"
-                    },
-                    {
-                      "label": "Praising",
-                      "value": "praising"
-                    }
-                  ],
-                  "item_type": "MCQ",
-                  "responses": [],
-                  "max_responses": 1,
-                  "image_data": {
-                    "image": "",
-                    "width": null,
-                    "height": null
-                  },
-                  "drawing_writing_split_type": "NONE",
-                  "revisit": false
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "section_type": 'THEORY'
-    },
     {
       "id": "SEC-ENG-2",
       "name": "CHEMISTRY",
@@ -1517,6 +1117,407 @@ export const loginData = {
         }
       ],
       "section_type": 'OBJECTIVE'
+    },
+    {
+      "id": "SEC-ENG-1",
+      "name": "BIOLOGY",
+      "section_settings": {
+        "minutes_left": 40,
+        "seconds_left": 0,
+        "duration_in_minutes": 40,
+        "shuffle_items": false,
+        "shuffle_options": true,
+        "allow_calculator": false,
+        "shuffle_blocks": false,
+        "prevent_navigation_to_attempted_items": false,
+        "section_instruction": "Answer all questions."
+      },
+      "question_blocks": [
+        {
+          "id": 101,
+          "index": 1,
+          "block_type": "SINGLE_QUESTIONS",
+          "total_questions": 3,
+          "name": "",
+          "attempt_rule": "ATTEMPT_ALL",
+          "items_to_attempt": 1,
+          "instruction": "Answer all in this block",
+          "items": [
+            {
+              "id": "ENG-Q9",
+              "stimulus": `
+                An agricultural science student set up an experiment using three identical potted plants. Plant A was placed in a dark cupboard. Plant B was left in the open sunlight but its leaves were completely smeared with petroleum jelly (Vaseline). Plant C was left in the open sunlight with no treatment. All three plants were watered equally for five days.
+              `,
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "DRAWING_AND_WRITING",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false,
+              "sub_questions": [
+                {
+                  "id": "1a",
+                  "stimulus": "Explain the internal and external factors affecting plant nutrition in this setup.",
+                  "score": 10,
+                  "background_type": "LINE",
+                  "children": [
+                    {
+                      "id": "1a(i)",
+                      "stimulus": "State the main biological process being investigated in this experiment.",
+                      "score": 10,
+                      "background_type": "GRID",
+                      "children": []
+                    },
+                    {
+                      "id": "1a(ii)",
+                      "stimulus": "Explain the physiological condition of Plant A after five days.",
+                      "score": 10,
+                      "background_type": "LINE",
+                      "children": []
+                    },
+                    {
+                      "id": "1a(iii)",
+                      "stimulus": "What is the purpose of Plant C in this experiment?",
+                      "score": 10,
+                      "background_type": "GRAPH",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "1b",
+                  "stimulus": " Analyze the structural and physiological disruptions occurring in the treated plants.",
+                  "score": 0,
+                  "background_type": "none",
+                  "children": [
+                    {
+                      "id": "1b(i)",
+                      "stimulus": "State two reasons why Plant B would show stunted growth",
+                      "score": 5,
+                      "background_type": "none",
+                      "children": []
+                    },
+                    {
+                      "id": "1b(ii)",
+                      "stimulus": "Name three structures in a plant leaf that are directly blocked by the petroleum jelly treatment on Plant B",
+                      "score": 5,
+                      "background_type": "none",
+                      "children": []
+                    },
+                    {
+                      "id": "1b(iii)",
+                      "stimulus": "Predict the effect of the petroleum jelly on the rate of transpiration in Plant B.",
+                      "score": 5,
+                      "background_type": "none",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "1c",
+                  "stimulus": "Outline the environmental conditions and laboratory tests related to this experiment.",
+                  "score": 0,
+                  "backgroundType": "none",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "ENG-Q9132",
+              "stimulus": "Which word is a noun?",
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "MCQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+          ],
+          "passages": []
+        },
+        {
+          "id": 102,
+          "index": 1,
+          "block_type": "SINGLE_QUESTIONS",
+          "total_questions": 3,
+          "name": "",
+          "attempt_rule": "ATTEMPT_ANY",
+          "items_to_attempt": 3,
+          "instruction": "Answer all in this block",
+          "items": [
+            {
+              "id": "ENG-Q91",
+              "stimulus": "Which word is a noun?",
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "MCQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+            {
+              "id": "ENG-Q913",
+              "stimulus": "Which word is a noun?",
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "MCQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+            {
+              "id": "ENG-Q9131",
+              "stimulus": "Which word is a noun?",
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "MCQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+            {
+              "id": "ENG-Q9133",
+              "stimulus": "Which word is a noun?",
+              "options": [
+                { "label": "Run", "value": "run" },
+                { "label": "Beauty", "value": "beauty" },
+                { "label": "Quickly", "value": "quickly" },
+                { "label": "Blue", "value": "blue" }
+              ],
+              "item_type": "MCQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": { "image": "", "width": null, "height": null },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+            {
+              "id": "ENG-IMG-MAP-002",
+              "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
+              "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
+
+              "item_type": "CLOZE_DROPDOWN_IMAGE",
+              "background_type": "IMAGE",
+
+              "image_data": {
+                "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
+                "width": 402,
+                "height": 361
+              },
+
+              "response_positions": [
+                { "x": 22, "y": 30 },
+                { "x": 63, "y": 28 },
+                { "x": 28, "y": 72 },
+                { "x": 70, "y": 75 }
+              ],
+
+              "possible_responses": [
+                {
+                  "responses": [
+                    { "label": "misinformation", "value": "misinformation" },
+                    { "label": "advertising", "value": "advertising" },
+                    { "label": "technology", "value": "technology" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "confusion", "value": "confusion" },
+                    { "label": "clarity", "value": "clarity" },
+                    { "label": "accuracy", "value": "accuracy" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "carefully", "value": "carefully" },
+                    { "label": "rarely", "value": "rarely" },
+                    { "label": "publicly", "value": "publicly" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "competition", "value": "competition" },
+                    { "label": "collaboration", "value": "collaboration" },
+                    { "label": "curiosity", "value": "curiosity" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "created", "value": "created" },
+                    { "label": "shared", "value": "shared" },
+                    { "label": "edited", "value": "edited" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "credibility", "value": "credibility" },
+                    { "label": "length", "value": "length" },
+                    { "label": "tone", "value": "tone" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "evidence", "value": "evidence" },
+                    { "label": "comments", "value": "comments" },
+                    { "label": "opinions", "value": "opinions" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "outlets", "value": "outlets" },
+                    { "label": "platforms", "value": "platforms" },
+                    { "label": "channels", "value": "channels" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "opportunities", "value": "opportunities" },
+                    { "label": "problems", "value": "problems" },
+                    { "label": "dangers", "value": "dangers" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion", "value": "discussion" },
+                    { "label": "entertainment", "value": "entertainment" },
+                    { "label": "consumption", "value": "consumption" }
+                  ]
+                },
+                {
+                  "responses": [
+                    { "label": "discussion-1", "value": "discussion-1" },
+                    { "label": "entertainment-1", "value": "entertainment-1" },
+                    { "label": "consumption-1", "value": "consumption-1" }
+                  ]
+                }
+              ],
+
+              "options": [
+                { "label": "<p>Nile River</p>", "value": "nile_river" },
+                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
+                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
+                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+              ],
+
+              "responses": [],
+
+              "max_words": 5,
+              "max_length": 50,
+              "allow_paste": false,
+              "allow_copy": false,
+              "max_responses": 1,
+
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
+            },
+          ],
+          "passages": []
+        },
+        {
+          "id": 103,
+          "index": 2,
+          "block_type": "PASSAGES",
+          "total_questions": 2,
+          "attempt_rule": "ATTEMPT_ANY",
+          "items_to_attempt": 1,
+          "items": [],
+          "passages": [
+            {
+              "id": "ENG-PASS-1",
+              "stimulus": "Climate change is caused primarily by greenhouse gases...",
+              "items": [
+                {
+                  "id": "ENG-P1-Q1",
+                  "stimulus": "According to the passage, what is the main cause of climate change?",
+                  "options": [
+                    {
+                      "label": "Natural cycles",
+                      "value": "natural"
+                    },
+                    {
+                      "label": "Human activities",
+                      "value": "human"
+                    },
+                    {
+                      "label": "Volcanoes",
+                      "value": "volcano"
+                    }
+                  ],
+                  "item_type": "MCQ",
+                  "responses": [],
+                  "max_responses": 1,
+                  "image_data": {
+                    "image": "",
+                    "width": null,
+                    "height": null
+                  },
+                  "drawing_writing_split_type": "NONE",
+                  "revisit": false
+                },
+                {
+                  "id": "ENG-P1-Q2",
+                  "stimulus": "What is the author’s tone?",
+                  "options": [
+                    {
+                      "label": "Critical",
+                      "value": "critical"
+                    },
+                    {
+                      "label": "Neutral",
+                      "value": "neutral"
+                    },
+                    {
+                      "label": "Praising",
+                      "value": "praising"
+                    }
+                  ],
+                  "item_type": "MCQ",
+                  "responses": [],
+                  "max_responses": 1,
+                  "image_data": {
+                    "image": "",
+                    "width": null,
+                    "height": null
+                  },
+                  "drawing_writing_split_type": "NONE",
+                  "revisit": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "section_type": 'THEORY'
     },
     {
       "id": "SEC-ENG-23",
