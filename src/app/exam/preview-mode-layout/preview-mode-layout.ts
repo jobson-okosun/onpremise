@@ -256,7 +256,7 @@ export default class PreviewModeLayout implements OnDestroy {
             allow_copy: item.allowCopy ?? false,
             allow_cut: item.allowCut ?? false,
             plain_text: item.plainText ?? false,
-            responses: [],
+            responses: item.scoringOption?.answers ? [...item.scoringOption.answers] : [],
             selectedResponse: undefined,
             block_id: blockId,
             revisit: false,
