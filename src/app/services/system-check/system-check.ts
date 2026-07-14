@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { DataService } from '../data';
+import { DataService } from '../data/data';
 import { SYSTEM_DEFAULT_CHECKS } from '../../utils/constants';
 
 export type CheckStatus = 'pending' | 'checking' | 'passed' | 'failed' | 'warning';

@@ -2,16 +2,16 @@ import { AfterViewInit, Component, computed, effect, ElementRef, inject, linkedS
 import { Store } from '../store/store';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { DeliveryMethod, DeploymentMode, ICandidateLoginDTO, ICandidateLoginResponse } from '../store/model/types';
-import { DataService } from '../services/data';
+import { DataService } from '../services/data/data';
 import { finalize, lastValueFrom } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { TauriService } from '../services/tauri';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { PostLogin } from '../services/post-login';
 import { AuthService } from '../services/auth';
 import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
+import { PostLogin } from '../services/onboarding/post-login';
+import { TauriService } from '../services/ipc/tauri';
 
 @Component({
   selector: 'app-login',

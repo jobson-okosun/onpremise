@@ -49,13 +49,14 @@ export const routes: Routes = [
         canActivate: [hasActiveExam, isLoggedin],
         loadComponent: () => import('./instructions/instructions')
     },
-    // {
-    //     path: 'exam',
-    //     canActivate: [hasActiveExam, isLoggedin, examNotEnded],
-    //     canDeactivate: [canGoBackFromExam],
-    //     loadComponent: () => import('./exam/layout/layout')
-    // },
-    { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
+    {
+        path: 'exam',
+        canActivate: [hasActiveExam, isLoggedin, examNotEnded],
+        canDeactivate: [canGoBackFromExam],
+        data: { preload: true},
+        loadComponent: () => import('./exam/layout/layout')
+    },
+    // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
         path: 'exam-preview',
         loadComponent: () => import('./exam/preview-mode-layout/preview-mode-layout')

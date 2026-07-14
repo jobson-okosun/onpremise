@@ -1,5 +1,5 @@
 import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
-import { MediaService } from '../../services/media';
+import { MediaService } from '../../services/onboarding/media';
 import { OnboardingService } from '../../services/system-check/onboarding';
 import { CaptureState } from '../../store/model/media-models';
 import { EventService } from '../../services/event';
@@ -10,7 +10,7 @@ import { CandidateEventType } from '../../store/model/events/events.enum';
   imports: [],
   templateUrl: './facial-authentication.html',
   styleUrl: './facial-authentication.css',
-})
+}) 
 export default class FacialAuthentication implements OnInit, OnDestroy {
   private _mediaService = inject(MediaService);
   private _onboardingService = inject(OnboardingService);

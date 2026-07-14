@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { MediaService } from '../../../services/media';
+import { MediaService } from '../../../services/onboarding/media';
 import { OnboardingService } from '../../../services/system-check/onboarding';
 import { EventService } from '../../../services/event';
 import { CandidateEventType } from '../../../store/model/events/events.enum';

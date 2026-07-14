@@ -1,12 +1,10 @@
 import { computed, inject, Injectable, signal, TemplateRef } from "@angular/core";
-import { TauriService } from "../tauri";
 import { Store } from "../../store/store";
 import { CandidateInfractionEntry, INFRACTION_COLORS, INFRACTION_LABELS } from "../../store/model/types";
 import { HotToastService } from "@ngxpert/hot-toast";
-import Swal from 'sweetalert2';
-import { disableRestrictedActions } from "../../utils/helper";
 import { EventService } from "../event";
 import { CandidateEventType } from "../../store/model/events/events.enum";
+import { TauriService } from "../ipc/tauri";
 
 @Injectable({ providedIn: 'root' })
 export class ProctorService {

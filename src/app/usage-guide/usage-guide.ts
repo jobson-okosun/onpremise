@@ -1,16 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { SLIDES } from '../utils/constants';
-import { DataService } from '../services/data';
+import { DataService } from '../services/data/data';
 import { finalize } from 'rxjs';
 import { DeploymentMode, Slide } from '../store/model/types';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { Router } from '@angular/router';
 import { Store } from '../store/store';
 import { NgClass } from '@angular/common';
-import { TauriService } from '../services/tauri';
 import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
+import { TauriService } from '../services/ipc/tauri';
 
 @Component({
   selector: 'app-usage-guide',

@@ -26,8 +26,8 @@ import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
-import { PostLogin } from '../../services/post-login';
 import { AuthService } from '../../services/auth';
+import { PostLogin } from '../../services/onboarding/post-login';
 
 @Component({
   selector: 'app-preview-mode-layout',

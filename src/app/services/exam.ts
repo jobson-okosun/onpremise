@@ -2,19 +2,19 @@ import { computed, effect, inject, Injectable, linkedSignal, signal, untracked }
 import { Store } from "../store/store";
 import { DeliveryMethod, ExamType, ICandidateAutoSave, ICandidateAutoSaveResponse, ICandidationEndExamResponse, ItemType } from "../store/model/types";
 import { catchError, of, delayWhen, finalize, interval, retryWhen, scan, Subscription, take, timer } from "rxjs";
-import { DataService } from "./data";
+import { DataService } from "./data/data";
 import { disableRestrictedActions, enableRestrictedActions, formatDuration, generatePayLoadForAutoSave, generatePayLoadWithAllData } from "../utils/helper";
 import { HotToastService } from "@ngxpert/hot-toast";
 import Swal from 'sweetalert2';
 import { Router } from "@angular/router";
-import { TauriService } from "./tauri";
 import { ProctorService } from "./auto-proctoring/proctor";
-import { PostLogin } from "./post-login";
 import { SystemCheckService } from "./system-check/system-check";
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED, MINIMUM_REASONABLE_DOWNLOAD_SPEED_OFFSET, NETWORK_RETRY_INTERVAL } from "../utils/constants";
 import { LiveProctoringService } from "./live-proctoring/live-proctoring.service";
 import { EventService } from "./event";
 import { CandidateEventType } from "../store/model/events/events.enum";
+import { PostLogin } from "./onboarding/post-login";
+import { TauriService } from "./ipc/tauri";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {

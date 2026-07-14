@@ -38,13 +38,13 @@ import { PopoverModule } from 'primeng/popover';
 import { Overview } from '../overview/overview';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
-import { PostLogin } from '../../services/post-login';
 import { environment } from '../../../environments/environment';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 import { EventService } from '../../services/event';
 import { ScreenReaderService } from '../../services/screen-reader';
+import { PostLogin } from '../../services/onboarding/post-login';
 
 @Component({
   selector: 'app-layout',
@@ -156,7 +156,7 @@ export default class Layout implements OnDestroy {
       return update
     })
 
-    if (map.length > 0) {
+    if (map.length > 0) { 
       map[0].open = true
     }
     return map

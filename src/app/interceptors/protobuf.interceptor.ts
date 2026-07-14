@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse,
 import { inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ProtobufService } from '../services/protobuf';
+import { ProtobufService } from '../services/data/protobuf';
 
 export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const protobufService = inject(ProtobufService);
@@ -53,15 +53,9 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
       return event;
     }),
     catchError((error: HttpErrorResponse) => {
-      // If the backend returns an error (like 400 Bad Request) as JSON, 
-      // Angular will have read it as an ArrayBuffer because we forced responseType: 'arraybuffer'.
-      // We must decode the ArrayBuffer back to a JSON object so the UI can display the correct error message.
-      if (req.url.includes('/auth/candidate_login') && error.error instanceof ArrayBuffer) {
-        try {
-          const decoder = new TextDecoder('utf-8');
-          const errorString = decoder.decode(error.error);
-          const errorJson = JSON.parse(errorString);
-          
+      if (req.url.includes('/auth/candidate_login') && error.error) {
+        
+        const createAndThrowError = (errorJson: any) => {
           const parsedError = new HttpErrorResponse({
             error: errorJson,
             headers: error.headers,
@@ -69,11 +63,38 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
             statusText: error.statusText,
             url: error.url || undefined
           });
-          throw parsedError;
-        } catch (e) { }
+          return throwError(() => parsedError);
+        };
+
+        if (error.error instanceof ArrayBuffer || error.error instanceof Uint8Array) {
+          try {
+            const decoder = new TextDecoder('utf-8');
+            const errorString = decoder.decode(error.error);
+            const errorJson = JSON.parse(errorString);
+            return createAndThrowError(errorJson);
+          } catch (e) {
+            return createAndThrowError({ error: 'Failed to parse error response' });
+          }
+        } 
+        else if (typeof error.error === 'string') {
+          try {
+            const errorJson = JSON.parse(error.error);
+            return createAndThrowError(errorJson);
+          } catch (e) {
+            return createAndThrowError({ error: error.error });
+          }
+        } 
+        else if (error.error instanceof Blob) {
+           // We shouldn't hit this since responseType is 'arraybuffer', but just in case
+           return throwError(() => error);
+        }
+        else if (typeof error.error === 'object') {
+           // It's already parsed
+           return createAndThrowError(error.error);
+        }
       }
 
-      throw error;
+      return throwError(() => error);
     })
   );
 }
