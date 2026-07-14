@@ -441,7 +441,11 @@ export class ExamService {
 
     private handleEndExamOnSuccess(value: ICandidationEndExamResponse) {
         this.examEnded.set(true)
-        this._tauriService.sendExamEnded()
+        
+        if(this.store().platformIsTauri) {
+            this._tauriService.sendExamEnded()
+        }
+
         this._store.updateStore({ endExamResponse: value })
 
         if (this.examTimerSub$ !== undefined) {
