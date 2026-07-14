@@ -618,7 +618,7 @@ export class ExamService {
 
                             return retryCount + 1;
                         }, 0),
-                        delayWhen((retryCount) => timer(Math.pow(2, retryCount) * 1000))
+                        delayWhen((retryCount) => timer(Math.min(Math.pow(2, retryCount) * 1000, 48000)))
                     )
                 )
             )
@@ -626,6 +626,9 @@ export class ExamService {
                 next: (value) => {
                     this.handleEndExamOnSuccess(value)
                 },
+                error: (err) => {
+                    console.error('Final endExam failure:', err);
+                }
             });
     }
 

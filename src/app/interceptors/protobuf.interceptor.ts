@@ -53,7 +53,7 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
       return event;
     }),
     catchError((error: HttpErrorResponse) => {
-      if (req.url.includes('/auth/candidate_login') && error.error) {
+      if ((req.url.includes('/auth/candidate_login') || req.url.includes('/candidate/end_exam/')) && error.error) {
         
         const createAndThrowError = (errorJson: any) => {
           const parsedError = new HttpErrorResponse({
@@ -85,7 +85,6 @@ export const protobufInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>
           }
         } 
         else if (error.error instanceof Blob) {
-           // We shouldn't hit this since responseType is 'arraybuffer', but just in case
            return throwError(() => error);
         }
         else if (typeof error.error === 'object') {
