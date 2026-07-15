@@ -10,7 +10,7 @@ export class ScreenReaderService {
   private liveAnnouncer = inject(LiveAnnouncer);
   private _store = inject(Store);
   
-  public isScreenReaderModeEnabled = signal<boolean>(false);
+  public isScreenReaderModeEnabled = signal<boolean>(true);
   private lastAnnouncedQuestionId: string | null = null;
   private hasAnnouncedWelcome = false;
   private alphabetList: typeof AlphabetList = AlphabetList;
