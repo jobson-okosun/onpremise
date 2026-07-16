@@ -430,6 +430,12 @@ export namespace candidate_http {
         /** ResponsePosition direction. */
         direction: candidate_http.ResponsePositionDirection;
 
+        /** ResponsePosition width. */
+        width: number;
+
+        /** ResponsePosition height. */
+        height: number;
+
         /**
          * Creates a new ResponsePosition instance using the specified properties.
          * @param [properties] Properties to set
@@ -522,6 +528,12 @@ export namespace candidate_http {
 
             /** ResponsePosition direction */
             direction?: (candidate_http.ResponsePositionDirection|null);
+
+            /** ResponsePosition width */
+            width?: (number|null);
+
+            /** ResponsePosition height */
+            height?: (number|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];
@@ -985,6 +997,9 @@ export namespace candidate_http {
         /** CandidateDataProto participant_id. */
         participant_id?: (Uint8Array|null);
 
+        /** CandidateDataProto accessibility_support. */
+        accessibility_support: string;
+
         /**
          * Creates a new CandidateDataProto instance using the specified properties.
          * @param [properties] Properties to set
@@ -1092,6 +1107,9 @@ export namespace candidate_http {
 
             /** CandidateDataProto participant_id */
             participant_id?: (Uint8Array|null);
+
+            /** CandidateDataProto accessibility_support */
+            accessibility_support?: (string|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];

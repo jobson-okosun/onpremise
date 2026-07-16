@@ -66,6 +66,12 @@ export interface ICandidateData {
   login_times: Array<string>;
   passport: string;
   participant_id?: string
+  accessibility_support: AccessibilitySupport;
+}
+
+export enum AccessibilitySupport {
+ YES = 'YES',
+  NO = 'NO'
 }
 
 export interface ICandidateSectionsOverview {
@@ -211,6 +217,8 @@ export interface IResponsePosition {
   x: number;
   y: number;
   direction: ResponsePositionDirection
+  width: number;
+  height: number;
 }
 
 export enum ResponsePositionDirection {

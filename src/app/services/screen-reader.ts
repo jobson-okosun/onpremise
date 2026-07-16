@@ -1,7 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Store } from '../store/store';
-import { AlphabetList, ItemType } from '../store/model/types';
+import { AccessibilitySupport, AlphabetList, ItemType } from '../store/model/types';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class ScreenReaderService {
   private liveAnnouncer = inject(LiveAnnouncer);
   private _store = inject(Store);
   
-  public isScreenReaderModeEnabled = signal<boolean>(true);
+  public isScreenReaderModeEnabled = computed(() => this._store.store().loginData?.candidate_data?.accessibility_support === AccessibilitySupport.YES ? true : false);
   private lastAnnouncedQuestionId: string | null = null;
   private hasAnnouncedWelcome = false;
   private alphabetList: typeof AlphabetList = AlphabetList;

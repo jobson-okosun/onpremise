@@ -21,7 +21,7 @@ import { TrueOrFalse } from '../item-types/true-or-false/true-or-false';
 import { YesOrNo } from '../item-types/yes-or-no/yes-or-no';
 import { Overview } from '../overview/overview';
 import { Paginator } from '../paginator/paginator';
-import { AssessmentFont, BlockType, DeliveryMethod, ExamType, IAssessmentPreLoginData, ICandidateLoginResponse, ItemType, StoreSection } from '../../store/model/types';
+import { AccessibilitySupport, AssessmentFont, BlockType, DeliveryMethod, ExamType, IAssessmentPreLoginData, ICandidateLoginResponse, ItemType, StoreSection } from '../../store/model/types';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -175,7 +175,8 @@ export default class PreviewModeLayout implements OnDestroy {
           login_field_value: 'PREVIEW-VALUE',
           section_ids: section_ids,
           login_times: [],
-          passport: ''
+          passport: '',
+          accessibility_support: AccessibilitySupport.NO
         };
 
         const sections_overview = sections.map((sec: any, idx: number) => {
@@ -328,7 +329,7 @@ export default class PreviewModeLayout implements OnDestroy {
           sections_questions,
           events_session_id: 'aa-11b',
           resume_elapsed_ms: 0,
-          last_sequence: 0
+          last_sequence: 0,
         };
 
         this._authService.setPreLoginData(mappedPreLogin);

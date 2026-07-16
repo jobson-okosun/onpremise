@@ -58,16 +58,44 @@
                                                  [class.right-3]="pos.direction === 'LEFT'"
                                                  [class.left-3]="pos.direction !== 'LEFT'">
                                                 <div class="h-1 bg-white border border-gray-300 w-2.5"></div>
-                                                <div cdkDropList [id]="'point-' + i" [cdkDropListConnectedTo]="getConnectedDropLists()" (cdkDropListDropped)="dropToPoint($event)" style="pointer-events: auto;">
+                                                <div class="relative flex items-center justify-center transition-all duration-200"
+                                                     [style.width.px]="expandedLabels()[i] ? null : (pos.width || 120)"
+                                                     [style.height.px]="expandedLabels()[i] ? null : (pos.height || 30)"
+                                                     [style.min-width.px]="pos.width || 120"
+                                                     [style.min-height.px]="pos.height || 30"
+                                                     [style.z-index]="expandedLabels()[i] ? 100 : 1">
+
+                                                    <!-- Expand Toggle Button -->
                                                     @if(labels()[i]) {
-                                                        <div cdkDrag [cdkDragData]="labels()[i]" class="flex items-center cursor-move border border-gray-300 text-xs rounded p-2 bg-white outline-none ring-0 w-32">
-                                                            <span [innerHTML]="labels()[i]?.label | safeHtml"></span>
-                                                        </div>
-                                                    } @else {
-                                                        <div class="flex items-center border border-gray-300 text-xs rounded p-2 bg-white outline-none ring-0 w-32 select-none">
-                                                            <span class="text-gray-400">Drop here</span>
-                                                        </div>
+                                                        <button 
+                                                            class="absolute -top-3 -right-3 h-6 w-6 z-101 rounded-full bg-primary text-white shadow flex items-center justify-center hover:bg-blue-600 transition-colors pointer-events-auto"
+                                                            (click)="toggleLabelExpand(i)">
+                                                            <i class="pi" style="font-size: 11px;" [class.pi-window-minimize]="expandedLabels()[i]" [class.pi-window-maximize]="!expandedLabels()[i]"></i>
+                                                        </button>
                                                     }
+
+                                                    <!-- DROP TARGET -->
+                                                    <div class="w-full h-full flex items-center justify-center"
+                                                         [style.overflow]="expandedLabels()[i] ? 'auto' : 'hidden'">
+                                                        <div class="w-full h-full"
+                                                             cdkDropList
+                                                             [id]="'point-' + i"
+                                                             [cdkDropListConnectedTo]="getConnectedDropLists()"
+                                                             (cdkDropListDropped)="dropToPoint($event)"
+                                                             style="pointer-events: auto;">
+                                                             @if(labels()[i]) {
+                                                                 <div cdkDrag [cdkDragData]="labels()[i]" 
+                                                                      class="flex items-center cursor-move border border-gray-300 text-xs rounded p-2 bg-white outline-none ring-0 w-full h-full transition-all duration-200"
+                                                                      [class.shadow-2xl]="expandedLabels()[i]">
+                                                                     <span [innerHTML]="labels()[i]?.label | safeHtml"></span>
+                                                                 </div>
+                                                             } @else {
+                                                                 <div class="flex items-center border border-gray-300 text-xs rounded p-2 bg-white outline-none ring-0 w-full h-full select-none">
+                                                                     <span class="text-gray-400">Drop here</span>
+                                                                 </div>
+                                                             }
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

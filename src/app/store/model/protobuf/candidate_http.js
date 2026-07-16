@@ -840,6 +840,8 @@ export const candidate_http = $root.candidate_http = (() => {
          * @property {number|null} [x] ResponsePosition x
          * @property {number|null} [y] ResponsePosition y
          * @property {candidate_http.ResponsePositionDirection|null} [direction] ResponsePosition direction
+         * @property {number|null} [width] ResponsePosition width
+         * @property {number|null} [height] ResponsePosition height
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
 
@@ -896,6 +898,22 @@ export const candidate_http = $root.candidate_http = (() => {
         ResponsePosition.prototype.direction = 0;
 
         /**
+         * ResponsePosition width.
+         * @member {number} width
+         * @memberof candidate_http.ResponsePosition
+         * @instance
+         */
+        ResponsePosition.prototype.width = 0;
+
+        /**
+         * ResponsePosition height.
+         * @member {number} height
+         * @memberof candidate_http.ResponsePosition
+         * @instance
+         */
+        ResponsePosition.prototype.height = 0;
+
+        /**
          * Creates a new ResponsePosition instance using the specified properties.
          * @function create
          * @memberof candidate_http.ResponsePosition
@@ -933,6 +951,10 @@ export const candidate_http = $root.candidate_http = (() => {
                 writer.uint32(/* id 2, wireType 5 =*/21).float(message.y);
             if (message.direction != null && $Object.hasOwnProperty.call(message, "direction") && message.direction !== 0)
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.direction);
+            if (message.width != null && $Object.hasOwnProperty.call(message, "width") && !$Object.is(message.width, 0))
+                writer.uint32(/* id 4, wireType 5 =*/37).float(message.width);
+            if (message.height != null && $Object.hasOwnProperty.call(message, "height") && !$Object.is(message.height, 0))
+                writer.uint32(/* id 5, wireType 5 =*/45).float(message.height);
             if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
                 for (let i = 0; i < message.$unknowns.length; ++i)
                     writer.raw(message.$unknowns[i]);
@@ -1007,6 +1029,24 @@ export const candidate_http = $root.candidate_http = (() => {
                             delete message.direction;
                         continue;
                     }
+                case 4: {
+                        if (wireType !== 5)
+                            break;
+                        if (!$Object.is(value = reader.float(), 0))
+                            message.width = value;
+                        else
+                            delete message.width;
+                        continue;
+                    }
+                case 5: {
+                        if (wireType !== 5)
+                            break;
+                        if (!$Object.is(value = reader.float(), 0))
+                            message.height = value;
+                        else
+                            delete message.height;
+                        continue;
+                    }
                 }
                 reader.skipType(wireType, _depth, tag);
                 if (!reader.discardUnknown) {
@@ -1059,6 +1099,12 @@ export const candidate_http = $root.candidate_http = (() => {
             if (message.direction != null && $Object.hasOwnProperty.call(message, "direction"))
                 if (typeof message.direction !== "number" || (message.direction | 0) !== message.direction)
                     return "direction: enum value expected";
+            if (message.width != null && $Object.hasOwnProperty.call(message, "width"))
+                if (typeof message.width !== "number")
+                    return "width: number expected";
+            if (message.height != null && $Object.hasOwnProperty.call(message, "height"))
+                if (typeof message.height !== "number")
+                    return "height: number expected";
             return null;
         };
 
@@ -1100,6 +1146,12 @@ export const candidate_http = $root.candidate_http = (() => {
                     if (typeof object.direction === "number" && (object.direction | 0) === object.direction)
                         message.direction = object.direction;
                 }
+            if (object.width != null)
+                if (!$Object.is($Number(object.width), 0))
+                    message.width = $Number(object.width);
+            if (object.height != null)
+                if (!$Object.is($Number(object.height), 0))
+                    message.height = $Number(object.height);
             return message;
         };
 
@@ -1124,6 +1176,8 @@ export const candidate_http = $root.candidate_http = (() => {
                 object.x = 0;
                 object.y = 0;
                 object.direction = options.enums === $String ? "LEFT" : 0;
+                object.width = 0;
+                object.height = 0;
             }
             if (message.x != null && $Object.hasOwnProperty.call(message, "x"))
                 object.x = options.json && !$isFinite(message.x) ? $String(message.x) : message.x;
@@ -1131,6 +1185,10 @@ export const candidate_http = $root.candidate_http = (() => {
                 object.y = options.json && !$isFinite(message.y) ? $String(message.y) : message.y;
             if (message.direction != null && $Object.hasOwnProperty.call(message, "direction"))
                 object.direction = options.enums === $String ? $root.candidate_http.ResponsePositionDirection[message.direction] === $undefined ? message.direction : $root.candidate_http.ResponsePositionDirection[message.direction] : message.direction;
+            if (message.width != null && $Object.hasOwnProperty.call(message, "width"))
+                object.width = options.json && !$isFinite(message.width) ? $String(message.width) : message.width;
+            if (message.height != null && $Object.hasOwnProperty.call(message, "height"))
+                object.height = options.json && !$isFinite(message.height) ? $String(message.height) : message.height;
             return object;
         };
 
@@ -2388,6 +2446,7 @@ export const candidate_http = $root.candidate_http = (() => {
          * @property {Array.<Uint8Array>|null} [section_ids] CandidateDataProto section_ids
          * @property {Array.<google.protobuf.Timestamp.$Properties>|null} [login_times] CandidateDataProto login_times
          * @property {Uint8Array|null} [participant_id] CandidateDataProto participant_id
+         * @property {string|null} [accessibility_support] CandidateDataProto accessibility_support
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
 
@@ -2485,6 +2544,14 @@ export const candidate_http = $root.candidate_http = (() => {
          */
         CandidateDataProto.prototype.participant_id = null;
 
+        /**
+         * CandidateDataProto accessibility_support.
+         * @member {string} accessibility_support
+         * @memberof candidate_http.CandidateDataProto
+         * @instance
+         */
+        CandidateDataProto.prototype.accessibility_support = "";
+
         // OneOf field names bound to virtual getters and setters
         let $oneOfFields;
 
@@ -2544,6 +2611,8 @@ export const candidate_http = $root.candidate_http = (() => {
                     $root.google.protobuf.Timestamp.encode(message.login_times[i], writer.uint32(/* id 7, wireType 2 =*/58).fork(), _depth + 1).ldelim();
             if (message.participant_id != null && $Object.hasOwnProperty.call(message, "participant_id"))
                 writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.participant_id);
+            if (message.accessibility_support != null && $Object.hasOwnProperty.call(message, "accessibility_support") && message.accessibility_support !== "")
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.accessibility_support);
             if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
                 for (let i = 0; i < message.$unknowns.length; ++i)
                     writer.raw(message.$unknowns[i]);
@@ -2659,6 +2728,15 @@ export const candidate_http = $root.candidate_http = (() => {
                         message._participant_id = "participant_id";
                         continue;
                     }
+                case 9: {
+                        if (wireType !== 2)
+                            break;
+                        if ((value = reader.stringVerify()).length)
+                            message.accessibility_support = value;
+                        else
+                            delete message.accessibility_support;
+                        continue;
+                    }
                 }
                 reader.skipType(wireType, _depth, tag);
                 if (!reader.discardUnknown) {
@@ -2739,6 +2817,9 @@ export const candidate_http = $root.candidate_http = (() => {
                 if (!(message.participant_id && typeof message.participant_id.length === "number" || $util.isString(message.participant_id)))
                     return "participant_id: buffer expected";
             }
+            if (message.accessibility_support != null && $Object.hasOwnProperty.call(message, "accessibility_support"))
+                if (!$util.isString(message.accessibility_support))
+                    return "accessibility_support: string expected";
             return null;
         };
 
@@ -2800,6 +2881,9 @@ export const candidate_http = $root.candidate_http = (() => {
                     $util.base64.decode(object.participant_id, message.participant_id = $util.newBuffer($util.base64.length(object.participant_id)), 0);
                 else if (object.participant_id.length >= 0)
                     message.participant_id = object.participant_id;
+            if (object.accessibility_support != null)
+                if (typeof object.accessibility_support !== "string" || object.accessibility_support.length)
+                    message.accessibility_support = $String(object.accessibility_support);
             return message;
         };
 
@@ -2830,6 +2914,7 @@ export const candidate_http = $root.candidate_http = (() => {
                 object.minutes_left = 0;
                 object.seconds_left = 0;
                 object.login_field_value = "";
+                object.accessibility_support = "";
             }
             if (message.name != null && $Object.hasOwnProperty.call(message, "name"))
                 object.name = message.name;
@@ -2853,6 +2938,8 @@ export const candidate_http = $root.candidate_http = (() => {
             }
             if (message.participant_id != null && $Object.hasOwnProperty.call(message, "participant_id"))
                 object.participant_id = options.bytes === $String ? $util.base64.encode(message.participant_id, 0, message.participant_id.length) : options.bytes === $Array ? $Array.prototype.slice.call(message.participant_id) : message.participant_id;
+            if (message.accessibility_support != null && $Object.hasOwnProperty.call(message, "accessibility_support"))
+                object.accessibility_support = message.accessibility_support;
             return object;
         };
 

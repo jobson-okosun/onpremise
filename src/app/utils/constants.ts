@@ -917,7 +917,7 @@ export const loginData = {
               },
 
               "response_positions": [
-                { "x": 22, "y": 30 },
+                { "x": 22, "y": 30, "direction": "LEFT", "width": 160, "height": 90 },
                 { "x": 63, "y": 28 },
                 { "x": 28, "y": 72 },
                 { "x": 70, "y": 75 }

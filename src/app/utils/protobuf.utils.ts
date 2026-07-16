@@ -113,6 +113,7 @@ export const formatProtobufResponse = (obj: any): any => {
   if (formatted.candidate_data) {
     formatted.candidate_data.id = String(formatted.candidate_data.id);
     formatted.candidate_data.passport = formatted.candidate_data.passport || '';
+    formatted.candidate_data.accessibility_support = formatted.candidate_data.accessibility_support || 'NO';
   }
   
   if (formatted.assessment_data) {

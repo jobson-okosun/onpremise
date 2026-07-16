@@ -3,13 +3,23 @@
 
     @for(item of store().currentSection?.blocks; track $index) {
         @if(item.attempt_rule == attemptRules().ATTEMPT_ALL) {
-            <div class="relative z-10 bg-white flex items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                <div class="text-sm font-medium text-primary">Compulsory: </div>
-                @if(item.questions.length <= 5) {
+            <div class="relative z-10 bg-white flex items-center flex-col gap-2 border rounded-md border-gray-300 py-0.5 px-1">
+                <div class="text-sm font-medium text-primary">Attempt all </div>
+                @if(item.questions.length <= 8) {
                     <div class="flex items-center gap-1">
                         @for(q of item.questions; track q.id) {
                             <button (click)="selectPage(q.storeMapIdex)"
-                                class="rounded-full size-5 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                                [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
+                                [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
+                                [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
+                                [class.bg-green-300!]="isAttempted(q.storeMapIdex)"
+                                [class.text-green-800!]="isAttempted(q.storeMapIdex)"
+                            >
+                                {{ q.storeMapIdex + 1 }}
+                            </button>
+                            <button (click)="selectPage(q.storeMapIdex)"
+                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                                 [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
@@ -49,13 +59,23 @@
         }
 
         @if(item.attempt_rule == attemptRules().ATTEMPT_ANY) {
-            <div class="relative z-10 bg-white flex items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                <div class="text-sm font-medium text-primary">Attempt any <b>{{ item.items_to_attempt }} </b> from </div>
-                @if(item.questions.length <= 5) {
+            <div class="relative z-10 bg-white flex flex-col items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
+                <div class="text-sm font-medium text-primary">Any <b>{{ item.items_to_attempt }} </b> from </div>
+                @if(item.questions.length <= 8) {
                     <div class="flex items-center gap-1">
                         @for(q of item.questions; track q.id) {
                             <button (click)="selectPage(q.storeMapIdex, item)"
-                                class="rounded-full size-5 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                                [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
+                                [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
+                                [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
+                                [class.bg-green-300!]="isAttempted(q.storeMapIdex)"
+                                [class.text-green-800!]="isAttempted(q.storeMapIdex)"
+                            >
+                                {{ q.storeMapIdex + 1 }}
+                            </button>
+                            <button (click)="selectPage(q.storeMapIdex, item)"
+                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                                 [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"

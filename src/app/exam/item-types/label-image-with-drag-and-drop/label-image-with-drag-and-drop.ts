@@ -28,6 +28,17 @@ export class LabelImageWithDragAndDrop {
 
   labels = signal<(IOptionDTO | null)[]>([])
   labelIds = computed(() => this.labels().map((_, i) => `point-${i}`))
+  
+  expandedLabels = signal<{ [index: number]: boolean }>({});
+
+  toggleLabelExpand(index: number) {
+    console.log(true)
+    const current = this.expandedLabels();
+    this.expandedLabels.set({
+      ...current,
+      [index]: !current[index]
+    });
+  }
 
   options = computed(() => {
     const q = this.store().currentQuestion;
