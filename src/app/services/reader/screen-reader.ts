@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Store } from '../store/store';
-import { AccessibilitySupport, AlphabetList, ItemType } from '../store/model/types';
+import { Store } from '../../store/store';
+import { AccessibilitySupport, AlphabetList, ItemType } from '../../store/model/types';
 
 @Injectable({
   providedIn: 'root'

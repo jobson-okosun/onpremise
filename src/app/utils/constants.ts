@@ -179,7 +179,8 @@ export const loginData = {
       "SEC-MATH-2"
     ],
     "login_times": [],
-    "passport": "https://cdn.example.com/passports/john_doe.png"
+    "passport": "https://cdn.example.com/passports/john_doe.png",
+    "accessibility_support": "NO"
   },
   "sections_overview": [
     {
@@ -236,7 +237,7 @@ export const loginData = {
           "items": [
             {
               "id": "ENG-Q9",
-              "stimulus": "Which word is a noun?",
+              "stimulus": `<p>The derivative of<span class="math-expression" data-latex="f(x)=e^{x^2}\text{ is }f^{\prime}(x)=e^{x^2}\text{.}" contenteditable="false" style="display: inline-block; vertical-align: middle; margin: 4px 5px; padding: 2px 0;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>&nbsp;is&nbsp;</mtext><msup><mi>f</mi><mo mathvariant="normal" lspace="0em" rspace="0em">&prime;</mo></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>.</mtext></mrow><annotation encoding="application/x-tex">f(x)=e^{x^2}\text{ is }f^{\prime}(x)=e^{x^2}\text{.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.2369em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.9869em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">&nbsp;is&nbsp;</span></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.7519em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">&prime;</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.9869em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.9869em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">.</span></span></span></span></span></span>&nbsp;</p>`,
               "options": [
                 { "label": "Run", "value": "run" },
                 { "label": "Beauty", "value": "beauty" },
@@ -252,7 +253,7 @@ export const loginData = {
             },
             {
               id: 'ENG-Qasfasfa8',
-              stimulus: "Which of the following words are coordinating conjunctions?",
+              stimulus: "Which of the <b>following</b> words are <i>coordinating</i> <u>conjunctions</u>?",
               options: [
                 { label: 'For', value: 'for' },
                 { label: 'Although', value: 'although' },
@@ -1138,7 +1139,7 @@ export const loginData = {
           "index": 1,
           "block_type": "SINGLE_QUESTIONS",
           "total_questions": 3,
-          "name": "",
+          "name": "COMPREHENSION",
           "attempt_rule": "ATTEMPT_ALL",
           "items_to_attempt": 1,
           "instruction": "Answer all in this block",
@@ -1255,7 +1256,7 @@ export const loginData = {
           "name": "",
           "attempt_rule": "ATTEMPT_ANY",
           "items_to_attempt": 3,
-          "instruction": "Answer all in this block",
+          "instruction": "Answer any 3 in this block",
           "items": [
             {
               "id": "ENG-Q91",
@@ -1451,6 +1452,7 @@ export const loginData = {
           "attempt_rule": "ATTEMPT_ANY",
           "items_to_attempt": 1,
           "items": [],
+          "instruction": "Answer any 1 in this block",
           "passages": [
             {
               "id": "ENG-PASS-1",

@@ -10,8 +10,8 @@ import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/even
 import { EventService } from '../../services/event';
 import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
 import { getParentLabel as getParentLabelHelper, getChildLabel as getChildLabelHelper } from '../../utils/helper';
-import { ScreenReaderService } from '../../services/screen-reader';
-
+import { TextToSpeechService } from '../../services/reader/text-to-speech';
+import { DrawingAndWritingStore } from '../item-types/drawing-and-writing/services/store.service';
 
 @Component({
   selector: 'app-question-tools',
@@ -24,9 +24,10 @@ export class QuestionTools {
   private _store = inject(Store)
   private _konvaEventTools = inject(KonvaToolsEvent)
   private _eventService = inject(EventService)
-  private _screenReaderService = inject(ScreenReaderService)
+  private _textToSpeech = inject(TextToSpeechService)
+  private _drawingStore = inject(DrawingAndWritingStore)
 
-  isScreenReaderModeEnabled = computed(() => this._screenReaderService.isScreenReaderModeEnabled());
+  isTextToSpeechEnabled = computed(() => this._textToSpeech.isTextToSpeechEnabled());
 
   itemTypes = signal(ItemType);
   store = computed(() => this._store.store())
@@ -34,6 +35,19 @@ export class QuestionTools {
   currentQuestion = computed(() => this.store().currentQuestion)
   currentSection = computed(() => this.store().currentSection)
   currentSectionSummary = computed(() => this._exam.currentSectionSummary())
+  activeStoreId = computed(() => this.store().activeSubQuestionId || 'default')
+  allDrawingStores = computed(() => this._drawingStore.getAllStores())
+
+  currentBlockName = computed(() => {
+    const question = this.currentQuestion();
+    const section = this.currentSection();
+    if (question && section && section?.blocks) {
+      const block = section.blocks.find((b: any) => b.id === question.block_id);
+      return block?.blockName || '';
+    }
+    return '';
+  });
+
   showIntructionDrawer = signal<boolean>(false)
   showCalculator = model<boolean>(false)
   showToggleLayoutButton = input<boolean>(false)
@@ -58,6 +72,31 @@ export class QuestionTools {
     });
   }
 
+  isAttempted(id: string): boolean {
+    const stores = this.allDrawingStores();
+    const storeData = stores[id];
+    if (!storeData) return false;
+
+    let pointFound = false;
+    storeData.pages.forEach((page: any) => {
+      if (page.strokes && page.strokes.length) {
+        pointFound = true;
+      }
+    });
+    return pointFound;
+  }
+
+  onModalShow() {
+    if (this.currentQuestion()?.item_type === ItemType.DRAWING_AND_WRITING) {
+      setTimeout(() => {
+        const el = document.getElementById('modal-sq-' + this.activeStoreId());
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
+  }
+
   revisit() {
     this._exam.addQuestionForRevisit()
 
@@ -70,7 +109,7 @@ export class QuestionTools {
   }
 
   readCurrentQuestion() {
-    this._screenReaderService.announceCurrentQuestion();
+    this._textToSpeech.announceCurrentQuestion();
   }
 
   getParentLabel(parentIndex: number): string {

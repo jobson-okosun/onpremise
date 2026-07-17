@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { Paginator } from "../exam/paginator/paginator";
-import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateEndExamData, ICandidateItem, ItemType, UsageEvent } from "../store/model/types";
+import { ICandidateAutoSave, ICandidateAutoSaveItems, ICandidateEndExamData, ICandidateItem, ItemType } from "../store/model/types";
 import { SingleChoice } from "../exam/item-types/single-choice/single-choice";
 import { ExamService } from "../services/exam";
 import { Store } from "../store/store";
@@ -9,50 +9,6 @@ import { YesOrNo } from "../exam/item-types/yes-or-no/yes-or-no";
 import { TrueOrFalse } from "../exam/item-types/true-or-false/true-or-false";
 import { CandidateEventType, NavigationMethod } from "../store/model/events/events.enum";
 import { EventService } from "../services/event";
-
-import { ScreenReaderService } from "../services/screen-reader";
-
-export function handleA11yShortcuts(
-  event: KeyboardEvent,
-  screenReaderService: ScreenReaderService,
-  store: Store,
-  paginatorComponent: Paginator | undefined,
-  component: any
-): void {
-  if (screenReaderService.handleSharedShortcuts(event)) {
-    return;
-  }
-
-  if (event.altKey && event.shiftKey) {
-    const key = event.key.toLowerCase();
-    
-    if (key === 'n') {
-      event.preventDefault();
-      const currentSectionLength = store.store().currentSection?.items?.length || 0;
-      if (store.store().currentQuestionIndex < currentSectionLength - 1 && paginatorComponent) {
-         paginatorComponent.next();
-      }
-    } else if (key === 'p') {
-      event.preventDefault();
-      if (store.store().currentQuestionIndex > 0 && paginatorComponent) {
-         paginatorComponent.prev();
-      }
-    } else {
-      const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-      const optionIndex = alphabet.indexOf(key);
-      
-      if (optionIndex !== -1) {
-        event.preventDefault();
-        if (component && typeof component.selectOptionByIndex === 'function') {
-          const success = component.selectOptionByIndex(optionIndex);
-          if (success) {
-            screenReaderService.announce(`Answer ${event.key.toUpperCase()} selected. Press Alt key plus Shift key plus letter N to move to next question, or Alt key plus Shift key plus letter P to go back to previous question.`, 'assertive');
-          }
-        }
-      }
-    }
-  }
-}
 
 export function fullscreen(eventService?: EventService) {
     const elem = document.documentElement;

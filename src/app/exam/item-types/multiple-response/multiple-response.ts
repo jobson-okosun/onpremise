@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, linkedSignal, model } from '@angular/core';
+import { Component, computed, inject, linkedSignal, model } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AlphabetList } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
@@ -6,7 +6,6 @@ import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
-import { ScreenReaderService } from '../../../services/screen-reader';
 
 
 @Component({
@@ -18,20 +17,13 @@ import { ScreenReaderService } from '../../../services/screen-reader';
 export class MultipleResponse {
   private _store = inject(Store);
   private _eventService = inject(EventService);
-  private _screenReaderService = inject(ScreenReaderService);
-
-  constructor() {
-    effect(() => {
-      this._screenReaderService.autoAnnounceQuestion();
-    });
-  }
-
 
   private multipleResponseAnswers = linkedSignal(() => this._store.store().currentQuestion?.responses!);
   protected maxResponses = computed(() => {
     const max = this.store().currentQuestion?.max_responses;
     return max == null ? undefined : max;
   });
+
   protected selectedAnswersCount = computed(() => this.store().currentQuestion!.responses.length);
   protected isMaxResponsesReached = computed(() => {
     return this.maxResponses() !== undefined && this.selectedAnswersCount() >= this.maxResponses()!;

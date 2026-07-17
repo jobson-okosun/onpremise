@@ -263,6 +263,9 @@ export interface StoreSectionBlock {
   questions: Pick<ICandidateItem, 'storeMapIdex' | 'id'>[]
   items_to_attempt: number,
   id: number
+  sectionName: string
+  blockName: string
+  sectionInstruction?: string
 }
 
 export interface Ping {

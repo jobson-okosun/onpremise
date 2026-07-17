@@ -46,7 +46,7 @@
                         <div [class.h-full]="height < 1000" cdkDrag class="relative cursor-grab w-full flex items-center" [style.transform]="'scale(' + zoom() + ')'">
 
                             <div class="relative w-max mx-auto">
-                                <img [style.width.px]="width" [style.height.px]="height" [src]="src" class="block" />
+                                <img [style.width.px]="width" [style.height.px]="height" [src]="src" class="block" [alt]="'I discribe this image'" />
 
                                 <div class="absolute inset-0 pointer-events-none">
                                     @for(pos of store().currentQuestion?.response_positions; track pos; let i = $index) {

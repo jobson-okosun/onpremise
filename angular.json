@@ -42,6 +42,11 @@
                 "output": "/katex/"
               },
               {
+                "glob": "**/*",
+                "input": "node_modules/speech-rule-engine/lib/mathmaps",
+                "output": "/mathmaps/"
+              },
+              {
                 "glob": "vercel.json",
                 "input": "./",
                 "output": "./"

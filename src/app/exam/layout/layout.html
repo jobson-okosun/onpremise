@@ -87,7 +87,7 @@
                 
                 <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
             </div>
-            <div class="flex w-full gap-3 p-2 items-center justify-between text-sm">
+            <div class="flex w-full gap-3 p-1 items-center justify-between text-sm">
                 <div class="hidden lg:flex gap-3 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
                     <div class="flex flex-col justify-between">
                         <div class="font-semibold">{{ !isExamAlpha() ? 'Subject' : 'Section' }} {{ currentSectionIndex() + 1 }} of {{ store().sections.length }}</div>
@@ -95,39 +95,70 @@
                     </div> 
                 </div>
                 
-                <div class="w-full lg:w-max" [class.-translate-y-[4px]]="store().currentSection?.section_type == sectionTypes().THEORY">
-                    <app-paginator class="w-full"></app-paginator>
+                <div class="w-full lg:w-max">
+                    @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                        <app-paginator class="w-full"></app-paginator>
+                    }
                     
                     @if(store().currentSection?.section_type == sectionTypes().THEORY) {
                         <app-theory-paginator class="w-full"></app-theory-paginator>
                     }
                 </div>
 
-                <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
-                    <div class="flex flex-col items-center justify-center">
-                        <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
-                        <div class="flex gap-2 items-center">
-                            <span class="rounded-full size-2.5 bg-green-600"></span>
-                            <span class="text-xs">Answered</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center justify-center">
-                        <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
-                        <div class="flex gap-2 items-center">
-                            <span class="rounded-full size-2.5 bg-red-600"></span>
-                            <span class="text-xs">Unanswered</span>
-                        </div>
-                    </div>
-                    @if(isExamAlpha()) {
+                @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                    <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
                         <div class="flex flex-col items-center justify-center">
-                            <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                            <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
                             <div class="flex gap-2 items-center">
-                                <span class="rounded-full size-2.5 bg-yellow-500"></span>
-                                <span class="text-xs">Revisit</span>
+                                <span class="rounded-full size-2.5 bg-green-600"></span>
+                                <span class="text-xs">Answered</span>
                             </div>
                         </div>
-                    }
-                </div>
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                            <div class="flex gap-2 items-center">
+                                <span class="rounded-full size-2.5 bg-red-600"></span>
+                                <span class="text-xs">Unanswered</span>
+                            </div>
+                        </div>
+                        @if(isExamAlpha()) {
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                                <div class="flex gap-2 items-center">
+                                    <span class="rounded-full size-2.5 bg-yellow-500"></span>
+                                    <span class="text-xs">Revisit</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                @if(store().currentSection?.section_type == sectionTypes().THEORY) {
+                    <div class="hidden lg:flex lg:flex-col bg-gray-100 items-center rounded-2xl w-max min-w-40 py-1 px-3">
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex gap-x-2 items-center">
+                                <span class="rounded-full size-2.5 bg-green-600"></span>
+                                <span class="text-xs">Answered</span>
+                            </div>
+                            <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
+                        </div>
+                        <div class="flex items-center justify-between w-full">
+                            <div class="flex gap-x-2 items-center">
+                                <span class="rounded-full size-2.5 bg-red-600"></span>
+                                <span class="text-xs">Unanswered</span>
+                            </div>
+                            <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                        </div>
+                        @if(isExamAlpha()) {
+                            <div class="flex items-center justify-between w-full">
+                                <div class="flex gap-x-2 items-center">
+                                    <span class="rounded-full size-2.5 bg-yellow-500"></span>
+                                    <span class="text-xs">Revisit</span>
+                                </div>
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
@@ -255,20 +286,22 @@
                 <div class="p-3 py-2 rounded-2xl bg-white text-sm font-medium">
                     <div>Attempted {{ allSectionsAttemp() }} of {{ totalSectionsQuestions() }} for all {{ !isExamAlpha() ? 'Subjects' : 'Sections' }}</div>
                 </div>
-                <button (click)="examprogress.toggle($event)"class="p-3 py-2 rounded-2xl bg-primary text-white text-sm font-medium flex items-center justify-center gap-2">
-                    <div>Show attempts</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" class="text-white">
-                        <path d="M2.5 7.5V13.5C2.5 17.2712 2.5 19.1569 3.67157 20.3284C4.84315 21.5 6.72876 21.5 10.5 21.5H12.5M21.5 11.5V7.5" 
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M3.86909 5.31461L2.5 7.5H21.5L20.2478 5.41303C19.3941 3.99021 18.9673 3.2788 18.2795 2.8894C17.5918 2.5 16.7621 2.5 15.1029 2.5H8.95371C7.32998 2.5 6.51812 2.5 5.84013 2.8753C5.16215 3.2506 4.73113 3.93861 3.86909 5.31461Z" 
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M12 7.5V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M10 10.5H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M18 15.5V17.5H19.5M22 17.5C22 19.7091 20.2091 21.5 18 21.5C15.7909 21.5 14 19.7091 14 17.5C14 15.2909 15.7909 13.5 18 13.5C20.2091 13.5 22 15.2909 22 17.5Z" 
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
 
+                @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                    <button (click)="examprogress.toggle($event)"class="p-3 py-2 rounded-2xl bg-primary text-white text-sm font-medium flex items-center justify-center gap-2">
+                        <div>Show attempts</div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" class="text-white">
+                            <path d="M2.5 7.5V13.5C2.5 17.2712 2.5 19.1569 3.67157 20.3284C4.84315 21.5 6.72876 21.5 10.5 21.5H12.5M21.5 11.5V7.5" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3.86909 5.31461L2.5 7.5H21.5L20.2478 5.41303C19.3941 3.99021 18.9673 3.2788 18.2795 2.8894C17.5918 2.5 16.7621 2.5 15.1029 2.5H8.95371C7.32998 2.5 6.51812 2.5 5.84013 2.8753C5.16215 3.2506 4.73113 3.93861 3.86909 5.31461Z" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M12 7.5V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 10.5H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M18 15.5V17.5H19.5M22 17.5C22 19.7091 20.2091 21.5 18 21.5C15.7909 21.5 14 19.7091 14 17.5C14 15.2909 15.7909 13.5 18 13.5C20.2091 13.5 22 15.2909 22 17.5Z" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                }
             </div>
 
             <div class="text-xs flex justify-center">

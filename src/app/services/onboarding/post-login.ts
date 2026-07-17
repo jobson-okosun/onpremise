@@ -108,13 +108,19 @@ export class PostLogin {
                     const questions = items.filter(item => item.block_id == b.id).map( item => ({ id: item.id, storeMapIdex: item.storeMapIdex}))
                     const instruction = b?.instruction ?? ''
                     const items_to_attempt = b.items_to_attempt ?? 0
+                    const sectionName = s.name
+                    const blockName = b.name
+                    const sectionInstruction = s.section_settings.section_instruction ?? ''
 
                     return { 
                         attempt_rule: attempt_rule,
                         questions,
                         items_to_attempt,
-                        instruction,
                         id: b.id,
+                        instruction,
+                        sectionName,
+                        blockName,
+                        sectionInstruction
                     }
                 })
 

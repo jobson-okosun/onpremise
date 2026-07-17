@@ -1,25 +1,22 @@
-<div class="relative flex justify-center items-center gap-4 w-max mx-auto translate-y-0.5">
+<div class="relative flex justify-center items-center gap-4 w-max mx-auto">
     <div class="absolute top-1/2 left-6 right-6 h-0.5 bg-gray-400 -translate-y-1/2"></div>
 
     @for(item of store().currentSection?.blocks; track $index) {
         @if(item.attempt_rule == attemptRules().ATTEMPT_ALL) {
-            <div class="relative z-10 bg-white flex items-center flex-col gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                <div class="text-sm font-medium text-primary">Attempt all </div>
+            <div class="relative z-10 bg-white flex flex-col items-center gap-0.5 border rounded-md border-gray-300 py-0.5 px-1">
+                <div class="flex items-center gap-2">
+                    <div class="text-sm font-medium text-primary">Attempt all </div>
+                    <button (click)="openBlockInfo(item)" class="text-gray-500 hover:text-primary transition-colors focus:outline-none" title="Block Information">
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
                 @if(item.questions.length <= 8) {
                     <div class="flex items-center gap-1">
                         @for(q of item.questions; track q.id) {
                             <button (click)="selectPage(q.storeMapIdex)"
-                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
-                                [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
-                                [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
-                                [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
-                                [class.bg-green-300!]="isAttempted(q.storeMapIdex)"
-                                [class.text-green-800!]="isAttempted(q.storeMapIdex)"
-                            >
-                                {{ q.storeMapIdex + 1 }}
-                            </button>
-                            <button (click)="selectPage(q.storeMapIdex)"
-                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                                class="rounded-full size-6 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                                 [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
                                 [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
@@ -33,7 +30,7 @@
                 }@else {
                     <div class="flex items-center gap-1">
                         <button (click)="selectPage(item.questions[0].storeMapIdex)"
-                            class="rounded-full size-5 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                            class="rounded-full size-6 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                             [class.bg-yellow-200!]="isRevisit(item.questions[0].storeMapIdex) && isUnattempted(item.questions[0].storeMapIdex)"
                             [class.text-yellow-800!]="isRevisit(item.questions[0].storeMapIdex) && isUnattempted(item.questions[0].storeMapIdex)"
                             [class.ring-blue-400!]="isCurrent(item.questions[0].storeMapIdex)"
@@ -44,7 +41,7 @@
                         </button>
                         <span class="text-sm px-1">To</span>
                         <button (click)="selectPage(item.questions[item.questions.length - 1].storeMapIdex)"
-                            class="rounded-full size-5 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
+                            class="rounded-full size-6 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                             [class.bg-yellow-200!]="isRevisit(item.questions[item.questions.length - 1].storeMapIdex) && isUnattempted(item.questions[item.questions.length - 1].storeMapIdex)"
                             [class.text-yellow-800!]="isRevisit(item.questions[item.questions.length - 1].storeMapIdex) && isUnattempted(item.questions[item.questions.length - 1].storeMapIdex)"
                             [class.ring-blue-400!]="isCurrent(item.questions[item.questions.length - 1].storeMapIdex)"
@@ -59,21 +56,18 @@
         }
 
         @if(item.attempt_rule == attemptRules().ATTEMPT_ANY) {
-            <div class="relative z-10 bg-white flex flex-col items-center gap-2 border rounded-md border-gray-300 py-0.5 px-1">
-                <div class="text-sm font-medium text-primary">Any <b>{{ item.items_to_attempt }} </b> from </div>
+            <div class="relative z-10 bg-white flex flex-col items-center gap-0.5 border rounded-md border-gray-300 py-0.5 px-1">
+                <div class="flex items-center gap-2">
+                    <div class="text-sm font-medium text-primary">Any <b>{{ item.items_to_attempt }} </b> from </div>
+                    <button (click)="openBlockInfo(item)" class="text-gray-500 hover:text-primary transition-colors focus:outline-none cursor-pointer" title="Instructions">
+                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
                 @if(item.questions.length <= 8) {
                     <div class="flex items-center gap-1">
                         @for(q of item.questions; track q.id) {
-                            <button (click)="selectPage(q.storeMapIdex, item)"
-                                class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
-                                [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
-                                [class.text-yellow-800!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
-                                [class.ring-blue-400!]="isCurrent(q.storeMapIdex)"
-                                [class.bg-green-300!]="isAttempted(q.storeMapIdex)"
-                                [class.text-green-800!]="isAttempted(q.storeMapIdex)"
-                            >
-                                {{ q.storeMapIdex + 1 }}
-                            </button>
                             <button (click)="selectPage(q.storeMapIdex, item)"
                                 class="rounded-full size-7 text-center align-middle text-xs font-bold bg-red-200 text-red-600 flex items-center justify-center transition duration-150 border border-transparent ring-2 ring-transparent ring-offset-1 cursor-pointer hover:border-blue-400! outline-none!"
                                 [class.bg-yellow-200!]="isRevisit(q.storeMapIdex) && isUnattempted(q.storeMapIdex)"
@@ -115,3 +109,34 @@
         }
     }
 </div>
+
+<p-dialog [appendTo]="'body'" header="Instructions" [position]="'top'" [modal]="true" [(visible)]="showBlockInfoModal" [style]="{ width: '40rem', maxWidth: '95vw' }">
+    @if(selectedBlock()) {
+        <div class="flex flex-col gap-6 p-4">
+            @if(selectedBlock()?.sectionName) {
+                <div>
+                    <h3 class="font-bold text-gray-700 uppercase tracking-wide text-xs mb-1">Section</h3>
+                    <p class="text-gray-900">{{ selectedBlock()?.sectionName }}</p>
+                </div>
+            }
+            @if(selectedBlock()?.sectionInstruction) {
+                <div>
+                    <h3 class="font-bold text-gray-700 uppercase tracking-wide text-xs mb-1">Section Instruction</h3>
+                    <div class="text-gray-800 prose prose-sm" [innerHTML]="selectedBlock()?.sectionInstruction | safeHtml"></div>
+                </div>
+            }
+            @if(selectedBlock()?.blockName) {
+                <div>
+                    <h3 class="font-bold text-gray-700 uppercase tracking-wide text-xs mb-1">Block</h3>
+                    <p class="text-gray-900">{{ selectedBlock()?.blockName }}</p>
+                </div>
+            }
+            @if(selectedBlock()?.instruction) {
+                <div>
+                    <h3 class="font-bold text-gray-700 uppercase tracking-wide text-xs mb-1">Block Instruction</h3>
+                    <div class="text-gray-800 prose prose-sm" [innerHTML]="selectedBlock()?.instruction | safeHtml"></div>
+                </div>
+            }
+        </div>
+    }
+</p-dialog>

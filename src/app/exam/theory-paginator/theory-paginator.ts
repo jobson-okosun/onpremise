@@ -1,14 +1,16 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Store } from '../../store/store';
 import { ExamService } from '../../services/exam';
 import { EventService } from '../../services/event';
 import { CandidateEventType, NavigationMethod } from '../../store/model/events/events.enum';
 import { AttemptRule, StoreSectionBlock } from '../../store/model/types';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { Dialog } from 'primeng/dialog';
+import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
 
 @Component({
   selector: 'app-theory-paginator',
-  imports: [],
+  imports: [Dialog, SafeHtmlPipe],
   templateUrl: './theory-paginator.html',
 })
 export class TheoryPaginator {
@@ -21,6 +23,14 @@ export class TheoryPaginator {
   attemptRules = computed(() => AttemptRule);
   currentQuestionIndex = computed(() => this.store().currentQuestionIndex);
   currentSectionSummary = computed(() => this._exam.currentSectionSummary());
+
+  showBlockInfoModal = signal<boolean>(false);
+  selectedBlock = signal<StoreSectionBlock | null>(null);
+
+  openBlockInfo(block: StoreSectionBlock) {
+    this.selectedBlock.set(block);
+    this.showBlockInfoModal.set(true);
+  }
 
   isAttempted(index: number): boolean {
     const summary = this.currentSectionSummary()?.summary;

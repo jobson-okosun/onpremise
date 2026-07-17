@@ -52,6 +52,7 @@
     "protobufjs": "^8.7.0",
     "rxjs": "~7.8.0",
     "simplify-js": "^1.2.4",
+    "speech-rule-engine": "^5.0.0-rc.4",
     "sweetalert2": "^11.26.3",
     "tailwindcss": "^4.1.17",
     "tslib": "^2.3.0"

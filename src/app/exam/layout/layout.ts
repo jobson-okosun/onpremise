@@ -11,7 +11,7 @@ import { ProctorService } from '../../services/auto-proctoring/proctor';
 import { AttemptRule, DeliveryMethod, ExamType, ItemType, SectionType, StoreSection } from '../../store/model/types';
 import { CandidateEventType } from '../../store/model/events/events.enum';
 import { SingleChoice } from '../item-types/single-choice/single-choice';
-import { blockContextMenuHandler, fullscreen, useShortcut, handleA11yShortcuts } from '../../utils/helper';
+import { blockContextMenuHandler, fullscreen, useShortcut } from '../../utils/helper';
 import { NgClass } from '@angular/common';
 import { CloseWithDropdown } from '../item-types/close-with-dropdown/close-with-dropdown';
 import { CloseWithText } from '../item-types/close-with-text/close-with-text';
@@ -43,7 +43,7 @@ import { LiveProctoringService } from '../../services/live-proctoring/live-proct
 import { AuthService } from '../../services/auth';
 import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
 import { EventService } from '../../services/event';
-import { ScreenReaderService } from '../../services/screen-reader';
+import { TextToSpeechService } from '../../services/reader/text-to-speech';
 import { PostLogin } from '../../services/onboarding/post-login';
 
 @Component({
@@ -67,7 +67,7 @@ export default class Layout implements OnDestroy {
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private _eventService = inject(EventService)
-  private _screenReaderService = inject(ScreenReaderService)
+  private _ttsService = inject(TextToSpeechService)
   private sub!: Subscription;
 
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
@@ -178,7 +178,7 @@ export default class Layout implements OnDestroy {
 
   constructor() {
     effect(() => {
-      this._screenReaderService.autoAnnounceQuestion();
+      this._ttsService.autoAnnounceQuestion();
     });
 
     this.sub = this.breakpointObserver
@@ -383,6 +383,11 @@ export default class Layout implements OnDestroy {
       return
     }
 
+    const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+    if (isInput) {
+      return;
+    }
+
     if (event.key.toLowerCase() === 's') {
       const currentTime = Date.now();
       if (currentTime - this.lastPressTime() < this.threshold()) {
@@ -417,26 +422,30 @@ export default class Layout implements OnDestroy {
     }
 
     useShortcut(event.key, this.store().currentQuestionIndex, this.paginator()!, this.totalSectionsQuestions(), this.store().currentQuestion!, component)
+
+    const letters = 'abcdefghijk';
+    if (letters.includes(event.key.toLowerCase())) {
+      setTimeout(() => {
+        this._ttsService.announceFeedback(`You just selected Option ${event.key.toUpperCase()}.`);
+      }, 100);
+    }
   }
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    handleA11yShortcuts(
-      event,
-      this._screenReaderService,
-      this._store,
-      this.paginator(),
-      this.getCurrentQuestionComponent()
-    );
-  }
+    const target = event.target as HTMLElement;
+    const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+    
+    if (isInput) {
+      return;
+    }
 
-  getCurrentQuestionComponent(): any {
-    if (!this.store().currentQuestion) return null;
-    if (this.store().currentQuestion!.item_type == this.itemTypes().MCQ) return this.standardChoice();
-    if (this.store().currentQuestion!.item_type == this.itemTypes().MRQ) return this.multipleChoice();
-    if (this.store().currentQuestion!.item_type == this.itemTypes().TRUE_FALSE) return this.trueOrFalse();
-    if (this.store().currentQuestion!.item_type == this.itemTypes().YES_NO) return this.yesOrNo();
-    return null;
+    const key = event.key.toLowerCase();
+    if (key === 'q') {
+      this._ttsService.announceCurrentQuestion();
+    } else if (key === 'o') {
+      this._ttsService.announceCurrentOptions();
+    }
   }
 
   isUnattempted(index: number, sectionSummary: any): boolean {

@@ -1,5 +1,6 @@
 <div class="bg-gray-100 flex items-center gap-1 rounded-2xl w-max p-1">
-    @if(showQuestionModalButton()){
+
+    @if(showQuestionModalButton() && !isTextToSpeechEnabled()){
         <button (click)="showQuestionModal.set(true)" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
             <span class="hidden lg:inline">Show Question</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none" stroke="#141B34" stroke-width="1.5">
@@ -8,7 +9,6 @@
             </svg>
         </button>
     }
-
 
     @if(!currentSectionSummary()?.summary?.attempted?.includes(currentQuestionIndex())) {
         @if(currentSectionSummary()?.summary?.revisits?.includes(currentQuestionIndex())) {
@@ -20,7 +20,7 @@
             </button>
         } @else {
             <button [class.hidden]="!isExamAlpha()" (click)="revisit()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer">
-                <span class="hidden lg:inline">Revisit later</span>
+                <span class="hidden lg:inline">Revisit</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#3c3c3c" fill="none" stroke="#3c3c3c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8.76938 2.5C8.4973 2.59728 8.23058 2.70543 7.96979 2.8239M5.42501 4.46566C5.19851 4.66428 4.98106 4.87255 4.77334 5.08979M3.03178 7.56476C2.84599 7.93804 2.68313 8.32421 2.54498 8.72152M2.01608 11.3914C1.99387 11.7808 1.99471 12.1778 2.01835 12.5673M2.56845 15.2658C2.70147 15.6396 2.85641 16.0035 3.03178 16.3558M4.69086 18.7435C4.93508 19.005 5.19323 19.2539 5.46415 19.4891M7.77635 21.0064C8.17073 21.1954 8.57927 21.3606 9 21.5" />
                     <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2" />
@@ -31,9 +31,9 @@
     }
     
 
-    @if(isScreenReaderModeEnabled()) {
+    @if(isTextToSpeechEnabled()) {
         <button (click)="readCurrentQuestion()" class="bg-white flex items-center gap-2 rounded-2xl w-max px-3 py-2 border border-gray-200 text-sm hover:border-primary cursor-pointer" title="Read Question">
-            <span class="hidden lg:inline">Read Question</span>
+            <span class="hidden lg:inline">Read aloud</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -61,17 +61,25 @@
     }
 </div>
 
-<p-dialog [appendTo]="'body'" [header]="'Question ' + (currentQuestionIndex() + 1)" [position]="'top'" [closable]="false" [dismissableMask]="true" [modal]="true" [(visible)]="showQuestionModal" (visibleChange)="showQuestionModal.set(false)" [style]="{ width: '70rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-    <button (click)="showQuestionModal.set(false)" type="button" class="absolute top-3 right-3 bg-red-600 text-white border-transparent border ring-0 outline-none p-1 rounded z-10 flex items-center gap-2">
-    <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-      viewBox="0 0 24 24">
-      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M6 18 17.94 6M18 18 6.06 6" />
-    </svg>
-    Close
-  </button>
+<p-dialog [appendTo]="'body'" [position]="'top'" [closable]="false" [dismissableMask]="true" [modal]="true" [(visible)]="showQuestionModal" (visibleChange)="showQuestionModal.set(false)" (onShow)="onModalShow()" [style]="{ width: '70rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <ng-template pTemplate="header">
+        <div class="flex items-center gap-4 mt-2">
+            <span class="text-xl font-bold text-gray-900">Question {{ currentQuestionIndex() + 1 }}</span>
+            @if(currentBlockName()) {
+                <span class="text-lg font-semibold text-gray-600 border-l-2 border-gray-300 pl-4">{{ currentBlockName() }}</span>
+            }
+        </div>
+    </ng-template>
+    
+    <button (click)="showQuestionModal.set(false)" type="button" class="absolute top-3 right-3 bg-red-600 text-white border-transparent border ring-0 outline-none p-1 rounded z-10 flex items-center gap-2 cursor-pointer transition-colors hover:bg-red-700">
+        <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+        </svg>
+        Close
+    </button>
 
-    <div class="mb-8 p-6 select-none">
+    <div class="mb-8 p-6 select-none pt-2">
+
         @if(currentQuestion()?.passage_stimulus) {
             <div [innerHTML]="currentQuestion()?.passage_stimulus | safeHtml"></div>
         }
@@ -83,16 +91,43 @@
             <div class="mt-6 flex flex-col gap-6 pl-4 border-l-2 border-gray-200">
                 @for(sq of currentQuestion()?.sub_questions; track sq.id; let pIdx = $index) {
                     <div class="flex flex-col gap-2">
-                        <div class="flex gap-2">
-                            <span class="font-bold">{{ getParentLabel(pIdx) }}.</span>
-                            <div [innerHTML]="sq.stimulus | safeHtml"></div>
+                        <div class="flex gap-2 p-2 transition-all duration-300 border-l-4" 
+                             [id]="'modal-sq-' + sq.id"
+                             [class.border-transparent]="activeStoreId() !== sq.id"
+                             [class.bg-blue-50]="activeStoreId() === sq.id && !isAttempted(sq.id)"
+                             [class.border-blue-500]="activeStoreId() === sq.id && !isAttempted(sq.id)"
+                             [class.bg-green-50]="activeStoreId() === sq.id && isAttempted(sq.id)"
+                             [class.border-green-500]="activeStoreId() === sq.id && isAttempted(sq.id)">
+                            <div class="flex flex-col items-center gap-1 mt-1">
+                                <span class="font-bold text-gray-800">{{ getParentLabel(pIdx) }}.</span>
+                                @if(isAttempted(sq.id)) {
+                                    <svg class="size-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                }
+                            </div>
+                            <div class="editor-content" [innerHTML]="sq.stimulus | safeHtml"></div>
                         </div>
+
                         @if(sq.children && sq.children.length) {
-                            <div class="flex flex-col gap-4 pl-6 mt-2">
+                            <div class="flex flex-col gap-4 pl-6 mt-2 border-l border-gray-100">
                                 @for(child of sq.children; track child.id; let cIdx = $index) {
-                                    <div class="flex gap-2">
-                                        <span class="font-bold">{{ getChildLabel(cIdx) }}.</span>
-                                        <div [innerHTML]="child.stimulus | safeHtml"></div>
+                                    <div class="flex gap-2 p-2 transition-all duration-300 border-l-4"
+                                         [id]="'modal-sq-' + child.id"
+                                         [class.border-transparent]="activeStoreId() !== child.id"
+                                         [class.bg-blue-50]="activeStoreId() === child.id && !isAttempted(child.id)"
+                                         [class.border-blue-500]="activeStoreId() === child.id && !isAttempted(child.id)"
+                                         [class.bg-green-50]="activeStoreId() === child.id && isAttempted(child.id)"
+                                         [class.border-green-500]="activeStoreId() === child.id && isAttempted(child.id)">
+                                        <div class="flex flex-col items-center gap-1 mt-1">
+                                            <span class="font-bold text-gray-800">{{ getChildLabel(cIdx) }}.</span>
+                                            @if(isAttempted(child.id)) {
+                                                <svg class="size-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            }
+                                        </div>
+                                        <div class="editor-content" [innerHTML]="child.stimulus | safeHtml"></div>
                                     </div>
                                 }
                             </div>
