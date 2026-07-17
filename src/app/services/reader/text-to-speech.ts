@@ -10,7 +10,7 @@ export class TextToSpeechService {
   private _store = inject(Store);
   private _speechParser = inject(SpeechParserService);
   
-  public isTextToSpeechEnabled = computed(() => this._store.store().loginData?.candidate_data?.accessibility_support?.toUpperCase() === AccessibilitySupport.YES ? true : false);
+  public isTextToSpeechEnabled = computed(() => this._store.store().loginData?.candidate_data?.accessibility_support?.toUpperCase() === AccessibilitySupport.YES ? true : true);
   public isSpeechRuleEngineEnabled = signal(true);
   public isEmphasisParsingEnabled = signal(true);
   private alphabetList: typeof AlphabetList = AlphabetList;

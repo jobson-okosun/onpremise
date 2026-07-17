@@ -22,7 +22,8 @@
               "simplify-js",
               "sweetalert2",
               "mediasoup-client",
-              "protobufjs"
+              "protobufjs",
+              "speech-rule-engine"
             ],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
