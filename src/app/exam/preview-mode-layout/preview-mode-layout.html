@@ -164,7 +164,7 @@
                 <div class="flex justify-between items-center md:justify-between gap-3">
                     @if(store().currentQuestionIndex > 0) {
                         <button (click)="prev()" class="btn gap-3!">
-                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
                             </svg>
                             Previous
@@ -172,7 +172,7 @@
                     }
                     @if(showPrevSectionButton()) {
                         <button (click)="prevSection()" class="btn bg-gray-800! gap-3!">
-                            <svg class="w-4 h-4 rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 rotate-180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                             </svg>
                             Previous {{ 'Section' }}
@@ -182,7 +182,7 @@
                     @if(store().currentQuestionIndex < (store().currentSection!.items!.length - 1)) {
                         <button (click)="nextQuestion()" class="btn gap-3!">
                             Next
-                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                             </svg>
                         </button>
@@ -191,7 +191,7 @@
                     @if(showNextSectionButton()) {
                         <button (click)="nextSection()" class="btn bg-gray-800! gap-3!">
                             Next {{ 'Section' }}
-                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                             </svg>
                         </button>

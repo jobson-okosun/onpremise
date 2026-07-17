@@ -9,7 +9,7 @@
                         <div>Question {{ store().currentQuestionIndex + 1 }}</div>
                     </div>
                     @if(!store().isPreviewMode) {
-                        <app-question-tools aria-hidden="true" [showToggleLayoutButton]="true"></app-question-tools>
+                        <app-question-tools [showToggleLayoutButton]="true"></app-question-tools>
                     }
                 </div>
             </div>

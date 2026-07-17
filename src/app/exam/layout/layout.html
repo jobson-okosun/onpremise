@@ -1,6 +1,6 @@
-<div aria-hidden="true" class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
+<div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
     <!-- top -->
-    <div aria-hidden="true">
+    <div>
         <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
             <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
@@ -20,7 +20,7 @@
                             </span>
                         } @else {
                             <span (click)="showUserProfileModal.set(true)" class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
-                                <svg class="w-[150px] h-auto text-gray-500 {{ imagePlaceholderTranslate }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-[150px] h-auto text-gray-500 {{ imagePlaceholderTranslate }}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
                                 </svg>
                             </span>
@@ -243,12 +243,12 @@
     </div> 
 
     <!-- bottom -->
-    <div aria-hidden="true">
+    <div>
         <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
             <div class="flex justify-between items-center md:justify-between gap-3">
                 @if(store().currentQuestionIndex > 0) {
                     <button (click)="prev()" class="btn gap-3!">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
                         </svg>
                         Previous
@@ -256,7 +256,7 @@
                 }
                 @if(showPrevSectionButton()) {
                     <button (click)="prevSection()" class="btn bg-gray-800! gap-3!">
-                        <svg class="w-4 h-4 rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 rotate-180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                         </svg>
                         Previous {{ !isExamAlpha() ? 'Subject' : 'Section' }}
@@ -266,7 +266,7 @@
                 @if(store().currentQuestionIndex < (store().currentSection!.items!.length - 1)) {
                     <button (click)="nextQuestion()" class="btn gap-3!">
                         Next
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                         </svg>
                     </button>
@@ -275,7 +275,7 @@
                 @if(showNextSectionButton()) {
                     <button (click)="nextSection()" class="btn bg-gray-800! gap-3!">
                         Next {{ !isExamAlpha() ? 'Subject' : 'Section' }}
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                         </svg>
                     </button>
@@ -489,7 +489,7 @@
           <img [src]="store().candidatePassport" class="w-[150px]" />
         } @else {
           <span class="w-[150px] h-[150px] rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                <svg class="w-[200px] h-auto text-gray-500 translate-y-[45px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-[200px] h-auto text-gray-500 translate-y-[45px]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
                 </svg>
             </span>

@@ -16,11 +16,144 @@ export class TextToSpeechService {
   private alphabetList: typeof AlphabetList = AlphabetList;
   private lastAnnouncedQuestionId: string | null = null;
   private hasAnnouncedWelcome = false;
+  
+  public normalSpeed = 0.75; 
+  public slowSpeed = 0.65;
+  private selectedVoice: SpeechSynthesisVoice | null = null;
+  
+  // Custom queue logic to bypass browser bugs and enable rewinding
+  private speechChunks: {text: string, rate: number}[] = [];
+  private currentChunkIndex: number = 0;
+  private currentCharIndex: number = 0;
+  private isManualPause: boolean = false;
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
+
+  constructor() {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      this.initVoice();
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.initVoice();
+      };
+      
+      // Global listener for Spacebar to pause/resume speech
+      window.addEventListener('keydown', (event) => {
+        const target = event.target as HTMLElement;
+        const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+        if (isInput) return;
+
+        if (event.key === ' ') {
+          event.preventDefault();
+          this.togglePause();
+        }
+      });
+    }
+  }
+
+  private initVoice(): void {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return;
+    
+    // Fallback chain for a consistent female English voice across platforms (Chrome Android, Windows, Mac)
+    this.selectedVoice = voices.find(v => v.name.includes('Google US English'))
+        || voices.find(v => v.name.includes('Google UK English Female'))
+        || voices.find(v => v.name.includes('Microsoft Zira'))
+        || voices.find(v => v.name.includes('Samantha') || v.name.includes('Victoria'))
+        || voices.find(v => v.lang.startsWith('en-') && v.name.toLowerCase().includes('female'))
+        || voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB')
+        || voices[0];
+  }
 
   public stop(): void {
+    this.isManualPause = false;
+    this.speechChunks = [];
+    this.currentChunkIndex = 0;
+    this.currentCharIndex = 0;
+    
+    if (this.currentUtterance) {
+      this.currentUtterance.onend = null;
+      this.currentUtterance.onboundary = null;
+    }
+
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
+  }
+
+  public togglePause(): void {
+    if (this.isManualPause) {
+      this.isManualPause = false;
+      
+      if (this.speechChunks.length > 0 && this.currentChunkIndex < this.speechChunks.length) {
+         let charsToRewind = 40; // Approx 3 seconds
+         if (this.currentCharIndex >= charsToRewind) {
+             this.currentCharIndex -= charsToRewind;
+         } else {
+             let remaining = charsToRewind - this.currentCharIndex;
+             if (this.currentChunkIndex > 0) {
+                 this.currentChunkIndex--;
+                 this.currentCharIndex = Math.max(0, this.speechChunks[this.currentChunkIndex].text.length - remaining);
+             } else {
+                 this.currentCharIndex = 0;
+             }
+         }
+
+         // Snap back to the beginning of a word
+         const chunkText = this.speechChunks[this.currentChunkIndex].text;
+         while (this.currentCharIndex > 0 && chunkText[this.currentCharIndex - 1] !== ' ') {
+           this.currentCharIndex--;
+         }
+         
+         this.playNextChunk();
+      }
+    } else {
+      // PAUSE
+      this.isManualPause = true;
+      if (this.currentUtterance) {
+         this.currentUtterance.onend = null; // Prevent race conditions
+      }
+      if (window.speechSynthesis) {
+         window.speechSynthesis.cancel(); // Cancel clears the native queue instantly
+      }
+    }
+  }
+
+  private playNextChunk(): void {
+    if (this.currentChunkIndex >= this.speechChunks.length) {
+      this.isManualPause = false;
+      return;
+    }
+    
+    const chunk = this.speechChunks[this.currentChunkIndex];
+    const textToSpeak = chunk.text.substring(this.currentCharIndex);
+    
+    if (textToSpeak.trim().length === 0) {
+      this.currentChunkIndex++;
+      this.currentCharIndex = 0;
+      this.playNextChunk();
+      return;
+    }
+
+    const baseCharIndex = this.currentCharIndex;
+    this.currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+    this.currentUtterance.rate = chunk.rate;
+    this.currentUtterance.pitch = 1.0;
+    if (this.selectedVoice) this.currentUtterance.voice = this.selectedVoice;
+
+    this.currentUtterance.onboundary = (event) => {
+      if (event.name === 'word') {
+         this.currentCharIndex = baseCharIndex + event.charIndex;
+      }
+    };
+
+    this.currentUtterance.onend = () => {
+      if (this.isManualPause) return;
+      
+      this.currentChunkIndex++;
+      this.currentCharIndex = 0;
+      this.playNextChunk();
+    };
+
+    window.speechSynthesis.speak(this.currentUtterance);
   }
 
   public speak(message: string): void {
@@ -31,22 +164,27 @@ export class TextToSpeechService {
     this.stop();
 
     if ('speechSynthesis' in window) {
-      // Split the message by our injected speed markers
-      const chunks = message.split(/(\[SLOW\]|\[NORMAL\])/);
-      let currentRate = 1.0;
+      window.speechSynthesis.resume(); // Ensure engine isn't permanently paused natively
+      
+      this.speechChunks = [];
+      const parts = message.split(/(\[SLOW\]|\[NORMAL\])/);
+      let currentRate = this.normalSpeed;
 
-      for (const chunk of chunks) {
-        if (chunk === '[SLOW]') {
-          currentRate = 0.75; // Slower rate for math equations
-        } else if (chunk === '[NORMAL]') {
-          currentRate = 1.0; // Return to normal rate
-        } else if (chunk.trim().length > 0) {
-          const utterance = new SpeechSynthesisUtterance(chunk);
-          utterance.rate = currentRate;
-          utterance.pitch = 1.0;
-          window.speechSynthesis.speak(utterance);
+      for (const part of parts) {
+        if (part === '[SLOW]') {
+          currentRate = this.slowSpeed;
+        } else if (part === '[NORMAL]') {
+          currentRate = this.normalSpeed;
+        } else if (part.trim().length > 0) {
+          this.speechChunks.push({ text: part, rate: currentRate });
         }
       }
+
+      this.currentChunkIndex = 0;
+      this.currentCharIndex = 0;
+      this.isManualPause = false;
+      
+      this.playNextChunk();
     } else {
       console.warn('Text-to-Speech is not supported in this browser.');
     }
@@ -82,10 +220,72 @@ export class TextToSpeechService {
       "To select an answer, press the corresponding option letter, for example A, B, or C. " +
       "To navigate to the next question, press letter N. " +
       "To navigate to the previous question, press letter P. " +
+      "To pause or resume reading, press the spacebar. " +
       "To get started, press letter Q to read the current question.";
       
     this.speak(message);
     this.hasAnnouncedWelcome = true;
+  }
+
+  public announceOverview(): void {
+    const storeData = this._store.store();
+    const loginData = storeData.loginData;
+    const preloginData = storeData.preloginData;
+    const sections = storeData.sections || [];
+    const examDuration = storeData.examDuration;
+    const totalQuestions = sections.reduce((s: number, item: any) => s + (item.items?.length || 0), 0);
+
+    let message = `Welcome to ${loginData?.assessment_data?.name || 'the Exam'}. `;
+    if (preloginData?.description) {
+      message += `${preloginData.description}. `;
+    }
+
+    message += `Candidate name: ${loginData?.candidate_data?.name || 'Unknown'}. `;
+    
+    if (loginData?.candidate_data?.login_field_value) {
+      message += `Login ID: ${loginData.candidate_data.login_field_value}. `;
+    }
+
+    message += `Exam Details. `;
+    message += `Sections: ${sections.length}. `;
+    message += `Total Questions: ${totalQuestions}. `;
+    message += `Exam Duration: ${examDuration} minutes. `;
+
+    if (sections.length > 0) {
+      message += `The sections are: `;
+      sections.forEach((sec: any, idx: number) => {
+        message += `Section ${idx + 1}: ${sec.name}. `;
+      });
+    }
+
+    message += `Please confirm the exam information before continuing.`;
+
+    this.speak(message);
+  }
+
+  public async announceInstructions(): Promise<void> {
+    const storeData = this._store.store();
+    const loginData = storeData.loginData;
+    
+    let message = `Instructions. Please read through the following instruction sets carefully. `;
+    
+    if (loginData?.sections_questions) {
+      for (const item of loginData.sections_questions) {
+        if (item.section_settings?.section_instruction) {
+           message += `Instructions for ${item.name}: `;
+           const plainInstruction = await this._speechParser.parseHtmlForSpeech(item.section_settings.section_instruction);
+           message += `${plainInstruction}. `;
+        }
+      }
+    }
+
+    if (loginData?.assessment_data?.start_exam_instruction) {
+      message += `Exam Instructions: `;
+      const plainInstruction = await this._speechParser.parseHtmlForSpeech(loginData.assessment_data.start_exam_instruction);
+      message += `${plainInstruction}. `;
+    }
+
+    this.speak(message);
   }
 
   public autoAnnounceQuestion(): void {

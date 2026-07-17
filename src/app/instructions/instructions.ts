@@ -7,7 +7,7 @@ import { interval } from 'rxjs';
 import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
 import { SafeHtmlPipe } from '../utils/safe-html.pipe';
-
+import { TextToSpeechService } from '../services/reader/text-to-speech';
 
 @Component({
   selector: 'app-instructions',
@@ -20,6 +20,7 @@ export default class Instructions implements OnInit {
   private _router = inject(Router)
   private _toast = inject(HotToastService)
   private _eventService = inject(EventService)
+  private _tts = inject(TextToSpeechService)
 
   store = computed(() => this._store.store())
   totalQuestions = computed(() => this.store().sections.reduce((s, item) => s + item.items.length, 0))
@@ -34,6 +35,9 @@ export default class Instructions implements OnInit {
 
   ngOnInit() {  
     this._eventService.logEvent({ event_type: CandidateEventType.INSTRUCTIONS_VIEWED });
+    setTimeout(() => {
+      this._tts.announceInstructions();
+    }, 500);
   }
 
   done = effect(() => {

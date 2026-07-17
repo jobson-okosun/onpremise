@@ -38,6 +38,28 @@ export class App {
     this._tauriService.updatePlatformType() 
     this._dataService.downloadOrganizationAssets()
     this._tauriService.initializeBatteryStatus()
+    this.unlockSpeechSynthesis()
+  }
+
+  private unlockSpeechSynthesis() {
+    let unlocked = false;
+    const unlock = () => {
+      if (unlocked) return;
+      unlocked = true;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.resume();
+        const utterance = new SpeechSynthesisUtterance(' ');
+        utterance.volume = 0;
+        utterance.rate = 10;
+        window.speechSynthesis.speak(utterance);
+      }
+      document.removeEventListener('click', unlock);
+      document.removeEventListener('touchstart', unlock);
+      document.removeEventListener('keydown', unlock);
+    };
+    document.addEventListener('click', unlock);
+    document.addEventListener('touchstart', unlock);
+    document.addEventListener('keydown', unlock);
   }
 
   private updateRouteInfo() {
