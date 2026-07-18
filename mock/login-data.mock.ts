@@ -11,7 +11,7 @@ export const loginData = {
     ],
     "login_times": [],
     "passport": "https://cdn.example.com/passports/john_doe.png",
-    "accessibility_support": "YES"
+    "accessibility_support": "NO"
   },
   "sections_overview": [
     {
@@ -41,10 +41,9 @@ export const loginData = {
     "preserve_section_order": true,
     "font_size": "DEFAULT",
     "compensatory_time_value": 10,
-    "exam_type": 'EXAMALPHA'
+    "exam_type": "EXAMALPHA"
   },
   "sections_questions": [
-
     {
       "id": "SEC-ENG-2",
       "name": "CHEMISTRY",
@@ -68,161 +67,361 @@ export const loginData = {
           "items": [
             {
               "id": "ENG-Q9",
-              "stimulus": `<p>The derivative of<span class="math-expression" data-latex="f(x)=e^{x^2}\text{ is }f^{\prime}(x)=e^{x^2}\text{.}" contenteditable="false" style="display: inline-block; vertical-align: middle; margin: 4px 5px; padding: 2px 0;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>&nbsp;is&nbsp;</mtext><msup><mi>f</mi><mo mathvariant="normal" lspace="0em" rspace="0em">&prime;</mo></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>.</mtext></mrow><annotation encoding="application/x-tex">f(x)=e^{x^2}\text{ is }f^{\prime}(x)=e^{x^2}\text{.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.2369em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.9869em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">&nbsp;is&nbsp;</span></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.7519em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">&prime;</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.9869em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.9869em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">.</span></span></span></span></span></span>&nbsp;</p>`,
+              "stimulus": "<p>The derivative of<span class=\"math-expression\" data-latex=\"f(x)=e^{x^2}\text{ is }f^{prime}(x)=e^{x^2}\text{.}\" contenteditable=\"false\" style=\"display: inline-block; vertical-align: middle; margin: 4px 5px; padding: 2px 0;\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>&nbsp;is&nbsp;</mtext><msup><mi>f</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">&prime;</mo></msup><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mtext>.</mtext></mrow><annotation encoding=\"application/x-tex\">f(x)=e^{x^2}\text{ is }f^{prime}(x)=e^{x^2}\text{.}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height: 1em; vertical-align: -0.25em;\"></span><span class=\"mord mathnormal\" style=\"margin-right: 0.1076em;\">f</span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">x</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height: 1.2369em; vertical-align: -0.25em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\">e</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.9869em;\"><span style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">x</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.8913em;\"><span style=\"top: -2.931em; margin-right: 0.0714em;\"><span class=\"pstrut\" style=\"height: 2.5em;\"></span><span class=\"sizing reset-size3 size1 mtight\"><span class=\"mord mtight\">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class=\"mord text\"><span class=\"mord\">&nbsp;is&nbsp;</span></span><span class=\"mord\"><span class=\"mord mathnormal\" style=\"margin-right: 0.1076em;\">f</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.7519em;\"><span style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">&prime;</span></span></span></span></span></span></span></span></span><span class=\"mopen\">(</span><span class=\"mord mathnormal\">x</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height: 0.9869em;\"></span><span class=\"mord\"><span class=\"mord mathnormal\">e</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.9869em;\"><span style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\"><span class=\"mord mathnormal mtight\">x</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.8913em;\"><span style=\"top: -2.931em; margin-right: 0.0714em;\"><span class=\"pstrut\" style=\"height: 2.5em;\"></span><span class=\"sizing reset-size3 size1 mtight\"><span class=\"mord mtight\">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class=\"mord text\"><span class=\"mord\">.</span></span></span></span></span></span>&nbsp;</p>",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              id: 'ENG-Qasfasfa8',
-              stimulus: "Which of the <b>following</b> words are <i>coordinating</i> <u>conjunctions</u>?",
-              options: [
-                { label: 'For', value: 'for' },
-                { label: 'Although', value: 'although' },
-                { label: 'Nor', value: 'nor' },
-                { label: 'Because', value: 'because' },
+              "id": "ENG-Qasfasfa8",
+              "stimulus": "Which of the <b>following</b> words are <i>coordinating</i> <u>conjunctions</u>?",
+              "options": [
+                {
+                  "label": "For",
+                  "value": "0"
+                },
+                {
+                  "label": "Although",
+                  "value": "1"
+                },
+                {
+                  "label": "Nor",
+                  "value": "2"
+                },
+                {
+                  "label": "Because",
+                  "value": "3"
+                }
               ],
-              item_type: 'MRQ',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "MRQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1asafaWD2',
-              stimulus: "The word 'ostracize' means to welcome someone warmly into a group.",
-              options: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' }
+              "id": "ENG-Q1asafaWD2",
+              "stimulus": "The word 'ostracize' means to welcome someone warmly into a group.",
+              "options": [
+                {
+                  "label": "True",
+                  "value": "0"
+                },
+                {
+                  "label": "False",
+                  "value": "1"
+                }
               ],
-              item_type: 'TRUE_FALSE',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "TRUE_FALSE",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1safsfa4',
-              stimulus: 'Is the word "ephemeral" used to describe something that lasts for a very long time?',
-              options: [
-                { label: 'Yes', value: 'yes' },
-                { label: 'No', value: 'no' }
+              "id": "ENG-Q1safsfa4",
+              "stimulus": "Is the word \"ephemeral\" used to describe something that lasts for a very long time?",
+              "options": [
+                {
+                  "label": "Yes",
+                  "value": "0"
+                },
+                {
+                  "label": "No",
+                  "value": "1"
+                }
               ],
-              item_type: 'YES_NO',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "YES_NO",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
               "id": "ENG-SUM-1112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_DROPDOWN",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -233,99 +432,247 @@ export const loginData = {
               "id": "ENG-SUM-112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_TEXT",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -336,99 +683,247 @@ export const loginData = {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZERADIO",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -439,16 +934,32 @@ export const loginData = {
               "id": "ENG-Q63",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "DRAWING_AND_WRITING",
               "background_type": "LINE",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -456,10 +967,22 @@ export const loginData = {
               "id": "ENG-Qf6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "SHORT_TEXT",
               "background_type": "GRID",
@@ -469,7 +992,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -477,10 +1004,22 @@ export const loginData = {
               "id": "ENG-Qfjd6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_RICH_TEXT",
               "background_type": "GRID",
@@ -490,7 +1029,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -498,10 +1041,22 @@ export const loginData = {
               "id": "ENG-Qfffj6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_PLAIN_TEXT",
               "background_type": "GRID",
@@ -511,7 +1066,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -525,10 +1084,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ASSOCIATION",
               "background_type": "GRID",
@@ -538,7 +1109,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -552,10 +1127,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ORDER_LIST",
               "background_type": "GRID",
@@ -565,7 +1152,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -573,45 +1164,61 @@ export const loginData = {
               "id": "ENG-IMG-MAP-001",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_TEXT_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 1026,
                 "height": 1083
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "stems": [
                 "<p>1. Nile River</p>",
                 "<p>2. Sahara Desert</p>",
                 "<p>3. Congo Rainforest</p>",
                 "<p>4. Kalahari Desert</p>"
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -619,118 +1226,233 @@ export const loginData = {
               "id": "ENG-IMG-MAP-002",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_DROPDOWN_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -738,118 +1460,236 @@ export const loginData = {
               "id": "ENG-IMG-MAP-003",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "IMAGE_DRAG_AND_DROP",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30, "direction": "LEFT", "width": 160, "height": 90 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30,
+                  "direction": "LEFT",
+                  "width": 160,
+                  "height": 90
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -865,14 +1705,19 @@ export const loginData = {
                 "<p>Hydropower plants use the movement of water to create electricity.</p>"
               ],
               "options": [
-                { "label": "<p>True</p>", "value": "true" },
-                { "label": "<p>False</p>", "value": "false" }
+                {
+                  "label": "<p>True</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>False</p>",
+                  "value": "1"
+                }
               ],
               "responses": [],
               "drawing_writing_split_type": "NONE",
               "revisit": false
             }
-
           ],
           "passages": []
         },
@@ -893,15 +1738,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Natural cycles",
-                      "value": "natural"
+                      "value": "0"
                     },
                     {
                       "label": "Human activities",
-                      "value": "human"
+                      "value": "1"
                     },
                     {
                       "label": "Volcanoes",
-                      "value": "volcano"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -921,15 +1766,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Critical",
-                      "value": "critical"
+                      "value": "0"
                     },
                     {
                       "label": "Neutral",
-                      "value": "neutral"
+                      "value": "1"
                     },
                     {
                       "label": "Praising",
-                      "value": "praising"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -948,7 +1793,7 @@ export const loginData = {
           ]
         }
       ],
-      "section_type": 'OBJECTIVE'
+      "section_type": "OBJECTIVE"
     },
     {
       "id": "SEC-ENG-1",
@@ -977,19 +1822,33 @@ export const loginData = {
           "items": [
             {
               "id": "ENG-Q9",
-              "stimulus": `
-                An agricultural science student set up an experiment using three identical potted plants. Plant A was placed in a dark cupboard. Plant B was left in the open sunlight but its leaves were completely smeared with petroleum jelly (Vaseline). Plant C was left in the open sunlight with no treatment. All three plants were watered equally for five days.
-              `,
+              "stimulus": "\n                An agricultural science student set up an experiment using three identical potted plants. Plant A was placed in a dark cupboard. Plant B was left in the open sunlight but its leaves were completely smeared with petroleum jelly (Vaseline). Plant C was left in the open sunlight with no treatment. All three plants were watered equally for five days.\n              ",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "DRAWING_AND_WRITING",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false,
               "sub_questions": [
@@ -1064,18 +1923,34 @@ export const loginData = {
               "id": "ENG-Q9132",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "DRAWING_AND_WRITING",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
-            },
+            }
           ],
           "passages": []
         },
@@ -1093,15 +1968,31 @@ export const loginData = {
               "id": "ENG-Q91",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1109,15 +2000,31 @@ export const loginData = {
               "id": "ENG-Q913",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1125,15 +2032,31 @@ export const loginData = {
               "id": "ENG-Q9131",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1141,15 +2064,31 @@ export const loginData = {
               "id": "ENG-Q9133",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1157,121 +2096,236 @@ export const loginData = {
               "id": "ENG-IMG-MAP-002",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_DROPDOWN_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
-            },
+            }
           ],
           "passages": []
         },
@@ -1295,15 +2349,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Natural cycles",
-                      "value": "natural"
+                      "value": "0"
                     },
                     {
                       "label": "Human activities",
-                      "value": "human"
+                      "value": "1"
                     },
                     {
                       "label": "Volcanoes",
-                      "value": "volcano"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -1323,15 +2377,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Critical",
-                      "value": "critical"
+                      "value": "0"
                     },
                     {
                       "label": "Neutral",
-                      "value": "neutral"
+                      "value": "1"
                     },
                     {
                       "label": "Praising",
-                      "value": "praising"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -1350,7 +2404,7 @@ export const loginData = {
           ]
         }
       ],
-      "section_type": 'THEORY'
+      "section_type": "THEORY"
     },
     {
       "id": "SEC-ENG-23",
@@ -1377,159 +2431,359 @@ export const loginData = {
               "id": "ENG-Q9",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              id: 'ENG-Qasfasfa8',
-              stimulus: "Which of the following words are coordinating conjunctions?",
-              options: [
-                { label: 'For', value: 'for' },
-                { label: 'Although', value: 'although' },
-                { label: 'Nor', value: 'nor' },
-                { label: 'Because', value: 'because' },
+              "id": "ENG-Qasfasfa8",
+              "stimulus": "Which of the following words are coordinating conjunctions?",
+              "options": [
+                {
+                  "label": "For",
+                  "value": "0"
+                },
+                {
+                  "label": "Although",
+                  "value": "1"
+                },
+                {
+                  "label": "Nor",
+                  "value": "2"
+                },
+                {
+                  "label": "Because",
+                  "value": "3"
+                }
               ],
-              item_type: 'MRQ',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "MRQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1asafaWD2',
-              stimulus: "The word 'ostracize' means to welcome someone warmly into a group.",
-              options: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' }
+              "id": "ENG-Q1asafaWD2",
+              "stimulus": "The word 'ostracize' means to welcome someone warmly into a group.",
+              "options": [
+                {
+                  "label": "True",
+                  "value": "0"
+                },
+                {
+                  "label": "False",
+                  "value": "1"
+                }
               ],
-              item_type: 'TRUE_FALSE',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "TRUE_FALSE",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1safsfa4',
-              stimulus: 'Is the word "ephemeral" used to describe something that lasts for a very long time?',
-              options: [
-                { label: 'Yes', value: 'yes' },
-                { label: 'No', value: 'no' }
+              "id": "ENG-Q1safsfa4",
+              "stimulus": "Is the word \"ephemeral\" used to describe something that lasts for a very long time?",
+              "options": [
+                {
+                  "label": "Yes",
+                  "value": "0"
+                },
+                {
+                  "label": "No",
+                  "value": "1"
+                }
               ],
-              item_type: 'YES_NO',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "YES_NO",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
               "id": "ENG-SUM-1112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_DROPDOWN",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -1540,99 +2794,247 @@ export const loginData = {
               "id": "ENG-SUM-112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_TEXT",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -1643,99 +3045,247 @@ export const loginData = {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZERADIO",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -1746,16 +3296,32 @@ export const loginData = {
               "id": "ENG-Q64",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "DRAWING_AND_WRITING",
               "background_type": "LINE",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1763,10 +3329,22 @@ export const loginData = {
               "id": "ENG-Qf6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "SHORT_TEXT",
               "background_type": "GRID",
@@ -1776,7 +3354,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1784,10 +3366,22 @@ export const loginData = {
               "id": "ENG-Qfjd6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_RICH_TEXT",
               "background_type": "GRID",
@@ -1797,7 +3391,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1805,10 +3403,22 @@ export const loginData = {
               "id": "ENG-Qfffj6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_PLAIN_TEXT",
               "background_type": "GRID",
@@ -1818,7 +3428,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1832,10 +3446,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ASSOCIATION",
               "background_type": "GRID",
@@ -1845,7 +3471,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1859,10 +3489,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ORDER_LIST",
               "background_type": "GRID",
@@ -1872,7 +3514,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1880,45 +3526,61 @@ export const loginData = {
               "id": "ENG-IMG-MAP-001",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_TEXT_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 1026,
                 "height": 1083
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "stems": [
                 "<p>1. Nile River</p>",
                 "<p>2. Sahara Desert</p>",
                 "<p>3. Congo Rainforest</p>",
                 "<p>4. Kalahari Desert</p>"
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -1926,118 +3588,233 @@ export const loginData = {
               "id": "ENG-IMG-MAP-002",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_DROPDOWN_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2045,118 +3822,234 @@ export const loginData = {
               "id": "ENG-IMG-MAP-003",
               "stimulus": "<p><strong>..Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "IMAGE_DRAG_AND_DROP",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30, "direction": 'LEFT' },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30,
+                  "direction": "LEFT"
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2172,14 +4065,19 @@ export const loginData = {
                 "<p>Hydropower plants use the movement of water to create electricity.</p>"
               ],
               "options": [
-                { "label": "<p>True</p>", "value": "true" },
-                { "label": "<p>False</p>", "value": "false" }
+                {
+                  "label": "<p>True</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>False</p>",
+                  "value": "1"
+                }
               ],
               "responses": [],
               "drawing_writing_split_type": "NONE",
               "revisit": false
             }
-
           ],
           "passages": []
         },
@@ -2200,15 +4098,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Natural cycles",
-                      "value": "natural"
+                      "value": "0"
                     },
                     {
                       "label": "Human activities",
-                      "value": "human"
+                      "value": "1"
                     },
                     {
                       "label": "Volcanoes",
-                      "value": "volcano"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -2228,15 +4126,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Critical",
-                      "value": "critical"
+                      "value": "0"
                     },
                     {
                       "label": "Neutral",
-                      "value": "neutral"
+                      "value": "1"
                     },
                     {
                       "label": "Praising",
-                      "value": "praising"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -2255,7 +4153,7 @@ export const loginData = {
           ]
         }
       ],
-      "section_type": 'OBJECTIVE'
+      "section_type": "OBJECTIVE"
     },
     {
       "id": "SEC-ENG-235",
@@ -2282,159 +4180,359 @@ export const loginData = {
               "id": "ENG-Q9",
               "stimulus": "Which word is a noun?",
               "options": [
-                { "label": "Run", "value": "run" },
-                { "label": "Beauty", "value": "beauty" },
-                { "label": "Quickly", "value": "quickly" },
-                { "label": "Blue", "value": "blue" }
+                {
+                  "label": "Run",
+                  "value": "0"
+                },
+                {
+                  "label": "Beauty",
+                  "value": "1"
+                },
+                {
+                  "label": "Quickly",
+                  "value": "2"
+                },
+                {
+                  "label": "Blue",
+                  "value": "3"
+                }
               ],
               "item_type": "MCQ",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
             {
-              id: 'ENG-Qasfasfa8',
-              stimulus: "Which of the following words are coordinating conjunctions?",
-              options: [
-                { label: 'For', value: 'for' },
-                { label: 'Although', value: 'although' },
-                { label: 'Nor', value: 'nor' },
-                { label: 'Because', value: 'because' },
+              "id": "ENG-Qasfasfa8",
+              "stimulus": "Which of the following words are coordinating conjunctions?",
+              "options": [
+                {
+                  "label": "For",
+                  "value": "0"
+                },
+                {
+                  "label": "Although",
+                  "value": "1"
+                },
+                {
+                  "label": "Nor",
+                  "value": "2"
+                },
+                {
+                  "label": "Because",
+                  "value": "3"
+                }
               ],
-              item_type: 'MRQ',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "MRQ",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1asafaWD2',
-              stimulus: "The word 'ostracize' means to welcome someone warmly into a group.",
-              options: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' }
+              "id": "ENG-Q1asafaWD2",
+              "stimulus": "The word 'ostracize' means to welcome someone warmly into a group.",
+              "options": [
+                {
+                  "label": "True",
+                  "value": "0"
+                },
+                {
+                  "label": "False",
+                  "value": "1"
+                }
               ],
-              item_type: 'TRUE_FALSE',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "TRUE_FALSE",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
-              id: 'ENG-Q1safsfa4',
-              stimulus: 'Is the word "ephemeral" used to describe something that lasts for a very long time?',
-              options: [
-                { label: 'Yes', value: 'yes' },
-                { label: 'No', value: 'no' }
+              "id": "ENG-Q1safsfa4",
+              "stimulus": "Is the word \"ephemeral\" used to describe something that lasts for a very long time?",
+              "options": [
+                {
+                  "label": "Yes",
+                  "value": "0"
+                },
+                {
+                  "label": "No",
+                  "value": "1"
+                }
               ],
-              item_type: 'YES_NO',
-              responses: [],
-              max_responses: 1,
-              image_data: { image: '', width: null, height: null },
-              drawing_writing_split_type: 'NONE',
-              revisit: false,
+              "item_type": "YES_NO",
+              "responses": [],
+              "max_responses": 1,
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
+              "drawing_writing_split_type": "NONE",
+              "revisit": false
             },
             {
               "id": "ENG-SUM-1112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_DROPDOWN",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -2445,99 +4543,247 @@ export const loginData = {
               "id": "ENG-SUM-112",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZE_TEXT",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -2548,99 +4794,247 @@ export const loginData = {
               "id": "ENG-SUM-11-2",
               "stimulus": "The rapid rise of digital media has significantly changed the way people consume news and information. In the past, individuals relied heavily on newspapers and scheduled television broadcasts for updates on world events. Today, however, information is available instantly on smartphones, social platforms, and online publications. While this shift has increased accessibility, it has also introduced new challenges. One major concern is the spread of {{response}}, which can mislead the public and create widespread {{response}}. Another issue is the pressure placed on traditional news organizations to deliver content quickly rather than {{response}} ensuring accuracy. As a result, journalists often face tight deadlines and intense {{response}} from online creators who publish content without undergoing the same editorial processes.\n\nTo address these challenges, educators argue that teaching media literacy is essential. Media literacy helps students understand how information is {{response}}, how it spreads, and how to evaluate its reliability. For example, learners are encouraged to question the {{response}} of a source, check for supporting {{response}}, and compare information across multiple {{response}}. With these skills, individuals can better distinguish trustworthy reports from misleading ones.\n\nDespite the difficulties brought about by the digital age, experts believe that the transformation of media also offers significant {{response}}. Audiences now have the chance to engage with news in interactive ways, participate in {{response}}, and access diverse viewpoints from around the world. Ultimately, the future of journalism may depend on society’s ability to balance the benefits of instant information with the need for critical and responsible {{response}}.",
               "item_type": "CLOZERADIO",
-              "responses": ["", "", "", "", "", "", "", "", "", "", ""],
+              "responses": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
               "max_responses": 10,
               "passage_stimulus": "",
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "response_positions": [
-                { "x": 25, "y": 18 },
-                { "x": 40, "y": 25 },
-                { "x": 52, "y": 32 },
-                { "x": 60, "y": 42 },
-                { "x": 40, "y": 55 },
-                { "x": 45, "y": 62 },
-                { "x": 50, "y": 68 },
-                { "x": 55, "y": 74 },
-                { "x": 65, "y": 82 },
-                { "x": 70, "y": 88 },
-                { "x": 70, "y": 88 }
+                {
+                  "x": 25,
+                  "y": 18
+                },
+                {
+                  "x": 40,
+                  "y": 25
+                },
+                {
+                  "x": 52,
+                  "y": 32
+                },
+                {
+                  "x": 60,
+                  "y": 42
+                },
+                {
+                  "x": 40,
+                  "y": 55
+                },
+                {
+                  "x": 45,
+                  "y": 62
+                },
+                {
+                  "x": 50,
+                  "y": 68
+                },
+                {
+                  "x": 55,
+                  "y": 74
+                },
+                {
+                  "x": 65,
+                  "y": 82
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                },
+                {
+                  "x": 70,
+                  "y": 88
+                }
               ],
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
@@ -2651,16 +5045,32 @@ export const loginData = {
               "id": "ENG-Q65",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "DRAWING_AND_WRITING",
               "background_type": "LINE",
               "responses": [],
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2668,10 +5078,22 @@ export const loginData = {
               "id": "ENG-Qf6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "SHORT_TEXT",
               "background_type": "GRID",
@@ -2681,7 +5103,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2689,10 +5115,22 @@ export const loginData = {
               "id": "ENG-Qfjd6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_RICH_TEXT",
               "background_type": "GRID",
@@ -2702,7 +5140,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2710,10 +5152,22 @@ export const loginData = {
               "id": "ENG-Qfffj6",
               "stimulus": "What is the antonym of 'Brave'?",
               "options": [
-                { "label": "Courageous", "value": "courageous" },
-                { "label": "Fearful", "value": "fearful" },
-                { "label": "Bold", "value": "bold" },
-                { "label": "Daring", "value": "daring" }
+                {
+                  "label": "Courageous",
+                  "value": "0"
+                },
+                {
+                  "label": "Fearful",
+                  "value": "1"
+                },
+                {
+                  "label": "Bold",
+                  "value": "2"
+                },
+                {
+                  "label": "Daring",
+                  "value": "3"
+                }
               ],
               "item_type": "ESSAY_PLAIN_TEXT",
               "background_type": "GRID",
@@ -2723,7 +5177,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2737,10 +5195,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ASSOCIATION",
               "background_type": "GRID",
@@ -2750,7 +5220,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2764,10 +5238,22 @@ export const loginData = {
                 "<p><strong>4. Brazil</strong></p>"
               ],
               "options": [
-                { "label": "<p>Tokyo</p>", "value": "tokyo" },
-                { "label": "<p>Ottawa</p>", "value": "ottawa" },
-                { "label": "<p>Brasília</p>", "value": "brasilia" },
-                { "label": "<p>Paris</p>", "value": "paris" }
+                {
+                  "label": "<p>Tokyo</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Ottawa</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Brasília</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Paris</p>",
+                  "value": "3"
+                }
               ],
               "item_type": "ORDER_LIST",
               "background_type": "GRID",
@@ -2777,7 +5263,11 @@ export const loginData = {
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-              "image_data": { "image": "", "width": null, "height": null },
+              "image_data": {
+                "image": "",
+                "width": null,
+                "height": null
+              },
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2785,45 +5275,61 @@ export const loginData = {
               "id": "ENG-IMG-MAP-001",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_TEXT_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 1026,
                 "height": 1083
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "stems": [
                 "<p>1. Nile River</p>",
                 "<p>2. Sahara Desert</p>",
                 "<p>3. Congo Rainforest</p>",
                 "<p>4. Kalahari Desert</p>"
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2831,118 +5337,233 @@ export const loginData = {
               "id": "ENG-IMG-MAP-002",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "CLOZE_DROPDOWN_IMAGE",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -2950,118 +5571,233 @@ export const loginData = {
               "id": "ENG-IMG-MAP-003",
               "stimulus": "<p><strong>Study the map carefully. Then drag the correct labels from the options below into the empty boxes on the image.</strong></p>",
               "passage_stimulus": "<p>This map highlights four major geographical features in Africa. Your task is to correctly identify each location by placing the appropriate label into the matching box on the image.</p>",
-
               "item_type": "IMAGE_DRAG_AND_DROP",
               "background_type": "IMAGE",
-
               "image_data": {
                 "image": "pngtree-map-of-nigeria-stylized-png-image_10468519.png",
                 "width": 402,
                 "height": 361
               },
-
               "response_positions": [
-                { "x": 22, "y": 30 },
-                { "x": 63, "y": 28 },
-                { "x": 28, "y": 72 },
-                { "x": 70, "y": 75 }
+                {
+                  "x": 22,
+                  "y": 30
+                },
+                {
+                  "x": 63,
+                  "y": 28
+                },
+                {
+                  "x": 28,
+                  "y": 72
+                },
+                {
+                  "x": 70,
+                  "y": 75
+                }
               ],
-
               "possible_responses": [
                 {
                   "responses": [
-                    { "label": "misinformation", "value": "misinformation" },
-                    { "label": "advertising", "value": "advertising" },
-                    { "label": "technology", "value": "technology" }
+                    {
+                      "label": "misinformation",
+                      "value": "0"
+                    },
+                    {
+                      "label": "advertising",
+                      "value": "1"
+                    },
+                    {
+                      "label": "technology",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "confusion", "value": "confusion" },
-                    { "label": "clarity", "value": "clarity" },
-                    { "label": "accuracy", "value": "accuracy" }
+                    {
+                      "label": "confusion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "clarity",
+                      "value": "1"
+                    },
+                    {
+                      "label": "accuracy",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "carefully", "value": "carefully" },
-                    { "label": "rarely", "value": "rarely" },
-                    { "label": "publicly", "value": "publicly" }
+                    {
+                      "label": "carefully",
+                      "value": "0"
+                    },
+                    {
+                      "label": "rarely",
+                      "value": "1"
+                    },
+                    {
+                      "label": "publicly",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "competition", "value": "competition" },
-                    { "label": "collaboration", "value": "collaboration" },
-                    { "label": "curiosity", "value": "curiosity" }
+                    {
+                      "label": "competition",
+                      "value": "0"
+                    },
+                    {
+                      "label": "collaboration",
+                      "value": "1"
+                    },
+                    {
+                      "label": "curiosity",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "created", "value": "created" },
-                    { "label": "shared", "value": "shared" },
-                    { "label": "edited", "value": "edited" }
+                    {
+                      "label": "created",
+                      "value": "0"
+                    },
+                    {
+                      "label": "shared",
+                      "value": "1"
+                    },
+                    {
+                      "label": "edited",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "credibility", "value": "credibility" },
-                    { "label": "length", "value": "length" },
-                    { "label": "tone", "value": "tone" }
+                    {
+                      "label": "credibility",
+                      "value": "0"
+                    },
+                    {
+                      "label": "length",
+                      "value": "1"
+                    },
+                    {
+                      "label": "tone",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "evidence", "value": "evidence" },
-                    { "label": "comments", "value": "comments" },
-                    { "label": "opinions", "value": "opinions" }
+                    {
+                      "label": "evidence",
+                      "value": "0"
+                    },
+                    {
+                      "label": "comments",
+                      "value": "1"
+                    },
+                    {
+                      "label": "opinions",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "outlets", "value": "outlets" },
-                    { "label": "platforms", "value": "platforms" },
-                    { "label": "channels", "value": "channels" }
+                    {
+                      "label": "outlets",
+                      "value": "0"
+                    },
+                    {
+                      "label": "platforms",
+                      "value": "1"
+                    },
+                    {
+                      "label": "channels",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "opportunities", "value": "opportunities" },
-                    { "label": "problems", "value": "problems" },
-                    { "label": "dangers", "value": "dangers" }
+                    {
+                      "label": "opportunities",
+                      "value": "0"
+                    },
+                    {
+                      "label": "problems",
+                      "value": "1"
+                    },
+                    {
+                      "label": "dangers",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion", "value": "discussion" },
-                    { "label": "entertainment", "value": "entertainment" },
-                    { "label": "consumption", "value": "consumption" }
+                    {
+                      "label": "discussion",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption",
+                      "value": "2"
+                    }
                   ]
                 },
                 {
                   "responses": [
-                    { "label": "discussion-1", "value": "discussion-1" },
-                    { "label": "entertainment-1", "value": "entertainment-1" },
-                    { "label": "consumption-1", "value": "consumption-1" }
+                    {
+                      "label": "discussion-1",
+                      "value": "0"
+                    },
+                    {
+                      "label": "entertainment-1",
+                      "value": "1"
+                    },
+                    {
+                      "label": "consumption-1",
+                      "value": "2"
+                    }
                   ]
                 }
               ],
-
               "options": [
-                { "label": "<p>Nile River</p>", "value": "nile_river" },
-                { "label": "<p>Sahara Desert</p>", "value": "sahara_desert" },
-                { "label": "<p>Congo Rainforest</p>", "value": "congo_rainforest" },
-                { "label": "<p>Kalahari Desert</p>", "value": "kalahari_desert" }
+                {
+                  "label": "<p>Nile River</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>Sahara Desert</p>",
+                  "value": "1"
+                },
+                {
+                  "label": "<p>Congo Rainforest</p>",
+                  "value": "2"
+                },
+                {
+                  "label": "<p>Kalahari Desert</p>",
+                  "value": "3"
+                }
               ],
-
               "responses": [],
-
               "max_words": 5,
               "max_length": 50,
               "allow_paste": false,
               "allow_copy": false,
               "max_responses": 1,
-
               "drawing_writing_split_type": "NONE",
               "revisit": false
             },
@@ -3077,14 +5813,19 @@ export const loginData = {
                 "<p>Hydropower plants use the movement of water to create electricity.</p>"
               ],
               "options": [
-                { "label": "<p>True</p>", "value": "true" },
-                { "label": "<p>False</p>", "value": "false" }
+                {
+                  "label": "<p>True</p>",
+                  "value": "0"
+                },
+                {
+                  "label": "<p>False</p>",
+                  "value": "1"
+                }
               ],
               "responses": [],
               "drawing_writing_split_type": "NONE",
               "revisit": false
             }
-
           ],
           "passages": []
         },
@@ -3105,15 +5846,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Natural cycles",
-                      "value": "natural"
+                      "value": "0"
                     },
                     {
                       "label": "Human activities",
-                      "value": "human"
+                      "value": "1"
                     },
                     {
                       "label": "Volcanoes",
-                      "value": "volcano"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -3133,15 +5874,15 @@ export const loginData = {
                   "options": [
                     {
                       "label": "Critical",
-                      "value": "critical"
+                      "value": "0"
                     },
                     {
                       "label": "Neutral",
-                      "value": "neutral"
+                      "value": "1"
                     },
                     {
                       "label": "Praising",
-                      "value": "praising"
+                      "value": "2"
                     }
                   ],
                   "item_type": "MCQ",
@@ -3160,10 +5901,9 @@ export const loginData = {
           ]
         }
       ],
-      "section_type": 'OBJECTIVE'
-    },
+      "section_type": "OBJECTIVE"
+    }
   ],
   "events_session_id": "aa-11b",
-  "resume_elapsed_ms": 0,
-}
-
+  "resume_elapsed_ms": 0
+};
