@@ -239,12 +239,7 @@ export default class PreviewModeLayout implements OnDestroy {
               value: opt.value
             })) : undefined,
             stems: item.stems || undefined,
-            possible_responses: item.possibleResponses ? item.possibleResponses.map((pr: any) => ({
-              responses: (pr.responses || []).map((resp: any) => ({
-                label: typeof resp === 'string' ? resp : (resp.label || resp),
-                value: typeof resp === 'string' ? resp : (resp.value || resp)
-              }))
-            })) : undefined,
+            possible_responses: item.possibleResponses ?? [], 
             response_positions: item.responsePositions || undefined,
             item_type: item.itemType as ItemType,
             numerical: true,
@@ -383,40 +378,6 @@ export default class PreviewModeLayout implements OnDestroy {
 
   setFontSize(el: HTMLInputElement) {
     this.questionFontSize.set(+el.value)
-  }
-
-  nextQuestion() {
-    this.paginator()?.next()
-  }
-
-  prev() {
-    this.paginator()?.prev()
-  }
-
-  nextSection() {
-    this.paginator()?.nextSection()
-  }
-
-  prevSection() {
-    this.paginator()?.prevSection()
-  }
-
-  logout() {
-    this._exam.logout()
-  }
-
-  togglePane(i: number) {
-    this.expandedPane.set(this.expandedPane() === i ? null : i);
-  }
-
-  isUnattempted(index: number, sectionSummary: any): boolean {
-    const summary = sectionSummary?.summary;
-    return summary?.unattempted.includes(index) ?? false;
-  }
-
-  isRevisit(index: number, sectionSummary: any): boolean {
-    const summary = sectionSummary?.summary;
-    return summary?.revisits.includes(index) ?? false;
   }
 
   updateDrawingAndWritingLayoutConfigInStore() {

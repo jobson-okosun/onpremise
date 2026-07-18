@@ -40,11 +40,9 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
-import { AuthService } from '../../services/auth';
-import { loginData, MINIMUM_REASONABLE_DOWNLOAD_SPEED, preloginData } from '../../utils/constants';
+import { MINIMUM_REASONABLE_DOWNLOAD_SPEED } from '../../utils/constants';
 import { EventService } from '../../services/event';
 import { TextToSpeechService } from '../../services/reader/text-to-speech';
-import { PostLogin } from '../../services/onboarding/post-login';
 
 @Component({
   selector: 'app-layout',
@@ -62,8 +60,6 @@ export default class Layout implements OnDestroy {
   private _exam = inject(ExamService)
   private _autoProctorService = inject(ProctorService)
   private _toast = inject(HotToastService)
-  private _postLoginService = inject(PostLogin)
-  private _authService = inject(AuthService)
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private _eventService = inject(EventService)
@@ -90,10 +86,10 @@ export default class Layout implements OnDestroy {
   sectionTypes = signal(SectionType)
   examTypes = Object.values(ExamType)
   paginator = viewChild(Paginator)
-  standardChoice = viewChild(SingleChoice)
-  multipleChoice = viewChild(MultipleResponse)
-  yesOrNo = viewChild(YesOrNo)
-  trueOrFalse = viewChild(TrueOrFalse)
+  standardChoice = viewChild<any>('standardChoice')
+  multipleChoice = viewChild<any>('multipleChoice')
+  yesOrNo = viewChild<any>('yesOrNo')
+  trueOrFalse = viewChild<any>('trueOrFalse')
   store = computed(() => this._store.store())
   isCandidateSuspendedModalActive = computed(() => this._exam.isCandidateSuspendedModalActive())
   isLogoutNoticeActive = computed(() => this._exam.isConcurrentExamModalActive())
@@ -201,7 +197,7 @@ export default class Layout implements OnDestroy {
         this.initiateExam()
       } else if (this._liveProctoring.hasSharedFullScreen() === false) {
         this._toast.error('Full screen sharing is mandatory!', { duration: 1500000, dismissible: true })
-        this._liveProctoring.cleanUpLiveProctoring()
+        this._liveProctoring.cleanUpLiveProctoring() 
       }
     });
 
@@ -243,14 +239,7 @@ export default class Layout implements OnDestroy {
 
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
-
-    // if (!this.store().loginData) {
-    //   this._authService.setPreLoginData(preloginData as any);
-    //   this._postLoginService.formatLoginDataToStore(loginData as any)
-    // }
-
     this.updateDrawingAndWritingLayoutConfigInStore()
-
 
     if (!this.store().platformIsTauri) {
       fullscreen(this._eventService)
@@ -289,9 +278,6 @@ export default class Layout implements OnDestroy {
     this.disablePrintAndScreenshot()
  
     this._exam.startExam()
-
-    // this._eventService.initializeSession()
-    // this._eventService.logEvent({ event_type: CandidateEventType.SESSION_STARTED });
 
     this._eventService.logEvent({ event_type: CandidateEventType.EXAM_STARTED });
     this._eventService.logEvent({ event_type: CandidateEventType.QUESTION_ENTERED, question_id: this.store().currentQuestion!.id, section_id: this.store().currentSection!.id });
@@ -476,7 +462,7 @@ export default class Layout implements OnDestroy {
     const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING);
 
     if(hasDrawingAndWriting) {
-      itemTypeContainer.classList.add('max-h-[580px]', '2xl:max-h-[1000px]')
+      itemTypeContainer?.classList?.add('max-h-[880px]', '2xl:max-h-[1000px]')
     }
 
     const configUpdate = {

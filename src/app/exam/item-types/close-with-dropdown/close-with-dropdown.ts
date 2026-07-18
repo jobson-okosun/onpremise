@@ -1,19 +1,20 @@
-import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2 } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, HostListener, OnInit } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
-
+import { ClozeTtsShortcutService } from '../../../services/reader/cloze-tts-shortcut.service';
 
 @Component({
   selector: 'app-close-with-dropdown',
   imports: [QuestionTools, AnswerTools, SafeHtmlPipe],
   templateUrl: './close-with-dropdown.html',
   styleUrl: './close-with-dropdown.css',
+  providers: [ClozeTtsShortcutService]
 })
-export class CloseWithDropdown implements AfterViewChecked {
+export class CloseWithDropdown implements OnInit, AfterViewChecked {
   private _store = inject(Store);
   private _eventService = inject(EventService);
   private renderer = inject(Renderer2);
@@ -22,11 +23,17 @@ export class CloseWithDropdown implements AfterViewChecked {
   fontSize = model(16);
   
   formattedStimulus = signal<string>('');
+  private ttsShortcutService = inject(ClozeTtsShortcutService);
 
   contentContainer = viewChild<ElementRef>('contentContainer');
   dropdowns = viewChildren<ElementRef>('clozeDropdown');
 
   ngOnInit() {
+    this.ttsShortcutService.init(
+      this.captureResponses.bind(this),
+      () => this.dropdowns().length
+    );
+    
     this.formatStimulus();
   }
 
@@ -101,5 +108,10 @@ export class CloseWithDropdown implements AfterViewChecked {
     currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    this.ttsShortcutService.handleKeyDown(event);
   }
 }

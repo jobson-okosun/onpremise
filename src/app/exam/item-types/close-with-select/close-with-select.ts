@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit, HostListener } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
@@ -6,6 +6,7 @@ import { AlphabetList } from '../../../store/model/types';
 import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
+import { ClozeTtsShortcutService } from '../../../services/reader/cloze-tts-shortcut.service';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
   imports: [AnswerTools, QuestionTools, SafeHtmlPipe],
   templateUrl: './close-with-select.html',
   styleUrl: './close-with-select.css',
+  providers: [ClozeTtsShortcutService]
 })
 export class CloseWithSelect implements OnInit, AfterViewChecked {
   private _store = inject(Store);
@@ -25,6 +27,7 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
   isMobile = signal(false)
   
   formattedStimulus = signal<string>('');
+  private ttsShortcutService = inject(ClozeTtsShortcutService);
 
   contentContainer = viewChild<ElementRef>('contentContainer');
   dropdowns = viewChildren<ElementRef>('clozeDropdown');
@@ -32,6 +35,11 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
   ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 767px)').matches
     this.isMobile.set(isMobile)
+
+    this.ttsShortcutService.init(
+      this.captureResponses.bind(this),
+      () => this.dropdowns().length
+    );
 
     this.formatStimulus();
   }
@@ -101,8 +109,14 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
       answer: answerIndex,
       old_answer: oldAnswerIndices
     })
+    
     currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    this.ttsShortcutService.handleKeyDown(event);
   }
 }

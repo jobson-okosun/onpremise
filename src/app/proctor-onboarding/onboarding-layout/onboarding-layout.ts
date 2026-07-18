@@ -13,7 +13,7 @@ import { CandidateEventType } from '../../store/model/events/events.enum';
   styleUrl: './onboarding-layout.css',
   imports: [ProgressIndicator, RouterOutlet],
 })
-export class OnboardingLayout {
+export default class OnboardingLayout {
   private _store = inject(Store)
   private _router = inject(Router)
   private _eventService = inject(EventService)

@@ -33,58 +33,47 @@
 
                     <div class="lg:hidden uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
 
-                    <!-- @if(isExamAlpha()) {
-                        <button (click)="sectionsList.toggle($event)" class="hidden sm:flex bg-gray-100 items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
-                            <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
-                            <i class="pi pi-angle-down"></i>
-                        </button>
-                    } -->
-
                     <button (click)="sectionsList.toggle($event)" class="sm:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
                         <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
                         <i class="pi pi-angle-down"></i>
                     </button>
                 </div>
 
-                <!-- @if(!isExamAlpha()) { -->
-                    <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
-                        <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
-                            @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
-                                <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
-                                    <div 
-                                        [class.bg-primary!]="store().currentSection?.id == item.id"
-                                        [class.text-white!]="store().currentSection?.id == item.id"
-                                        [class.rounded-l-2xl!] = "first"
-                                        [class.rounded-r-2xl!] = "last"
-                                        class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
+                <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
+                    <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
+                        @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
+                            <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
+                                <div 
+                                    [class.bg-primary!]="store().currentSection?.id == item.id"
+                                    [class.text-white!]="store().currentSection?.id == item.id"
+                                    [class.rounded-l-2xl!] = "first"
+                                    [class.rounded-r-2xl!] = "last"
+                                    class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
 
-                                        <div 
-                                            [class.font-bold!]="store().currentSection?.id == item.id" 
-                                            class="text-sm font-medium select-none text-start">
-                                            {{ sectionNameInFullMode(item) }}
+                                    <div 
+                                        [class.font-bold!]="store().currentSection?.id == item.id" 
+                                        class="text-sm font-medium select-none text-start">
+                                        {{ sectionNameInFullMode(item) }}
+                                    </div>
+                                        
+                                    <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
+                                        <div class="text-xs font-normal lowercase select-none text-start">
+                                            <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
                                         </div>
-                                            
-                                        <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
-                                            <div class="text-xs font-normal lowercase select-none text-start">
-                                                <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
-                                            </div>
-                                            <div 
-                                                class="w-full xl:w-2/4 xl:min-w-[70px]">
-                                                <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
-                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
-                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
-                                                </div>
+                                        <div 
+                                            class="w-full xl:w-2/4 xl:min-w-[70px]">
+                                            <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
+                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
+                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
                                             </div>
                                         </div>
                                     </div>
-                                </button>
-                            }
-                        </div>
+                                </div>
+                            </button>
+                        }
                     </div>
-                <!-- } @else { -->
-                    <!-- <div class="uppercase font-bold">{{ examName() }}</div> -->
-                <!-- } -->
-                
+                </div>
+
                 <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
             </div>
             <div class="flex w-full gap-3 p-1 items-center justify-between text-sm">
@@ -170,74 +159,78 @@
         @if(showItemTypesContainer()) {
 
             @if(store().currentQuestion!.item_type === itemTypes().MCQ) {
-                <app-single-choice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice>
+                @defer { 
+                    <app-single-choice #standardChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice> 
+                }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().MRQ) {
-                <app-multiple-response [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response>
+                @defer { <app-multiple-response #multipleChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response> }
             }
 
             @if(store().currentQuestion?.item_type === itemTypes().TRUE_FALSE) {
-                <app-true-or-false [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false>
+                @defer { <app-true-or-false #trueOrFalse [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false> }
             }
 
             @if(store().currentQuestion?.item_type === itemTypes().YES_NO) {
-                <app-yes-or-no [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no>
+                @defer { <app-yes-or-no #yesOrNo [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no> }
             }  
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
+                @defer { <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
-                <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text>
+                @defer { <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_RADIO) {
-                <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
+                @defer { <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().SHORT_TEXT) {
-                <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text>
+                @defer { <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ESSAY_RICH_TEXT) {
-                <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text>
+                @defer { <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ESSAY_PLAIN_TEXT) {
-                <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text>
+                @defer { <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ASSOCIATION) {
-                <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching>
+                @defer { <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ORDER_LIST) {
-                <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering>
+                @defer { <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT_IMAGE) {
-                <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text>
+                @defer { <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN_IMAGE) {
-                <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect>
+                @defer { <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().IMAGE_DRAG_AND_DROP) {
-                <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop>
+                @defer { <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop> }
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CHOICE_MATRIX) {
-                <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix>
+                @defer { <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix> }
             }
             
             @if(store().currentQuestion!.item_type === itemTypes().DRAWING_AND_WRITING) {
-                @if(store().drawingAndWritingConfig.roughWorkMode) {
-                    <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
-                } @else {
-                    <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
+                @defer { 
+                    @if(store().drawingAndWritingConfig.roughWorkMode) {
+                        <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
+                    } @else {
+                        <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
+                    }
                 }
             }
         }
@@ -555,7 +548,9 @@
     </div>
 }
 
-<app-proctor-preview></app-proctor-preview>
+@defer {
+    <app-proctor-preview></app-proctor-preview>
+}
 
 <ng-template #infractionToastTemplate let-toastRef>
     <div class="flex items-center gap-3">

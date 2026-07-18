@@ -21,7 +21,6 @@ export class App {
   private _tauriService = inject(TauriService)
   private _store = inject(Store)
 
-  isAdminRoute = signal(false)
   store = computed(() => this._store.store())
   userExitPassword = new FormControl('', Validators.required)
   isExitingApplication = signal(false)
@@ -29,7 +28,6 @@ export class App {
   watchURL = toSignal(this._router.events.pipe(
     filter((event): event is NavigationEnd => event instanceof NavigationEnd),
     map(() => {
-      this.isAdminRoute.set(this.isAdminUrl())
       this.updateRouteInfo()
     })
   ))
@@ -53,10 +51,12 @@ export class App {
         utterance.rate = 10;
         window.speechSynthesis.speak(utterance);
       }
+
       document.removeEventListener('click', unlock);
       document.removeEventListener('touchstart', unlock);
       document.removeEventListener('keydown', unlock);
     };
+
     document.addEventListener('click', unlock);
     document.addEventListener('touchstart', unlock);
     document.addEventListener('keydown', unlock);
@@ -69,10 +69,6 @@ export class App {
 
     this._store.updateStore({ currentRoute, isPreviewMode: !!localStorage.getItem('exam-preview-mode') })
   } 
-
-  isAdminUrl() {
-    return location.href.includes('admin')
-  }
 
   pinApp() { 
     this._tauriService.pinApplication()

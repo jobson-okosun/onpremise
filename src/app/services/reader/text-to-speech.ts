@@ -21,7 +21,6 @@ export class TextToSpeechService {
   public slowSpeed = 0.65;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   
-  // Custom queue logic to bypass browser bugs and enable rewinding
   private speechChunks: {text: string, rate: number}[] = [];
   private currentChunkIndex: number = 0;
   private currentCharIndex: number = 0;
@@ -124,6 +123,17 @@ export class TextToSpeechService {
     }
     
     const chunk = this.speechChunks[this.currentChunkIndex];
+
+    if (chunk.text === '[PAUSE]') {
+      setTimeout(() => {
+        if (this.isManualPause) return;
+        this.currentChunkIndex++;
+        this.currentCharIndex = 0;
+        this.playNextChunk();
+      }, 1500);
+      return;
+    }
+
     const textToSpeak = chunk.text.substring(this.currentCharIndex);
     
     if (textToSpeak.trim().length === 0) {
@@ -167,7 +177,7 @@ export class TextToSpeechService {
       window.speechSynthesis.resume(); // Ensure engine isn't permanently paused natively
       
       this.speechChunks = [];
-      const parts = message.split(/(\[SLOW\]|\[NORMAL\])/);
+      const parts = message.split(/(\[SLOW\]|\[NORMAL\]|\[PAUSE\])/);
       let currentRate = this.normalSpeed;
 
       for (const part of parts) {
@@ -175,6 +185,8 @@ export class TextToSpeechService {
           currentRate = this.slowSpeed;
         } else if (part === '[NORMAL]') {
           currentRate = this.normalSpeed;
+        } else if (part === '[PAUSE]') {
+          this.speechChunks.push({ text: '[PAUSE]', rate: currentRate });
         } else if (part.trim().length > 0) {
           this.speechChunks.push({ text: part, rate: currentRate });
         }
@@ -201,7 +213,9 @@ export class TextToSpeechService {
       ItemType.SHORT_TEXT, 
       ItemType.IMAGE_DRAG_AND_DROP, 
       ItemType.CLOZE_TEXT_IMAGE, 
-      ItemType.CLOZE_DROPDOWN_IMAGE
+      ItemType.CLOZE_DROPDOWN_IMAGE,
+      ItemType.CLOZE_DROPDOWN,
+      ItemType.CLOZE_RADIO
     ].includes(type)) {
       return 'QUESTION_ONLY';
     }
@@ -213,15 +227,17 @@ export class TextToSpeechService {
   }
 
   public announceWelcomeMessage(): void {
-    const message = "Hello, welcome to the exam. " +
-      "Here is a quick guide on how to navigate using shortcuts. " +
-      "To read the current question, press letter Q. " +
-      "To read the options, press letter O. " +
-      "To select an answer, press the corresponding option letter, for example A, B, or C. " +
-      "To navigate to the next question, press letter N. " +
-      "To navigate to the previous question, press letter P. " +
-      "To pause or resume reading, press the spacebar. " +
-      "To get started, press letter Q to read the current question.";
+    this.stop()
+    
+    const message = "Hello, welcome to the exam. [PAUSE] " +
+      "Here is a quick guide on how to navigate using shortcuts. [PAUSE] " +
+      "To read the current question, press letter Q. [PAUSE] " +
+      "To read the options, press letter O. [PAUSE] " +
+      "To select an answer, press the corresponding option letter, for example A, B, or C. [PAUSE] " +
+      "To navigate to the next question, press letter N. [PAUSE] " +
+      "To navigate to the previous question, press letter P. [PAUSE] " +
+      "To pause or resume reading, press the spacebar. [PAUSE] " +
+      "So, are you ready to begin? press letter Q so i can read to you the first question.";
       
     this.speak(message);
     this.hasAnnouncedWelcome = true;
@@ -267,22 +283,27 @@ export class TextToSpeechService {
     const storeData = this._store.store();
     const loginData = storeData.loginData;
     
-    let message = `Instructions. Please read through the following instruction sets carefully. `;
+    let message = `Instructions. Please read through the following instruction sets carefully. [PAUSE] `;
     
+    message += `Here is a quick guide on how to navigate this page using shortcuts. [PAUSE] `;
+    message += `To re-read these instructions, press the letter R. [PAUSE] `;
+    message += `To pause or resume reading, press the spacebar. [PAUSE] `;
+    message += `To begin the exam, press the Enter key. [PAUSE] `;
+
     if (loginData?.sections_questions) {
       for (const item of loginData.sections_questions) {
         if (item.section_settings?.section_instruction) {
-           message += `Instructions for ${item.name}: `;
+           message += `Instructions for ${item.name}: [PAUSE] `;
            const plainInstruction = await this._speechParser.parseHtmlForSpeech(item.section_settings.section_instruction);
-           message += `${plainInstruction}. `;
+           message += `${plainInstruction}. [PAUSE] `;
         }
       }
     }
 
     if (loginData?.assessment_data?.start_exam_instruction) {
-      message += `Exam Instructions: `;
+      message += `Exam Instructions: [PAUSE] `;
       const plainInstruction = await this._speechParser.parseHtmlForSpeech(loginData.assessment_data.start_exam_instruction);
-      message += `${plainInstruction}. `;
+      message += `${plainInstruction}. [PAUSE] `;
     }
 
     this.speak(message);
@@ -299,7 +320,7 @@ export class TextToSpeechService {
         this.hasAnnouncedWelcome = true;
         setTimeout(() => {
           this.announceWelcomeMessage();
-        }, 1000);
+        }, 2000);
       } else {
         if (!this.isSupportedItemType(question.item_type)) {
           this.stop()
@@ -327,6 +348,10 @@ export class TextToSpeechService {
 
     let announcement = `${section?.name}, Question ${index + 1}. `;
     
+    if (question.item_type === ItemType.CLOZE_DROPDOWN || question.item_type === ItemType.CLOZE_RADIO) {
+      announcement += "For this question only, here is a quick guide. Whenever you hear the word 'blank', it means you need to choose the correct answer to fill in that gap. Use the Left and Right Arrow keys to move from one blank to the other, and press the corresponding letter, such as A or B, to select your answer. The main question is as follows. [PAUSE] ";
+    }
+
     announcement += await this.buildPassageAndStimulus(question);
     announcement += this.buildImageDescription(question);
 
@@ -368,11 +393,33 @@ export class TextToSpeechService {
     let result = '';
     if (passageText) result += passageText + '. ';
     if (stimulusText) result += stimulusText + '. ';
+
+    if (question.item_type === ItemType.CLOZE_DROPDOWN || question.item_type === ItemType.CLOZE_RADIO) {
+      let blankIndex = 0;
+      result = result.replace(/\{\{\s*response\s*\}\}/gi, () => {
+        let replacement = ` blank number ${blankIndex + 1}: options are: `;
+        const possibleResponses = question.possible_responses?.[blankIndex]?.responses || [];
+        
+        if (possibleResponses.length > 0) {
+          possibleResponses.forEach((opt: any, idx: number) => {
+            const cleanLetter = this.alphabetList[idx] ? this.alphabetList[idx].replace(/[()]/g, '') : String.fromCharCode(65 + idx);
+            const optText = opt.label?.replace(/<[^>]*>?/gm, ' ').trim() || '';
+            replacement += `${cleanLetter}, ${optText}. `;
+          });
+        }
+        
+        blankIndex++;
+        return replacement;
+      });
+    } else {
+      result = result.replace(/\{\{\s*response\s*\}\}/gi, ' blank ');
+    }
+    
     return result;
   }
 
   private buildImageDescription(question: any): string {
-    if ([ItemType.CLOZE_TEXT_IMAGE, ItemType.CLOZE_DROPDOWN_IMAGE, ItemType.IMAGE_DRAG_AND_DROP].includes(question.item_type as ItemType)) {
+    if ([ItemType.CLOZE_TEXT_IMAGE, ItemType.CLOZE_DROPDOWN_IMAGE, ItemType.CLOZE_RADIO].includes(question.item_type as ItemType)) {
       const img = document.querySelector('.answer-space img') as HTMLImageElement;
       if (img && img.alt) {
         return `Image description: ${img.alt}. `;

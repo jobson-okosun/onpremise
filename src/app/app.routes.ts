@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { hasActiveExam, isLoggedin, hasExamSettings } from './guards/onboarding';
 import { canGoBackFromExam, examNotEnded } from './guards/exam';
-import { OnboardingLayout } from './proctor-onboarding/onboarding-layout/onboarding-layout';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'usage-guide', pathMatch: 'full' },
@@ -13,7 +12,7 @@ export const routes: Routes = [
             {
                 path: 'onboarding',
                 canActivate: [isLoggedin],
-                component: OnboardingLayout,
+                loadComponent: () => import('./proctor-onboarding/onboarding-layout/onboarding-layout'),
                 children: [
                     { path: '', redirectTo: 'overview', pathMatch: 'full' },
                     { path: 'overview', loadComponent: () => import('./proctor-onboarding/exam-details/exam-details') },
@@ -56,7 +55,6 @@ export const routes: Routes = [
         data: { preload: true},
         loadComponent: () => import('./exam/layout/layout')
     },
-    // { path: 'exam', loadComponent: () => import('./exam/layout/layout') },
     {
         path: 'exam-preview',
         loadComponent: () => import('./exam/preview-mode-layout/preview-mode-layout')

@@ -133,8 +133,6 @@ export class EventService {
 
         this._sequenceCounter.update(seq => seq + 1);
         this._pendingEvents.update((events) => [...events, event]);
-
-        // console.log("event", event)
     }
 
     getPendingEvents(): ICandidateEvent[] {

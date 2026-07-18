@@ -32,7 +32,6 @@ export class LabelImageWithDragAndDrop {
   expandedLabels = signal<{ [index: number]: boolean }>({});
 
   toggleLabelExpand(index: number) {
-    console.log(true)
     const current = this.expandedLabels();
     this.expandedLabels.set({
       ...current,
