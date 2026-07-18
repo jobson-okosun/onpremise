@@ -42,7 +42,7 @@ export class CanvasService {
     protractorTransformer = signal<Konva.Transformer | null>(null)
     eraserCursor = signal<any>(null)
     loaded = signal(false)
-    brushSize = signal(1.8)
+    brushSize = signal(1.5) 
     eraserSize = signal<number>(10)
     brushColor = signal(DRAWING_AND_WRITING_BRUSH_COLORS[0])
     eraserColor = signal('#f5f5f7')
@@ -87,7 +87,6 @@ export class CanvasService {
         this.canvasWorker?.terminate();
         this.canvasWorker = undefined;
     }
-
 
     async initializeCanvas(): Promise<void> {
         const stageContainer = document.getElementById('stage')
@@ -480,6 +479,7 @@ export class CanvasService {
                         lineJoin: 'round',
                         listening: false,
                         perfectDrawEnabled: false,
+                        tension: 0.5,
                     });
                 }
 
@@ -568,7 +568,7 @@ export class CanvasService {
                 rotationHandleSize: 30,
                 rotationHandleStroke: "#1976d2",
                 rotationHandleFill: "#1976d2",
-                enabledAnchors: ["middle-left", "middle-right"],
+                enabledAnchors: [],
                 borderStroke: "#1976d2",
                 borderStrokeWidth: 2,
                 anchorCornerRadius: 6,
@@ -578,18 +578,83 @@ export class CanvasService {
             toolLayer.add(rulerTransformer);
             toolLayer.add(group);
 
-            stage.on("click tap", (e) => {
-                if (e.target === stage) {
-                    rulerTransformer.nodes([])
-                }
-                else if (e.target.getParent() === group) {
-                    rulerTransformer.nodes([group])
-                };
-                toolLayer.batchDraw();
-            });
+            const RULER_PIVOT_LOCAL = {
+                x: RULER_LENGTH_PX / 2,
+                y: RULER_HEIGHT / 2,
+            };
+            const rulerHandleSpecs = [
+                {
+                    baseAngleDeg: 0,
+                    point: { x: RULER_LENGTH_PX + 18, y: RULER_HEIGHT / 2 },
+                },
+                {
+                    baseAngleDeg: 180,
+                    point: { x: -18, y: RULER_HEIGHT / 2 },
+                },
+            ];
+
+            const positionRulerHandle = (handle: any, localPoint: any) => {
+                handle.position(
+                    group.getAbsoluteTransform().point(localPoint),
+                );
+            };
+
+            const rulerRotateHandles = rulerHandleSpecs.map(
+                ({ baseAngleDeg, point }) => {
+                    const handle = new Konva.Circle({
+                        radius: 9,
+                        fill: "#1976d2",
+                        stroke: "#fff",
+                        strokeWidth: 2,
+                        draggable: true,
+                    });
+                    positionRulerHandle(handle, point);
+
+                    handle.on("dragmove", () => {
+                        const pivotBefore = group
+                            .getAbsoluteTransform()
+                            .point(RULER_PIVOT_LOCAL);
+                        const dx = handle.x() - pivotBefore.x;
+                        const dy = handle.y() - pivotBefore.y;
+                        const angleDeg =
+                            (Math.atan2(dy, dx) * 180) / Math.PI;
+                        group.rotation(angleDeg - baseAngleDeg);
+
+                        const pivotAfter = group
+                            .getAbsoluteTransform()
+                            .point(RULER_PIVOT_LOCAL);
+                        group.x(group.x() + (pivotBefore.x - pivotAfter.x));
+                        group.y(group.y() + (pivotBefore.y - pivotAfter.y));
+
+                        rulerHandleSpecs.forEach((spec, i) =>
+                            positionRulerHandle(
+                                rulerRotateHandles[i],
+                                spec.point,
+                            ),
+                        );
+                        rulerTransformer.forceUpdate();
+                        toolLayer.batchDraw();
+                    });
+                    handle.on("mouseenter", () => {
+                        document.body.style.cursor = "grab";
+                    });
+                    handle.on("mouseleave", () => {
+                        document.body.style.cursor = "default";
+                    });
+
+                    toolLayer.add(handle);
+                    return handle;
+                },
+            );
+            rulerRotateHandles.forEach((h) => h.moveToTop());
+            (group as any).rotateHandles = rulerRotateHandles;
 
             group.on("dragmove transform", () => {
                 rulerTransformer.moveToTop();
+                rulerHandleSpecs.forEach((spec, i) =>
+                    positionRulerHandle(rulerRotateHandles[i], spec.point),
+                );
+                rulerRotateHandles.forEach((h) => h.moveToTop());
                 toolLayer.batchDraw();
             });
 
@@ -612,7 +677,7 @@ export class CanvasService {
         const createProtractor = (x: number, y: number) => {
             const DPI = getDPI();
             const PIXELS_PER_CM = DPI / 2.54;
-            const radius = 8 * PIXELS_PER_CM; // 8cm radius for larger size
+            const radius = 5.5 * PIXELS_PER_CM;
             const group = new Konva.Group({ x, y, draggable: true });
             // Base semicircle with gradient
             const arc = new Konva.Arc({
@@ -682,10 +747,10 @@ export class CanvasService {
                     const textX = textRadius * Math.cos(radians);
                     const textY = -textRadius * Math.sin(radians);
                     const text = new Konva.Text({
-                        x: textX - 8,
-                        y: textY - 8,
+                        x: textX - 7,
+                        y: textY - 7,
                         text: angle.toString(),
-                        fontSize: 16,
+                        fontSize: 13,
                         fontFamily: "monospace",
                         fill: "#111",
                         fontStyle: "bold",
@@ -698,10 +763,10 @@ export class CanvasService {
                     const textX = textRadius * Math.cos(radians);
                     const textY = -textRadius * Math.sin(radians);
                     const text = new Konva.Text({
-                        x: textX - 6,
-                        y: textY - 6,
+                        x: textX - 5,
+                        y: textY - 5,
                         text: angle.toString(),
-                        fontSize: 12,
+                        fontSize: 10,
                         fontFamily: "monospace",
                         fill: "#333",
                     });
@@ -750,7 +815,7 @@ export class CanvasService {
                 rotationHandleSize: 30,
                 rotationHandleStroke: "#1976d2",
                 rotationHandleFill: "#1976d2",
-                enabledAnchors: ["middle-left", "middle-right"],
+                enabledAnchors: [],
                 borderStroke: "#1976d2",
                 borderStrokeWidth: 2,
                 anchorCornerRadius: 6,
@@ -759,14 +824,59 @@ export class CanvasService {
             toolLayer.add(protractorTransformer);
             toolLayer.add(group);
 
-            stage.on("click tap", (e) => {
-                if (e.target === stage) protractorTransformer.nodes([]);
-                else if (e.target.getParent() === group) protractorTransformer.nodes([group]);
-                toolLayer.batchDraw();
-            });
+            const ROTATE_HANDLE_DIST = radius + 18;
+            const rotateHandleAngles = [0, 180];
+
+            const positionRotateHandle = (handle: any, baseAngleDeg: number) => {
+                const angle = ((group.rotation() + baseAngleDeg) * Math.PI) / 180;
+                handle.position({
+                    x: group.x() + ROTATE_HANDLE_DIST * Math.cos(angle),
+                    y: group.y() + ROTATE_HANDLE_DIST * Math.sin(angle),
+                });
+            };
+
+            const makeRotateHandle = (baseAngleDeg: number) => {
+                const handle = new Konva.Circle({
+                    radius: 9,
+                    fill: "#1976d2",
+                    stroke: "#fff",
+                    strokeWidth: 2,
+                    draggable: true,
+                });
+                positionRotateHandle(handle, baseAngleDeg);
+
+                handle.on("dragmove", () => {
+                    const dx = handle.x() - group.x();
+                    const dy = handle.y() - group.y();
+                    const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+                    group.rotation(angleDeg - baseAngleDeg);
+                    rotateHandles.forEach((h, i) =>
+                        positionRotateHandle(h, rotateHandleAngles[i]),
+                    );
+                    protractorTransformer.forceUpdate();
+                    toolLayer.batchDraw();
+                });
+                handle.on("mouseenter", () => {
+                    document.body.style.cursor = "grab";
+                });
+                handle.on("mouseleave", () => {
+                    document.body.style.cursor = "default";
+                });
+
+                toolLayer.add(handle);
+                return handle;
+            };
+
+            const rotateHandles = rotateHandleAngles.map(makeRotateHandle);
+            rotateHandles.forEach((h) => h.moveToTop());
+            (group as any).rotateHandles = rotateHandles;
 
             group.on("dragmove transform", () => {
                 protractorTransformer.moveToTop();
+                rotateHandles.forEach((h, i) =>
+                    positionRotateHandle(h, rotateHandleAngles[i]),
+                );
+                rotateHandles.forEach((h) => h.moveToTop());
                 toolLayer.batchDraw();
             });
 
@@ -792,46 +902,7 @@ export class CanvasService {
             return maxWidth - (normalizedSpeed * (maxWidth - minWidth));
         }
 
-        function getCatmullRomPoints(points: any[], tension = 0.5) {
-            if (points.length < 4) return points;
 
-            const result = [];
-            const numSegments = 8; // Optimized for performance
-
-            for (let i = 0; i < points.length - 2; i += 2) {
-                const p0 = i === 0 ? points.slice(i, i + 2) : points.slice(i - 2, i);
-                const p1 = points.slice(i, i + 2);
-                const p2 = points.slice(i + 2, i + 4);
-                const p3 = i + 4 >= points.length ? points.slice(i + 2, i + 4) : points.slice(i + 4, i + 6);
-
-                if (i === 0) {
-                    result.push(p1[0], p1[1]);
-                }
-
-                for (let t = 0; t <= 1; t += 1 / numSegments) {
-                    const t2 = t * t;
-                    const t3 = t2 * t;
-
-                    const x = 0.5 * (
-                        (2 * p1[0]) +
-                        (-p0[0] + p2[0]) * t +
-                        (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-                        (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
-                    );
-
-                    const y = 0.5 * (
-                        (2 * p1[1]) +
-                        (-p0[1] + p2[1]) * t +
-                        (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-                        (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
-                    );
-
-                    result.push(x, y);
-                }
-            }
-
-            return result;
-        }
 
         // Douglas-Peucker point simplification to reduce lag
         function simplifyPoints(points: any[], tolerance = 2) {
@@ -1084,13 +1155,9 @@ export class CanvasService {
 
                 // if (rawPoints.length >= 500) {
                 //     return;
-                // }
+                const simplified = simplifyPoints(rawPoints, 0.8);
 
-                const simplified = simplifyPoints(rawPoints, 1.5);
-
-                const finalPoints = simplified.length < 200 ? getCatmullRomPoints(simplified) : simplified;
-
-                line.points(finalPoints);
+                line.points(simplified);
 
                 scheduleDraw();
 
@@ -1169,6 +1236,23 @@ export class CanvasService {
             return findType(question.sub_questions) || question.background_type || 'NONE';
         };
 
+        stage.on('click tap', (e) => {
+            const rGroup = this.ruler();
+            const pGroup = this.protractor();
+            const rTrans = this.rulerTransformer();
+            const pTrans = this.protractorTransformer();
+
+            if (e.target === stage) {
+                if (rTrans) rTrans.nodes([]);
+                if (pTrans) pTrans.nodes([]);
+            } else if (rGroup && e.target.getParent() === rGroup) {
+                if (rTrans) rTrans.nodes([rGroup as any]);
+            } else if (pGroup && e.target.getParent() === pGroup) {
+                if (pTrans) pTrans.nodes([pGroup as any]);
+            }
+            toolLayer.batchDraw();
+        });
+
         stage.on('mouseenter', () => {
             if (this.currentTool() === 'brush') {
                 document.body.style.cursor = 'url("pen-tool-02-stroke-rounded.svg") 12 24, auto';
@@ -1197,12 +1281,17 @@ export class CanvasService {
 
         window.addEventListener('resize', resizeStage);
 
+        const resizeObserver = new ResizeObserver(() => {
+            resizeStage();
+        });
+        if (stageContainer.parentElement) {
+            resizeObserver.observe(stageContainer.parentElement);
+        }
+
         this.layoutSub$?.unsubscribe()
         this.layoutSub$ = this._konvaEventTools._toggleDrawingAndWritingLayout$.subscribe({
             next: () => {
-                setTimeout(() => {
-                    resizeStage();
-                }, 1000)
+                resizeStage();
             }
         })
 
@@ -1321,6 +1410,8 @@ export class CanvasService {
             next: (tool) => {
 
                 if (tool == 'all') {
+                    (this.ruler() as any)?.rotateHandles?.forEach((h: any) => h.destroy());
+                    (this.protractor() as any)?.rotateHandles?.forEach((h: any) => h.destroy());
                     this.ruler()?.destroy()
                     this.ruler.set(null)
                     this.protractor()?.destroy()
@@ -1329,6 +1420,7 @@ export class CanvasService {
                 }
 
                 if (tool === 'ruler') {
+                    (this.ruler() as any)?.rotateHandles?.forEach((h: any) => h.destroy());
                     this.ruler()?.destroy()
                     this.ruler.set(null)
                     toolLayer.getChildren((item) => item == this.ruler())?.[0]?.destroy()
@@ -1336,6 +1428,7 @@ export class CanvasService {
                 }
 
                 if (tool === 'protractor') {
+                    (this.protractor() as any)?.rotateHandles?.forEach((h: any) => h.destroy());
                     this.protractor()?.destroy()
                     this.protractor.set(null)
                     toolLayer.getChildren((item) => item == this.protractor())?.[0]?.destroy()

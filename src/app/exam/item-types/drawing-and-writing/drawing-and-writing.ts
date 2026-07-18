@@ -180,11 +180,7 @@ export class DrawingAndWriting {
       this._drawingStore.setActiveStoreId('default');
     }
 
-    this._canvasService.initializeCanvas()
-    .then(() => {
-      this._questionTools()?.toggleLayout()
-      this._questionTools()?.toggleLayout()
-    });
+    this._canvasService.initializeCanvas();
   }
 
   toggleLayout() {

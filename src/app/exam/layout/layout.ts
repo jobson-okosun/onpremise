@@ -228,16 +228,29 @@ export default class Layout implements OnDestroy {
         }
       });
     });
+
+    effect((onCleanup) => {
+      const el = this.itemTypesContainer()?.nativeElement;
+      if (el) {
+        const resizeObserver = new ResizeObserver(() => {
+          this.updateDrawingAndWritingLayoutConfigInStore();
+        });
+        resizeObserver.observe(el);
+        onCleanup(() => resizeObserver.disconnect());
+      }
+    });
   }
 
   async ngOnInit() {
     this.isMobile.set(window.matchMedia('(max-width: 768px)').matches)
+
+    // if (!this.store().loginData) {
+    //   this._authService.setPreLoginData(preloginData as any);
+    //   this._postLoginService.formatLoginDataToStore(loginData as any)
+    // }
+
     this.updateDrawingAndWritingLayoutConfigInStore()
 
-    if (!this.store().loginData) {
-      this._authService.setPreLoginData(preloginData as any);
-      this._postLoginService.formatLoginDataToStore(loginData as any)
-    }
 
     if (!this.store().platformIsTauri) {
       fullscreen(this._eventService)
@@ -267,7 +280,7 @@ export default class Layout implements OnDestroy {
       this._exam.startProctoringNetworkMonitor()
     }
 
-    // this.initiateExam()
+    this.initiateExam()
   }
 
   private initiateExam() {
@@ -460,9 +473,15 @@ export default class Layout implements OnDestroy {
 
   updateDrawingAndWritingLayoutConfigInStore() {
     const itemTypeContainer = document.getElementById('itemTypesContainer') as HTMLElement;
+    const hasDrawingAndWriting = this.store().sections.flatMap(s => s.items).some(item => item.item_type == this.itemTypes().DRAWING_AND_WRITING);
+
+    if(hasDrawingAndWriting) {
+      itemTypeContainer.classList.add('max-h-[580px]', '2xl:max-h-[1000px]')
+    }
+
     const configUpdate = {
       ...this.store().drawingAndWritingConfig,
-      layoutFullModeWidth: itemTypeContainer.offsetWidth - 70, // sub question container width
+      layoutFullModeWidth: itemTypeContainer.offsetWidth - 70, // sub question navigation container width
       canvasContainerHeight: itemTypeContainer.offsetHeight - 54
     }
 

@@ -1238,7 +1238,7 @@ export const loginData = {
                 { "label": "Quickly", "value": "quickly" },
                 { "label": "Blue", "value": "blue" }
               ],
-              "item_type": "MCQ",
+              "item_type": "DRAWING_AND_WRITING",
               "responses": [],
               "max_responses": 1,
               "image_data": { "image": "", "width": null, "height": null },

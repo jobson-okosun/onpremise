@@ -165,7 +165,8 @@
     </div>
 
     <!-- content area -->
-    <div id="itemTypesContainer" class="flex-1 max-h-[580px] 2xl:max-h-[1000px] overflow-hidden"> 
+    <!-- max-h-[580px] 2xl:max-h-[1000px]  -->
+    <div id="itemTypesContainer" class="flex-1 overflow-hidden"> 
         @if(showItemTypesContainer()) {
 
             @if(store().currentQuestion!.item_type === itemTypes().MCQ) {
@@ -245,42 +246,44 @@
     <!-- bottom -->
     <div>
         <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
-            <div class="flex justify-between items-center md:justify-between gap-3">
-                @if(store().currentQuestionIndex > 0) {
-                    <button (click)="prev()" class="btn gap-3!">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
-                        </svg>
-                        Previous
-                    </button>
-                }
-                @if(showPrevSectionButton()) {
-                    <button (click)="prevSection()" class="btn bg-gray-800! gap-3!">
-                        <svg class="w-4 h-4 rotate-180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                        </svg>
-                        Previous {{ !isExamAlpha() ? 'Subject' : 'Section' }}
-                    </button>
-                }
+            @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                <div class="flex justify-between items-center md:justify-between gap-3">
+                    @if(store().currentQuestionIndex > 0) {
+                        <button (click)="prev()" class="btn gap-3!">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                            </svg>
+                            Previous
+                        </button>
+                    }
+                    @if(showPrevSectionButton()) {
+                        <button (click)="prevSection()" class="btn bg-gray-800! gap-3!">
+                            <svg class="w-4 h-4 rotate-180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                            </svg>
+                            Previous {{ !isExamAlpha() ? 'Subject' : 'Section' }}
+                        </button>
+                    }
 
-                @if(store().currentQuestionIndex < (store().currentSection!.items!.length - 1)) {
-                    <button (click)="nextQuestion()" class="btn gap-3!">
-                        Next
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                        </svg>
-                    </button>
-                }
+                    @if(store().currentQuestionIndex < (store().currentSection!.items!.length - 1)) {
+                        <button (click)="nextQuestion()" class="btn gap-3!">
+                            Next
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                            </svg>
+                        </button>
+                    }
 
-                @if(showNextSectionButton()) {
-                    <button (click)="nextSection()" class="btn bg-gray-800! gap-3!">
-                        Next {{ !isExamAlpha() ? 'Subject' : 'Section' }}
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                        </svg>
-                    </button>
-                }
-            </div>
+                    @if(showNextSectionButton()) {
+                        <button (click)="nextSection()" class="btn bg-gray-800! gap-3!">
+                            Next {{ !isExamAlpha() ? 'Subject' : 'Section' }}
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                            </svg>
+                        </button>
+                    }
+                </div>
+            }
             
             <div class="flex flex-col sm:flex-row lg:items-center gap-2">
                 <div class="p-3 py-2 rounded-2xl bg-white text-sm font-medium">
