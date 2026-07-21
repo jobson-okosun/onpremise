@@ -3,7 +3,7 @@
         <div>
             <div class="flex flex-col lg:flex-row lg:justify-between gap-5 mb-10">
                 <div class="flex gap-4 lg:max-w-5/6">
-                    <div>
+                    <div class="min-w-16">
                         <div class="bg-white border border-gray-200 rounded-md flex items-center justify-center p-1 min-h-16">
                             @if(store().organizationAssets?.hasLogo) {
                                 <img [src]="store().organizationAssets?.logo" class="w-16">
@@ -13,7 +13,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="uppercase font-black text-2xl text-primary">{{ store().loginData?.assessment_data?.name }}</div>
+                        <div class="uppercase font-black text-lg md:text-2xl text-primary">{{ store().loginData?.assessment_data?.name }}</div>
                         <div class="mt-2">{{ store().preloginData?.description }} </div>
                     </div>
                 </div>

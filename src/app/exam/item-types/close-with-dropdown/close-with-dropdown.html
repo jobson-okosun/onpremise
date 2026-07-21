@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <div [style.fontSize.px]="fontSize()" class="overflow-auto h-[400px] lg:h-full p-3 border-t border-gray-300 border-dashed">
+        <div [style.fontSize.px]="fontSize()" class="overflow-auto h-[1000px] pb-[500px] md:h-full p-3 border-t border-gray-300 border-dashed">
 
             @if (store().currentQuestion?.passage_stimulus) {
                 <div class="editor-content" [innerHTML]="store().currentQuestion?.passage_stimulus | safeHtml"></div>

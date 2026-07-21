@@ -1,157 +1,202 @@
 <div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
-    <!-- top -->
-    <div>
-        <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
-            <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
-            <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
-        </div>
-        
-        <div class="flex flex-col bg-white rounded-md rounded-t-none drop-shadow-sm drop-shadow-gray-50 divide-y divide-gray-200">
-            <div class="flex flex-col lg:flex-row justify-between items-center gap-x-5 p-0.5">
-                @let passportSize = screenWidth() > 1280 ? 'size-20' : 'size-12';
-                @let imagePlaceholderTranslate = screenWidth() > 1280 ? 'translate-y-6' : 'translate-y-3';
+    <!-- top mobile -->    
+    @if(screenWidth() < 500) {
+        <div>
+            <div class="relative w-full h-3 bg-gray-300 overflow-hidden">
+                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+            </div>
 
-                <div class="flex flex-col lg:flex-row items-center gap-3 xl:gap-10 shrink-0">
- 
-                    <div class="items-center gap-2 hidden lg:flex">
-                        @if(store().candidatePassport) {
-                            <span (click)="showUserProfileModal.set(true)"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200">
-                                <img [src]="store().candidatePassport" alt="" class="{{ passportSize }}">
-                            </span>
-                        } @else {
-                            <span (click)="showUserProfileModal.set(true)" class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
-                                <svg class="w-[150px] h-auto text-gray-500 {{ imagePlaceholderTranslate }}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
-                                </svg>
-                            </span>
-                        }
-                        <div>
-                            <div class="font-semibold">{{ candidateName() }}</div>
-                            <div class="text-xs">{{ store().loginData?.candidate_data?.login_field_value }}</div>
-                        </div>
+            <div class="bg-white p-2 flex items-center justify-between gap-2 min-w-0">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    @if(store().candidatePassport) {
+                        <span (click)="showUserProfileModal.set(true)" class="size-10 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200 shrink-0">
+                            <img [src]="store().candidatePassport" alt="" class="size-10 object-cover">
+                        </span>
+                    } @else {
+                        <span (click)="showUserProfileModal.set(true)" class="size-10 rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                            <svg class="w-12 h-auto text-gray-500 translate-y-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    }
+                    <div class="flex flex-col leading-tight flex-1 min-w-0">
+                        <span class="font-bold text-sm truncate">{{ candidateName() }}</span>
+                        <span class="text-[10px] text-gray-500 truncate">{{ store().loginData?.candidate_data?.login_field_value }}</span>
                     </div>
-
-                    <div class="lg:hidden uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
-
-                    <button (click)="sectionsList.toggle($event)" class="sm:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
-                        <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
-                        <i class="pi pi-angle-down"></i>
-                    </button>
                 </div>
 
-                <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
-                    <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
-                        @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
-                            <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
-                                <div 
-                                    [class.bg-primary!]="store().currentSection?.id == item.id"
-                                    [class.text-white!]="store().currentSection?.id == item.id"
-                                    [class.rounded-l-2xl!] = "first"
-                                    [class.rounded-r-2xl!] = "last"
-                                    class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
+                <div class="flex flex-col items-end gap-1.5 shrink-0 w-[140px] max-w-[140px] min-w-0">
+                    <div class="uppercase font-bold text-[14px] text-primary truncate w-full text-right">{{ store().loginData?.assessment_data?.name  }}</div>
+                    <button (click)="sectionsList.toggle($event)" class="bg-gray-100 flex items-center justify-between gap-1.5 px-2.5 py-1 w-full min-w-0">
+                        <span class="text-[11px] font-semibold truncate flex-1 text-left min-w-0">{{ store().currentSection?.name }}</span>
+                        <i class="pi pi-angle-down text-[10px] shrink-0"></i>
+                    </button>
+                </div>
+            </div>
 
+            <div class="mt-2 bg-white rounded-2xl p-2">
+                <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
+                <app-paginator class="w-full"></app-paginator>
+            </div>
+        </div>
+    }
+    
+    <!-- top -->
+    @if(screenWidth() > 500){ 
+        <div>
+            <div class="relative w-full h-3 bg-gray-300 overflow-hidden rounded-t-md">
+                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-800 opacity-70" [style.width.%]="currentSectionSummary()?.summary?.progress"></div>
+            </div>
+            
+            <div class="flex flex-col bg-white rounded-md rounded-t-none drop-shadow-sm drop-shadow-gray-50 divide-y divide-gray-200">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-x-5 p-0.5">
+                    @let passportSize = screenWidth() > 1280 ? 'size-20' : 'size-12';
+                    @let imagePlaceholderTranslate = screenWidth() > 1280 ? 'translate-y-6' : 'translate-y-3';
+
+                    <div class="flex flex-col lg:flex-row items-center gap-3 xl:gap-10 shrink-0">
+    
+                        <div class="items-center gap-2 hidden lg:flex">
+                            @if(store().candidatePassport) {
+                                <span (click)="showUserProfileModal.set(true)"  class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-200">
+                                    <img [src]="store().candidatePassport" alt="" class="{{ passportSize }}">
+                                </span>
+                            } @else {
+                                <span (click)="showUserProfileModal.set(true)" class="{{ passportSize }} rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <svg class="w-[150px] h-auto text-gray-500 {{ imagePlaceholderTranslate }}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                                    </svg>
+                                </span>
+                            }
+                            <div>
+                                <div class="font-semibold">{{ candidateName() }}</div>
+                                <div class="text-xs">{{ store().loginData?.candidate_data?.login_field_value }}</div>
+                            </div>
+                        </div>
+
+                        <div class="lg:hidden uppercase font-bold py-3 lg:py-0">{{ store().loginData?.assessment_data?.name  }}</div>
+
+                        <button (click)="sectionsList.toggle($event)" class="sm:hidden bg-gray-100 flex items-center gap-5 rounded-2xl w-max min-w-[150px] px-4">
+                            <span class="py-2 text-sm">{{ store().currentSection?.name }}</span>
+                            <i class="pi pi-angle-down"></i>
+                        </button>
+                    </div>
+
+                    <div class="hidden md:flex overflow-hidden w-full lg:w-max justify-center lg:justify-start">
+                        <div class="flex max-w-full w-max flex-nowrap no-scrollbar items-center uppercase font-bold border border-gray-200 rounded-2xl py-0.5 overflow-x-auto divide-x divide-gray-200 snap-x">
+                            @for(item of overviewSections(); track item.name; let first = $first;let last = $last;) {
+                                <button (click)="selectSectionInFullMode(item);" class="snap-center py-px px-0.5 shrink-0 cursor-pointer overflow-hidden">
                                     <div 
-                                        [class.font-bold!]="store().currentSection?.id == item.id" 
-                                        class="text-sm font-medium select-none text-start">
-                                        {{ sectionNameInFullMode(item) }}
-                                    </div>
-                                        
-                                    <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
-                                        <div class="text-xs font-normal lowercase select-none text-start">
-                                            <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
-                                        </div>
+                                        [class.bg-primary!]="store().currentSection?.id == item.id"
+                                        [class.text-white!]="store().currentSection?.id == item.id"
+                                        [class.rounded-l-2xl!] = "first"
+                                        [class.rounded-r-2xl!] = "last"
+                                        class="py-1 px-3 shrink-0 cursor-pointer hover:bg-gray-100 overflow-hidden rounded transition duration-300">
+
                                         <div 
-                                            class="w-full xl:w-2/4 xl:min-w-[70px]">
-                                            <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
-                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
-                                                <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
+                                            [class.font-bold!]="store().currentSection?.id == item.id" 
+                                            class="text-sm font-medium select-none text-start">
+                                            {{ sectionNameInFullMode(item) }}
+                                        </div>
+                                            
+                                        <div class="flex md:flex-col xl:flex-row items-center justify-between md:gap-0.5 xl:gap-2">
+                                            <div class="text-xs font-normal lowercase select-none text-start">
+                                                <strong>{{ item?.summary?.attempted?.length }}</strong> of <strong>{{ item?.items?.length }}</strong>
+                                            </div>
+                                            <div 
+                                                class="w-full xl:w-2/4 xl:min-w-[70px]">
+                                                <div class="relative w-full h-2 bg-gray-300 overflow-hidden rounded-md">
+                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-[repeating-linear-gradient(45deg,white_0px,white_10px,transparent_10px,transparent_20px)]"  [style.width.%]="item?.summary?.progress"></div>
+                                                    <div class="transition-all duration-700 ease-in-out absolute top-0 left-0 h-full bg-green-500 opacity-70" [style.width.%]="item?.summary?.progress"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </button>
-                        }
+                                </button>
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
-            </div>
-            <div class="flex w-full gap-3 p-1 items-center justify-between text-sm">
-                <div class="hidden lg:flex gap-3 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
-                    <div class="flex flex-col justify-between">
-                        <div class="font-semibold">{{ !isExamAlpha() ? 'Subject' : 'Section' }} {{ currentSectionIndex() + 1 }} of {{ store().sections.length }}</div>
-                        <div>{{ store().currentSection?.items?.length }} questions</div>
-                    </div> 
+                    <app-exam-tools (resizeFont)="fontSize.toggle($event)" [(showCalculator)]="showCalculator"></app-exam-tools>
                 </div>
-                
-                <div class="w-full lg:w-max">
-                    @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
-                        <app-paginator class="w-full"></app-paginator>
-                    }
+                <div class="flex w-full gap-3 p-1 items-center justify-between text-sm">
+                    <div class="hidden lg:flex gap-3 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-4">
+                        <div class="flex flex-col justify-between">
+                            <div class="font-semibold">{{ !isExamAlpha() ? 'Subject' : 'Section' }} {{ currentSectionIndex() + 1 }} of {{ store().sections.length }}</div>
+                            <div>{{ store().currentSection?.items?.length }} questions</div>
+                        </div> 
+                    </div>
                     
-                    @if(store().currentSection?.section_type == sectionTypes().THEORY) {
-                        <app-theory-paginator class="w-full"></app-theory-paginator>
-                    }
-                </div>
-
-                @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
-                    <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
-                            <div class="flex gap-2 items-center">
-                                <span class="rounded-full size-2.5 bg-green-600"></span>
-                                <span class="text-xs">Answered</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center justify-center">
-                            <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
-                            <div class="flex gap-2 items-center">
-                                <span class="rounded-full size-2.5 bg-red-600"></span>
-                                <span class="text-xs">Unanswered</span>
-                            </div>
-                        </div>
-                        @if(isExamAlpha()) {
-                            <div class="flex flex-col items-center justify-center">
-                                <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
-                                <div class="flex gap-2 items-center">
-                                    <span class="rounded-full size-2.5 bg-yellow-500"></span>
-                                    <span class="text-xs">Revisit</span>
-                                </div>
-                            </div>
+                    <div class="w-full lg:w-max">
+                        @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                            <app-paginator class="w-full"></app-paginator>
+                        }
+                        
+                        @if(store().currentSection?.section_type == sectionTypes().THEORY) {
+                            <app-theory-paginator class="w-full"></app-theory-paginator>
                         }
                     </div>
-                }
-                @if(store().currentSection?.section_type == sectionTypes().THEORY) {
-                    <div class="hidden lg:flex lg:flex-col bg-gray-100 items-center rounded-2xl w-max min-w-40 py-1 px-3">
-                        <div class="flex items-center justify-between w-full">
-                            <div class="flex gap-x-2 items-center">
-                                <span class="rounded-full size-2.5 bg-green-600"></span>
-                                <span class="text-xs">Answered</span>
+
+                    @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                        <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
+                                <div class="flex gap-2 items-center">
+                                    <span class="rounded-full size-2.5 bg-green-600"></span>
+                                    <span class="text-xs">Answered</span>
+                                </div>
                             </div>
-                            <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
-                        </div>
-                        <div class="flex items-center justify-between w-full">
-                            <div class="flex gap-x-2 items-center">
-                                <span class="rounded-full size-2.5 bg-red-600"></span>
-                                <span class="text-xs">Unanswered</span>
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                                <div class="flex gap-2 items-center">
+                                    <span class="rounded-full size-2.5 bg-red-600"></span>
+                                    <span class="text-xs">Unanswered</span>
+                                </div>
                             </div>
-                            <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                            @if(isExamAlpha()) {
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                                    <div class="flex gap-2 items-center">
+                                        <span class="rounded-full size-2.5 bg-yellow-500"></span>
+                                        <span class="text-xs">Revisit</span>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        @if(isExamAlpha()) {
+                    }
+                    @if(store().currentSection?.section_type == sectionTypes().THEORY) {
+                        <div class="hidden lg:flex lg:flex-col bg-gray-100 items-center rounded-2xl w-max min-w-40 py-1 px-3">
                             <div class="flex items-center justify-between w-full">
                                 <div class="flex gap-x-2 items-center">
-                                    <span class="rounded-full size-2.5 bg-yellow-500"></span>
-                                    <span class="text-xs">Revisit</span>
+                                    <span class="rounded-full size-2.5 bg-green-600"></span>
+                                    <span class="text-xs">Answered</span>
                                 </div>
-                                <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
                             </div>
-                        }
-                    </div>
-                }
+                            <div class="flex items-center justify-between w-full">
+                                <div class="flex gap-x-2 items-center">
+                                    <span class="rounded-full size-2.5 bg-red-600"></span>
+                                    <span class="text-xs">Unanswered</span>
+                                </div>
+                                <div class="font-bold">{{ currentSectionSummary()?.summary?.unattempted?.length }}</div>
+                            </div>
+                            @if(isExamAlpha()) {
+                                <div class="flex items-center justify-between w-full">
+                                    <div class="flex gap-x-2 items-center">
+                                        <span class="rounded-full size-2.5 bg-yellow-500"></span>
+                                        <span class="text-xs">Revisit</span>
+                                    </div>
+                                    <div class="font-bold">{{ currentSectionSummary()?.summary?.revisits?.length }}</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
 
-    </div>
+        </div>
+    }
 
     <!-- content area -->
     <!-- max-h-[580px] 2xl:max-h-[1000px]  -->
@@ -238,7 +283,7 @@
 
     <!-- bottom -->
     <div>
-        <div class="flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
+        <div class="hidden md:flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
             @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
                 <div class="flex justify-between items-center md:justify-between gap-3">
                     @if(store().currentQuestionIndex > 0) {

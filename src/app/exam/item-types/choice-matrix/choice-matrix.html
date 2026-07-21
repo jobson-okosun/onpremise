@@ -27,13 +27,13 @@
                 }
 
                 <div class="mt-3">
-                    <div class="overflow-x-auto p-5 bg-gray-50 rounded-md">
+                    <div class="overflow-auto max-h-[400px] md:max-h-none p-5 bg-gray-50 rounded-md">
                         <table class="min-w-full border border-gray-200 text-left text-sm rounded-md">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-4 py-2 border border-gray-300"></th>
                                     @for(option of store().currentQuestion?.options; track option; let i = $index) {
-                                        <th class="px-4 py-2 border border-gray-300 text-center font-bold" scope="col" [innerHTML]="option.label | safeHtml" [style.fontSize.px]="fontSize()">
+                                        <th class="px-4 py-2 border border-gray-300 text-center font-bold whitespace-nowrap" scope="col" [innerHTML]="option.label | safeHtml" [style.fontSize.px]="fontSize()">
                                             {{ option.label }}
                                         </th>
                                     }
@@ -43,9 +43,9 @@
                             <tbody>
                                 @for(stem of store().currentQuestion?.stems; track stem; let i = $index) {
                                     <tr>
-                                        <td class="px-4 py-3 border border-gray-300 font-medium bg-white" [innerHTML]="stem | safeHtml" [style.fontSize.px]="fontSize()">{{ stem }}</td>
+                                        <td class="px-4 py-3 border border-gray-300 font-medium bg-white min-w-[200px]" [innerHTML]="stem | safeHtml" [style.fontSize.px]="fontSize()">{{ stem }}</td>
                                         @for(option of store().currentQuestion?.options; track option; let j = $index) {
-                                            <td class="px-4 py-2 border border-gray-300 text-center bg-white">
+                                            <td class="px-4 py-2 border border-gray-300 text-center bg-white whitespace-nowrap">
                                                 <input id="form-radio-{{ i }}-{{ j }}" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 accent-primary" name="stem_{{ i }}" value="{{ option.value }}" [checked]="store().currentQuestion!.responses[i] === option.value" (change)="captureResponses(option.value, $event, i)"/>
                                             </td>
                                         }

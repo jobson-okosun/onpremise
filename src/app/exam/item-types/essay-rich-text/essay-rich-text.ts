@@ -1,10 +1,8 @@
-import { Component, computed, inject, model, signal, viewChild } from '@angular/core';
-import { HotToastService } from '@ngxpert/hot-toast';
+import { Component, computed, inject, model, signal } from '@angular/core';
 import { Store } from '../../../store/store';
 import { Editor } from '../../editor/editor';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
-import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 
 
