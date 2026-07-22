@@ -204,78 +204,74 @@
         @if(showItemTypesContainer()) {
 
             @if(store().currentQuestion!.item_type === itemTypes().MCQ) {
-                @defer { 
-                    <app-single-choice #standardChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice> 
-                }
+                <app-single-choice #standardChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-single-choice> 
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().MRQ) {
-                @defer { <app-multiple-response #multipleChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response> }
+                <app-multiple-response #multipleChoice [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-multiple-response>
             }
 
             @if(store().currentQuestion?.item_type === itemTypes().TRUE_FALSE) {
-                @defer { <app-true-or-false #trueOrFalse [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false> }
+                <app-true-or-false #trueOrFalse [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-true-or-false>
             }
 
             @if(store().currentQuestion?.item_type === itemTypes().YES_NO) {
-                @defer { <app-yes-or-no #yesOrNo [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no> }
+                <app-yes-or-no #yesOrNo [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-yes-or-no>
             }  
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN) {
-                @defer { <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown> }
+                <app-close-with-dropdown [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-dropdown>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT) {
-                @defer { <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text> }
+                <app-close-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_RADIO) {
-                @defer { <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select> }
+                <app-close-with-select [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-close-with-select>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().SHORT_TEXT) {
-                @defer { <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text> }
+                <app-short-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-short-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ESSAY_RICH_TEXT) {
-                @defer { <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text> }
+                <app-essay-rich-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-rich-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ESSAY_PLAIN_TEXT) {
-                @defer { <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text> }
+                <app-essay-plain-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-essay-plain-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ASSOCIATION) {
-                @defer { <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching> }
+                <app-classify-by-matching [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-matching>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().ORDER_LIST) {
-                @defer { <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering> }
+                <app-classify-by-ordering [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-classify-by-ordering>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_TEXT_IMAGE) {
-                @defer { <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text> }
+                <app-label-image-with-text [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-text>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CLOZE_DROPDOWN_IMAGE) {
-                @defer { <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect> }
+                <app-label-image-with-dropdownselect [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-dropdownselect>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().IMAGE_DRAG_AND_DROP) {
-                @defer { <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop> }
+                <app-label-image-with-drag-and-drop [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-label-image-with-drag-and-drop>
             }
 
             @if(store().currentQuestion!.item_type === itemTypes().CHOICE_MATRIX) {
-                @defer { <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix> }
+                <app-choice-matrix [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-choice-matrix>
             }
             
             @if(store().currentQuestion!.item_type === itemTypes().DRAWING_AND_WRITING) {
-                @defer { 
-                    @if(store().drawingAndWritingConfig.roughWorkMode) {
-                        <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
-                    } @else {
-                        <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
-                    }
+                @if(store().drawingAndWritingConfig.roughWorkMode) {
+                    <app-drawing-and-writing-rough-mode [(fontSize)]="questionFontSize" animate.enter="fade-in"></app-drawing-and-writing-rough-mode>
+                } @else {
+                    <app-drawing-and-writing [(fontSize)]="questionFontSize"></app-drawing-and-writing>
                 }
             }
         }

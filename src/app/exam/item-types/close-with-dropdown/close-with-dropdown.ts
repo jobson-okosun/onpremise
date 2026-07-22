@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, HostListener, OnInit } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, HostListener, OnInit, effect, untracked } from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
@@ -19,39 +19,47 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
   private _eventService = inject(EventService);
   private renderer = inject(Renderer2);
 
-  store = computed(() => this._store.store());
-  fontSize = model(16);
-  
-  formattedStimulus = signal<string>('');
   private ttsShortcutService = inject(ClozeTtsShortcutService);
 
+  store = computed(() => this._store.store());
+  currentQuestionId = computed(() => this.store().currentQuestion?.id);
+  fontSize = model(16);
   contentContainer = viewChild<ElementRef>('contentContainer');
   dropdowns = viewChildren<ElementRef>('clozeDropdown');
+
+  formattedStimulus = computed(() => {
+    const currentQuestion = this.store().currentQuestion;
+    if (!currentQuestion?.stimulus) {
+      return '';
+    }
+
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+      // Replace each occurrence sequentially with an incrementing index
+      stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+      i++;
+    }
+
+    return stim;
+  });
+
+  constructor() {
+    effect(() => {
+      const qId = this.currentQuestionId();
+      if (qId) {
+        untracked(() => {
+          this.ttsShortcutService.activeBlankIndex.set(0);
+        });
+      }
+    });
+  }
 
   ngOnInit() {
     this.ttsShortcutService.init(
       this.captureResponses.bind(this),
       () => this.dropdowns().length
     );
-    
-    this.formatStimulus();
-  }
-
-  formatStimulus() {
-    const currentQuestion = this.store().currentQuestion;
-    if (!currentQuestion?.stimulus) {
-      return;
-    }
-
-    let stim = currentQuestion.stimulus;
-    let i = 0;
-    while (stim.includes('{{response}}')) {
-       // Replace each occurrence sequentially with an incrementing index
-       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
-       i++;
-    }
-
-    this.formattedStimulus.set(stim);
   }
 
   ngAfterViewChecked() {
@@ -60,7 +68,7 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
 
     if (container && drops.length > 0) {
       const placeholders = container.querySelectorAll('.cloze-placeholder');
-      
+
       placeholders.forEach((placeholder: HTMLElement, i: number) => {
         const dropEl = drops[i]?.nativeElement;
         if (dropEl && !placeholder.contains(dropEl)) {

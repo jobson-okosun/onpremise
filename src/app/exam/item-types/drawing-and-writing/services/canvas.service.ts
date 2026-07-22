@@ -40,6 +40,7 @@ export class CanvasService {
     protractor = signal<Konva.Group | null>(null)
     rulerTransformer = signal<Konva.Transformer | null>(null)
     protractorTransformer = signal<Konva.Transformer | null>(null)
+    compass = signal<any | null>(null)
     eraserCursor = signal<any>(null)
     loaded = signal(false)
     brushSize = signal(1.5) 
@@ -883,6 +884,339 @@ export class CanvasService {
             return group;
         }
 
+        const createCompass = (centerX: number, centerY: number, initialRadius = 80) => {
+            const LEG_LENGTH = 220;
+            const MIN_RADIUS = 30;
+            const MAX_RADIUS = LEG_LENGTH * 2 * 0.95;
+            const HANDLE_FRACTION = 0.5;
+
+            let center = { x: centerX, y: centerY };
+            let radius = Math.min(
+                Math.max(initialRadius, MIN_RADIUS),
+                MAX_RADIUS,
+            );
+            let angle = 0;
+
+            const pencilPos = () => ({
+                x: center.x + radius * Math.cos(angle),
+                y: center.y + radius * Math.sin(angle),
+            });
+
+            const apertureHandlePos = () => ({
+                x: center.x + radius * HANDLE_FRACTION * Math.cos(angle),
+                y: center.y + radius * HANDLE_FRACTION * Math.sin(angle),
+            });
+
+            const apexPos = () => {
+                const ux = Math.cos(angle);
+                const uy = Math.sin(angle);
+                const vx = -uy;
+                const vy = ux;
+                const half = radius / 2;
+                const h = Math.sqrt(
+                    Math.max(0, LEG_LENGTH * LEG_LENGTH - half * half),
+                );
+                return {
+                    x: center.x + half * ux + vx * h,
+                    y: center.y + half * uy + vy * h,
+                };
+            };
+
+            const legToPin = new Konva.Line({
+                points: [apexPos().x, apexPos().y, center.x, center.y],
+                stroke: "#8a8f98",
+                strokeWidth: 6,
+                lineCap: "round",
+            });
+            toolLayer.add(legToPin);
+
+            const legToPencil = new Konva.Line({
+                points: [
+                    apexPos().x,
+                    apexPos().y,
+                    pencilPos().x,
+                    pencilPos().y,
+                ],
+                stroke: "#f2c744",
+                strokeWidth: 6,
+                lineCap: "round",
+            });
+            toolLayer.add(legToPencil);
+
+            const apexPhi = () => {
+                const half = radius / 2;
+                const h = Math.sqrt(
+                    Math.max(0, LEG_LENGTH * LEG_LENGTH - half * half),
+                );
+                return Math.atan2(h, half);
+            };
+
+            const hinge = new Konva.Circle({
+                ...apexPos(),
+                radius: 18,
+                fill: "#444",
+                stroke: "#fff",
+                strokeWidth: 2,
+                shadowColor: "black",
+                shadowBlur: 3,
+                shadowOpacity: 0.3,
+                draggable: true,
+                dragBoundFunc: (pos) => {
+                    const a = Math.atan2(
+                        pos.y - center.y,
+                        pos.x - center.x,
+                    );
+                    return {
+                        x: center.x + LEG_LENGTH * Math.cos(a),
+                        y: center.y + LEG_LENGTH * Math.sin(a),
+                    };
+                },
+            });
+            toolLayer.add(hinge);
+
+            const pin = new Konva.Circle({
+                x: center.x,
+                y: center.y,
+                radius: 18,
+                fill: "#c62828",
+                stroke: "#fff",
+                strokeWidth: 2,
+                shadowColor: "black",
+                shadowBlur: 3,
+                shadowOpacity: 0.3,
+                draggable: true,
+            });
+            toolLayer.add(pin);
+
+            const pencil = new Konva.Group({
+                ...pencilPos(),
+                listening: false,
+            });
+            const pencilBody = new Konva.Rect({
+                x: -6,
+                y: -30,
+                width: 12,
+                height: 18,
+                fill: "#fbc02d",
+                stroke: "#333",
+                strokeWidth: 1.5,
+            });
+            const pencilTip = new Konva.Line({
+                points: [-6, -12, 6, -12, 0, 0, -6, -12],
+                fill: "#333",
+                closed: true,
+            });
+            pencil.add(pencilBody);
+            pencil.add(pencilTip);
+            toolLayer.add(pencil);
+
+            const apertureHandle = new Konva.Rect({
+                ...apertureHandlePos(),
+                width: 30,
+                height: 30,
+                offsetX: 15,
+                offsetY: 15,
+                rotation: 45,
+                fill: "#1976d2",
+                stroke: "#fff",
+                strokeWidth: 2,
+                shadowColor: "black",
+                shadowBlur: 3,
+                shadowOpacity: 0.3,
+                draggable: true,
+                dragBoundFunc: (pos) => {
+                    const ux = Math.cos(angle);
+                    const uy = Math.sin(angle);
+                    const proj =
+                        (pos.x - center.x) * ux +
+                        (pos.y - center.y) * uy;
+                    const clamped = Math.max(
+                        MIN_RADIUS * HANDLE_FRACTION,
+                        Math.min(MAX_RADIUS * HANDLE_FRACTION, proj),
+                    );
+                    return {
+                        x: center.x + clamped * ux,
+                        y: center.y + clamped * uy,
+                    };
+                },
+            });
+            toolLayer.add(apertureHandle);
+
+            const apexAngleDeg = () => {
+                const cosA =
+                    1 - (radius * radius) / (2 * LEG_LENGTH * LEG_LENGTH);
+                return (
+                    (Math.acos(Math.max(-1, Math.min(1, cosA))) * 180) /
+                    Math.PI
+                );
+            };
+
+            const angleLabelPos = () => {
+                const apexP = apexPos();
+                const vx = -Math.sin(angle);
+                const vy = Math.cos(angle);
+                return { x: apexP.x + vx * 26, y: apexP.y + vy * 26 };
+            };
+
+            const angleLabel = new Konva.Text({
+                ...angleLabelPos(),
+                text: `${Math.round(apexAngleDeg())}°`,
+                fontSize: 16,
+                fontStyle: "bold",
+                fontFamily: "monospace",
+                fill: "#1976d2",
+            });
+            angleLabel.offsetX(angleLabel.width() / 2);
+            angleLabel.offsetY(angleLabel.height() / 2);
+            toolLayer.add(angleLabel);
+
+            const redraw = () => {
+                const pencilP = pencilPos();
+                const apexP = apexPos();
+                pencil.position(pencilP);
+                
+                // Point pencil towards apex
+                const pencilAngle = Math.atan2(
+                    apexP.y - pencilP.y,
+                    apexP.x - pencilP.x,
+                );
+                pencil.rotation((pencilAngle * 180) / Math.PI + 90);
+
+                apertureHandle.position(apertureHandlePos());
+                hinge.position(apexP);
+                legToPin.points([apexP.x, apexP.y, center.x, center.y]);
+                legToPencil.points([
+                    apexP.x,
+                    apexP.y,
+                    pencilP.x,
+                    pencilP.y,
+                ]);
+
+                angleLabel.text(`${Math.round(apexAngleDeg())}°`);
+                angleLabel.offsetX(angleLabel.width() / 2);
+                angleLabel.offsetY(angleLabel.height() / 2);
+                angleLabel.position(angleLabelPos());
+            };
+
+            const normalizeAngleDelta = (delta: number) =>
+                Math.atan2(Math.sin(delta), Math.cos(delta));
+
+            const MAX_INK_POINTS = 4000;
+            let inkLine: Konva.Line | null = null;
+            let inkPoints: number[] = [];
+
+            pin.on("dragmove", () => {
+                center = { x: pin.x(), y: pin.y() };
+                redraw();
+                toolLayer.batchDraw();
+            });
+            pin.on("mouseenter", () => {
+                document.body.style.cursor = "grab";
+            });
+            pin.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+            });
+
+            apertureHandle.on("dragmove", () => {
+                const dist = Math.hypot(
+                    apertureHandle.x() - center.x,
+                    apertureHandle.y() - center.y,
+                );
+                radius = Math.min(
+                    Math.max(dist / HANDLE_FRACTION, MIN_RADIUS),
+                    MAX_RADIUS,
+                );
+                redraw();
+                toolLayer.batchDraw();
+            });
+            apertureHandle.on("mouseenter", () => {
+                document.body.style.cursor = "ew-resize";
+            });
+            apertureHandle.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+            });
+
+            hinge.on("dragstart", () => {
+                const cur = pencilPos();
+                inkPoints = [cur.x, cur.y];
+                inkLine = new Konva.Line({
+                    points: inkPoints,
+                    stroke: this.brushColor(),
+                    strokeWidth: this.brushSize(),
+                    lineCap: "round",
+                    lineJoin: "round",
+                    listening: false,
+                });
+                drawingLayer.add(inkLine);
+            });
+
+            hinge.on("dragmove", () => {
+                const apexAngle = Math.atan2(
+                    hinge.y() - center.y,
+                    hinge.x() - center.x,
+                );
+                const newAngle = apexAngle - apexPhi();
+                const delta = normalizeAngleDelta(newAngle - angle);
+
+                if (inkLine && inkPoints.length < MAX_INK_POINTS) {
+                    const steps = Math.max(
+                        1,
+                        Math.ceil(Math.abs(delta) / 0.05),
+                    );
+                    for (let i = 1; i <= steps; i++) {
+                        const a = angle + (delta * i) / steps;
+                        inkPoints.push(
+                            center.x + radius * Math.cos(a),
+                            center.y + radius * Math.sin(a),
+                        );
+                    }
+                    inkLine.points(inkPoints);
+                    scheduleDraw();
+                }
+
+                angle = newAngle;
+                redraw();
+                toolLayer.batchDraw();
+            });
+
+            hinge.on("dragend", () => {
+                if (inkPoints.length > 6 && inkLine) {
+                    const simplified = simplifyPoints(inkPoints, 0.8);
+                    inkLine.points(simplified);
+                    scheduleDraw();
+
+                    this.canvasWorker?.postMessage({
+                        type: 'LINE_POINTER_UP',
+                        points: inkLine.points(),
+                        mode: 'brush',
+                        color: inkLine.stroke(),
+                        size: inkLine.strokeWidth(),
+                    });
+                } else if (inkLine) {
+                    inkLine.destroy();
+                    scheduleDraw();
+                }
+                inkPoints = [];
+                inkLine = null;
+            });
+            hinge.on("mouseenter", () => {
+                document.body.style.cursor = "grab";
+            });
+            hinge.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+            });
+
+            return {
+                pin,
+                pencil,
+                apertureHandle,
+                legToPin,
+                legToPencil,
+                hinge,
+                angleLabel,
+            };
+        };
+
         function scheduleDraw() {
             if (!needsRedraw) {
                 needsRedraw = true;
@@ -1401,6 +1735,10 @@ export class CanvasService {
                     toolLayer.add(this.protractor() as any);
                 }
 
+                if (tool === 'compass' && !this.compass()) {
+                    this.compass.set(createCompass(300, 300, 120));
+                }
+
                 toolLayer.batchDraw();
             },
         });
@@ -1416,6 +1754,11 @@ export class CanvasService {
                     this.ruler.set(null)
                     this.protractor()?.destroy()
                     this.protractor.set(null)
+                    if (this.compass()) {
+                        const comp = this.compass();
+                        Object.values(comp).forEach((item: any) => item?.destroy?.());
+                        this.compass.set(null);
+                    }
                     toolLayer.destroyChildren()
                 }
 
@@ -1433,6 +1776,14 @@ export class CanvasService {
                     this.protractor.set(null)
                     toolLayer.getChildren((item) => item == this.protractor())?.[0]?.destroy()
                     toolLayer.getChildren((item) => item == this.protractorTransformer())?.[0]?.destroy()
+                }
+
+                if (tool === 'compass') {
+                    if (this.compass()) {
+                        const comp = this.compass();
+                        Object.values(comp).forEach((item: any) => item?.destroy?.());
+                        this.compass.set(null);
+                    }
                 }
 
                 toolLayer.batchDraw();

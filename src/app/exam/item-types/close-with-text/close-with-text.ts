@@ -20,8 +20,23 @@ export class CloseWithText implements OnInit, AfterViewChecked, OnDestroy {
   store = computed(() => this._store.store());
   fontSize = model(16);
   
-  formattedStimulus = signal<string>('');
+  clozeRenderInfo = computed(() => {
+    const currentQuestion = this.store().currentQuestion;
+    if (!currentQuestion?.stimulus) {
+      return { stim: '', renderArray: [] };
+    }
 
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+       i++;
+    }
+
+    return { stim, renderArray: Array.from({ length: i }, (_, idx) => idx) };
+  });
+
+  formattedStimulus = computed(() => this.clozeRenderInfo().stim);
   contentContainer = viewChild<ElementRef>('contentContainer');
   dropdowns = viewChildren<ElementRef>('clozeDropdown');
 
@@ -29,7 +44,6 @@ export class CloseWithText implements OnInit, AfterViewChecked, OnDestroy {
   private subscription?: Subscription;
 
   ngOnInit() {
-    this.formatStimulus();
     this.subscription = this.responseSubject.pipe(
       debounceTime(500)
     ).subscribe(({index, value}) => {
@@ -41,24 +55,7 @@ export class CloseWithText implements OnInit, AfterViewChecked, OnDestroy {
     this.subscription?.unsubscribe();
   }
 
-  formatStimulus() {
-    const currentQuestion = this.store().currentQuestion;
-    if (!currentQuestion?.stimulus) {
-      return
-    }
-
-    let stim = currentQuestion.stimulus;
-    let i = 0;
-    while (stim.includes('{{response}}')) {
-       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
-       i++;
-    }
-
-    this.formattedStimulus.set(stim);
-    this.clozeRenderArray.set(Array.from({ length: i }, (_, idx) => idx));
-  }
-
-  clozeRenderArray = signal<number[]>([]);
+  clozeRenderArray = computed(() => this.clozeRenderInfo().renderArray);
 
   ngAfterViewChecked() {
     const container = this.contentContainer()?.nativeElement;

@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit, HostListener } from '@angular/core';
+import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, OnInit, HostListener, effect, untracked } from '@angular/core';
 import { Store } from '../../../store/store';
 import { AnswerTools } from '../../answer-tools/answer-tools';
 import { QuestionTools } from '../../question-tools/question-tools';
@@ -20,17 +20,43 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
   private _store = inject(Store);
   private _eventService = inject(EventService)
   private renderer = inject(Renderer2);
+  private ttsShortcutService = inject(ClozeTtsShortcutService);
 
   store = computed(() => this._store.store());
+  currentQuestionId = computed(() => this.store().currentQuestion?.id);
   fontSize = model(16);
   alphabetList: typeof AlphabetList = AlphabetList;
   isMobile = signal(false)
-  
-  formattedStimulus = signal<string>('');
-  private ttsShortcutService = inject(ClozeTtsShortcutService);
 
   contentContainer = viewChild<ElementRef>('contentContainer');
   dropdowns = viewChildren<ElementRef>('clozeDropdown');
+
+  formattedStimulus = computed(() => {
+    const currentQuestion = this.store().currentQuestion;
+    if (!currentQuestion?.stimulus) {
+      return '';
+    }
+
+    let stim = currentQuestion.stimulus;
+    let i = 0;
+    while (stim.includes('{{response}}')) {
+      stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
+      i++;
+    }
+
+    return stim;
+  });
+
+  constructor() {
+    effect(() => {
+      const qId = this.currentQuestionId();
+      if (qId) {
+        untracked(() => {
+          this.ttsShortcutService.activeBlankIndex.set(0);
+        });
+      }
+    });
+  }
 
   ngOnInit() {
     const isMobile = window.matchMedia('(max-width: 767px)').matches
@@ -40,24 +66,6 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
       this.captureResponses.bind(this),
       () => this.dropdowns().length
     );
-
-    this.formatStimulus();
-  }
-
-  formatStimulus() {
-    const currentQuestion = this.store().currentQuestion;
-    if (!currentQuestion?.stimulus) {
-      return
-    }
-
-    let stim = currentQuestion.stimulus;
-    let i = 0;
-    while (stim.includes('{{response}}')) {
-       stim = stim.replace('{{response}}', `<span class="cloze-placeholder inline-flex align-middle" data-index="${i}"></span>`);
-       i++;
-    }
-
-    this.formattedStimulus.set(stim);
   }
 
   ngAfterViewChecked() {
@@ -75,7 +83,6 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
     }
   }
 
-
   captureResponses(index: number, value: string) {
     const currentQuestion = this.store().currentQuestion;
     if (!currentQuestion) {
@@ -83,7 +90,7 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
     };
 
     const oldAnswers = [...currentQuestion.responses];
-    
+
     if (oldAnswers[index] === value) {
       return;
     }
@@ -109,7 +116,7 @@ export class CloseWithSelect implements OnInit, AfterViewChecked {
       answer: answerIndex,
       old_answer: oldAnswerIndices
     })
-    
+
     currentQuestion!.lastUpdated = new Date()
 
     this._store.updateStore({ currentQuestion })

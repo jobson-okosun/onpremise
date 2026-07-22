@@ -393,7 +393,7 @@
                     </button>
                 </div>
 
-                @let showAddBtn = !getSelectedTools().includes('ruler') || !getSelectedTools().includes('protractor');
+                @let showAddBtn = !getSelectedTools().includes('ruler') || !getSelectedTools().includes('protractor') || !getSelectedTools().includes('compass');
 
                 @if(showAddBtn) {
                 <div class="text-sm p-2 font-bold border-b border-gray-300 border-dashed">ADD</div>
@@ -431,6 +431,20 @@
                         </svg>
 
                         <span>Protractor</span>
+                    </button>
+                    }
+                    @if(!getSelectedTools().includes('compass')){
+                    <button (click)="selectMeasurementTool('compass')"
+                        class="w-max p-2 justify-between hover:bg-gray-100 rounded-md cursor-pointer flex flex-col gap-1 items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="11.2" y1="6.8" x2="6" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="12.8" y1="6.8" x2="18" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M7 16 Q12 18 17 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" stroke-dasharray="2 2"/>
+                            <circle cx="6" cy="19.5" r="1" fill="currentColor" stroke="none"/>
+                            <path d="M17.5 19L18.5 22L16.5 22Z" fill="currentColor"/>
+                        </svg>
+                        <span>Compass</span>
                     </button>
                     }
                 </div>
@@ -479,6 +493,7 @@
         <div class="flex flex-col p-1 cursor-pointer text-sm">
             <button class="p-2 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left">Ruler</button>
             <button class="p-2 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left">Protractor</button>
+            <button class="p-2 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left">Compass</button>
         </div>
     </ng-template>
 </p-menu>
