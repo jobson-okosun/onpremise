@@ -1,9 +1,10 @@
 export const environment = {
     production: true,
-    // domain: 'https://onpremise.ngrok.app',
-    // developmentIP: "https://onpremise.ngrok.app/examalpha/onpremise",
-    developmentIP: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80', '/examalpha/onpremise'),
-    domain: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80'),
+    domain: 'https://onpremise.ngrok.app',
+    developmentIP: "https://onpremise.ngrok.app/examalpha/onpremise",
+    // developmentIP: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80', '/examalpha/onpremise'),
+    // domain: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80'),
+    
     NETWORK_CHECK: {
         DOWNLOAD: "https://pub-086a38f5ef8c44ccaf276c5b1a970832.r2.dev/2mb.bin",
         UPLOAD: "https://ml-server-api.ngrok.app/ml_server/upload-speed",
