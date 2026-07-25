@@ -271,10 +271,7 @@ export class TextToSpeechService {
           const parsed = await this.buildPassageAndStimulus(question);
           
           if (isFirstQuestion && (question.stimulus?.includes('math') || question.stimulus?.includes('katex'))) {
-            console.log('--- FIRST MATH QUESTION LOG ---');
-            console.log('Original HTML length:', question.stimulus.length);
-            console.log('Parsed Speech Text:', parsed);
-            console.log('-------------------------------');
+
             isFirstQuestion = false;
           } else if (isFirstQuestion && !question.stimulus?.includes('math') && !question.stimulus?.includes('katex')) {
             // Keep searching for the first question that actually has math
