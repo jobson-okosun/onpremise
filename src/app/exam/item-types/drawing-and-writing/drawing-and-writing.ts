@@ -24,8 +24,6 @@ export class DrawingAndWriting {
   private _drawingStore = inject(DrawingAndWritingStore)
   private _konvaEventTools = inject(KonvaToolsEvent)
 
-  private _questionTools = viewChild(QuestionTools)
-
   showClearPageModal = false;
   showDeletePageModal = false;
 
@@ -135,6 +133,7 @@ export class DrawingAndWriting {
   });
 
   prepareCanvasAndStoreDataOnLoad() {
+    this.selectedMeasuringToolsSet.set(new Set());
     const currentQuestion = this.store().currentQuestion
 
     const backgroundType = this.store().currentQuestion?.background_type as any

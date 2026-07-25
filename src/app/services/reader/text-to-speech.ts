@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Store } from '../../store/store';
 import { AccessibilitySupport, AlphabetList, ItemType } from '../../store/model/types';
 import { SpeechParserService } from './speech-parser';
@@ -18,7 +18,7 @@ export class TextToSpeechService {
   private hasAnnouncedWelcome = false;
   
   public normalSpeed = 0.75; 
-  public slowSpeed = 0.65;
+  public slowSpeed = 0.45;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   
   private speechChunks: {text: string, rate: number}[] = [];
@@ -26,16 +26,31 @@ export class TextToSpeechService {
   private currentCharIndex: number = 0;
   private isManualPause: boolean = false;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
+  private hasPreloaded = false;
 
   constructor() {
+    effect(() => {
+      const sections = this._store.store().sections;
+      if (sections && sections.length > 0 && !this.hasPreloaded) {
+        this.hasPreloaded = true;
+        this.preloadAllQuestions();
+      }
+    });
+
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       this.initVoice();
       window.speechSynthesis.onvoiceschanged = () => {
         this.initVoice();
       };
       
+      window.addEventListener('click', () => {
+        this.unlockAudioEngine();
+      });
+
       // Global listener for Spacebar to pause/resume speech
       window.addEventListener('keydown', (event) => {
+        this.unlockAudioEngine();
+        
         const target = event.target as HTMLElement;
         const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
         if (isInput) return;
@@ -48,18 +63,34 @@ export class TextToSpeechService {
     }
   }
 
+  private lastUnlockTime = 0;
+  public unlockAudioEngine(): void {
+    const now = Date.now();
+    if (now - this.lastUnlockTime < 2000) return; 
+    
+    if ('speechSynthesis' in window && this.isTextToSpeechEnabled()) {
+      if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+         const unlockUtterance = new SpeechSynthesisUtterance('');
+         unlockUtterance.volume = 0;
+         window.speechSynthesis.speak(unlockUtterance);
+         this.lastUnlockTime = now;
+      }
+    }
+  }
+
   private initVoice(): void {
     const voices = window.speechSynthesis.getVoices();
     if (!voices || voices.length === 0) return;
     
-    // Fallback chain for a consistent female English voice across platforms (Chrome Android, Windows, Mac)
-    this.selectedVoice = voices.find(v => v.name.includes('Google US English'))
-        || voices.find(v => v.name.includes('Google UK English Female'))
-        || voices.find(v => v.name.includes('Microsoft Zira'))
+    this.selectedVoice =
+        //  voices.find(v => v.name.includes('Google US English'))
+        // || voices.find(v => v.name.includes('Google UK English Female'))
+        voices.find(v => v.name.includes('Microsoft Zira'))
         || voices.find(v => v.name.includes('Samantha') || v.name.includes('Victoria'))
         || voices.find(v => v.lang.startsWith('en-') && v.name.toLowerCase().includes('female'))
         || voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB')
         || voices[0];
+
   }
 
   public stop(): void {
@@ -224,6 +255,40 @@ export class TextToSpeechService {
 
   private isSupportedItemType(itemType: ItemType | string): boolean {
     return this.getSupportedMode(itemType) !== 'SKIP';
+  }
+
+  public async preloadAllQuestions(): Promise<void> {
+    const sections = this._store.store().sections;
+    if (!sections) return;
+
+    let isFirstQuestion = true;
+    for (const section of sections) {
+      if (!section.items) continue;
+      for (const question of section.items) {
+        if (!this.isSupportedItemType(question.item_type)) continue;
+
+        if (question.stimulus || question.passage_stimulus) {
+          const parsed = await this.buildPassageAndStimulus(question);
+          
+          if (isFirstQuestion && (question.stimulus?.includes('math') || question.stimulus?.includes('katex'))) {
+            console.log('--- FIRST MATH QUESTION LOG ---');
+            console.log('Original HTML length:', question.stimulus.length);
+            console.log('Parsed Speech Text:', parsed);
+            console.log('-------------------------------');
+            isFirstQuestion = false;
+          } else if (isFirstQuestion && !question.stimulus?.includes('math') && !question.stimulus?.includes('katex')) {
+            // Keep searching for the first question that actually has math
+          }
+        }
+
+        if (this.getSupportedMode(question.item_type) === 'FULL' && question.options) {
+          await this.buildOptionsText(question);
+        }
+
+        // Yield to the event loop to prevent freezing the UI
+        await new Promise(r => setTimeout(r, 10));
+      }
+    }
   }
 
   public announceWelcomeMessage(): void {

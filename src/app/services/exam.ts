@@ -56,6 +56,7 @@ export class ExamService {
     isActivityWarningDisplayed = signal(false);
     inactivityTimer = signal(Date.now())
     connectionAlertShown = signal(false)
+    isPermanentNetworkLossModalActive = signal(false)
     examTimedOut = signal(false)
     timeDisplay = signal({ min: 0, sec: 0 })
     store = computed(() => this._store.store())
@@ -554,6 +555,10 @@ export class ExamService {
     }
 
     displayConectionLossModal(): void {
+        this.isPermanentNetworkLossModalActive.set(true)
+        if (this.examTimerSub$) {
+            this.examTimerSub$.unsubscribe();
+        }
         this.isProctoringNetworkRetryActive.set(false)
         this.stopNetworkRetryCountdown()
         this.cleanUpProctoring()

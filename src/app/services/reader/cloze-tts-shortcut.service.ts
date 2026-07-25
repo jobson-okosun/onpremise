@@ -2,11 +2,13 @@ import { Injectable, inject, signal } from '@angular/core';
 import { TextToSpeechService } from './text-to-speech';
 import { Store } from '../../store/store';
 import { AlphabetList } from '../../store/model/types';
+import { ExamService } from '../exam';
 
 @Injectable()
 export class ClozeTtsShortcutService {
   private _tts = inject(TextToSpeechService);
   private _store = inject(Store);
+  private _exam = inject(ExamService);
   private alphabetList = AlphabetList;
 
   activeBlankIndex = signal<number>(0);
@@ -21,6 +23,7 @@ export class ClozeTtsShortcutService {
 
   handleKeyDown(event: KeyboardEvent) {
     if (!this._tts.isTextToSpeechEnabled()) return;
+    if (this._exam.isProctoringNetworkRetryActive() || this._exam.isPermanentNetworkLossModalActive()) return;
 
     const target = event.target as HTMLElement;
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;

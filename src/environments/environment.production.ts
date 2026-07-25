@@ -1,7 +1,9 @@
 export const environment = {
     production: true,
+    
     domain: 'https://onpremise.ngrok.app',
     developmentIP: "https://onpremise.ngrok.app/examalpha/onpremise",
+
     // developmentIP: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80', '/examalpha/onpremise'),
     // domain: location.protocol.concat('//', location.hostname, location.port ? `:${location.port}` : ':80'),
     

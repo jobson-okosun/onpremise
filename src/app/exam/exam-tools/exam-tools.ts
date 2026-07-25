@@ -33,6 +33,7 @@ export class ExamTools {
   totalExamTime = computed(() => this._exam.totalExamTime())
   isExamAlpha = computed(() => this._exam.isExamAlpha())
   isProctoredExam = computed(() => this._exam.isProctoredExam())
+  supportedCalculators = signal(['SIMPLE'])
   
   fullscreen() {
     fullscreen()

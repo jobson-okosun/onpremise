@@ -377,6 +377,10 @@ export default class Layout implements OnDestroy {
       return
     }
 
+    if (this._exam.isProctoringNetworkRetryActive() || this._exam.isPermanentNetworkLossModalActive()) {
+      return;
+    }
+
     const target = event.target as HTMLElement
     if (target.classList.contains('close-item')) {
       return
@@ -432,6 +436,10 @@ export default class Layout implements OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    if (this._exam.isProctoringNetworkRetryActive() || this._exam.isPermanentNetworkLossModalActive()) {
+      return;
+    }
+
     const target = event.target as HTMLElement;
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
     

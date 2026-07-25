@@ -1,4 +1,5 @@
-import { Component, computed, inject, model, signal, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, HostListener, OnInit, effect, untracked } from '@angular/core';
+import { Component, computed, inject, model, viewChild, viewChildren, ElementRef, AfterViewChecked, Renderer2, HostListener, OnInit, effect, untracked,
+} from '@angular/core';
 import { Store } from '../../../store/store';
 import { QuestionTools } from '../../question-tools/question-tools';
 import { AnswerTools } from '../../answer-tools/answer-tools';
@@ -6,6 +7,7 @@ import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { ClozeTtsShortcutService } from '../../../services/reader/cloze-tts-shortcut.service';
+import { TextToSpeechService } from '../../../services/reader/text-to-speech';
 
 @Component({
   selector: 'app-close-with-dropdown',
@@ -20,6 +22,7 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
   private renderer = inject(Renderer2);
 
   private ttsShortcutService = inject(ClozeTtsShortcutService);
+  private tts = inject(TextToSpeechService)
 
   store = computed(() => this._store.store());
   currentQuestionId = computed(() => this.store().currentQuestion?.id);
@@ -120,6 +123,10 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    if (!this.tts.isTextToSpeechEnabled()) {
+      return;
+    }
+
     this.ttsShortcutService.handleKeyDown(event);
   }
 }

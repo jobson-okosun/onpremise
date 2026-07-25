@@ -1,24 +1,45 @@
 import { Injectable } from '@angular/core';
-import * as sre from 'speech-rule-engine';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpeechParserService {
   private isEngineReady = false;
+  private engineSetupFailed = false;
   private engineSetupPromise: Promise<any>;
+  private cache = new Map<string, string>();
+  private sre: any;
 
   constructor() {
-    this.engineSetupPromise = sre.setupEngine({
-      json: '/mathmaps/',
+    let baseHref = '/';
+
+    if (typeof document !== 'undefined') {
+      baseHref = document.querySelector('base')?.getAttribute('href') || '/';
+    }
+
+    const mathmapsUrl = baseHref.endsWith('/') ? `${baseHref}mathmaps/` : `${baseHref}/mathmaps/`;
+
+    (window as any).SREfeature = {
+      custom: (loc: string) => {
+        const url = `${mathmapsUrl}${loc}.json`;
+        return fetch(url).then(res => {
+          if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+          return res.text();
+        });
+      },
       domain: 'clearspeak', 
       style: 'default',
       locale: 'en'
-    }).then(() => { 
-      return sre.engineReady();
-    }).then(() => {
+    };
+
+    this.engineSetupPromise = (async () => {
+      const sreModule = await import('speech-rule-engine');
+      this.sre = sreModule.default || sreModule;
+      
+      await this.sre.setupEngine((window as any).SREfeature);
+      await this.sre.engineReady();
       this.isEngineReady = true;
-    }).catch((err: any) => {
+    })().catch((err: any) => {
       console.error('Failed to setup speech rule engine:', err);
     });
   }
@@ -26,37 +47,89 @@ export class SpeechParserService {
   public async parseHtmlForSpeech(html: string, parseEmphasis: boolean = false): Promise<string> {
     if (!html) return '';
 
+    const cacheKey = html + '_' + parseEmphasis;
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey)!;
+    }
+
     // Wait for the engine to be ready if it's not already
-    if (!this.isEngineReady) {
-      await this.engineSetupPromise;
+    if (!this.isEngineReady && !this.engineSetupFailed) {
+      try {
+        await Promise.race([
+          this.engineSetupPromise,
+          new Promise((_, reject) => setTimeout(() => reject(new Error('SRE Initialization Timeout')), 5000))
+        ]);
+      } catch (e) {
+        console.warn('Speech Rule Engine setup failed or timed out:', e);
+        this.engineSetupFailed = true;
+      }
     }
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
-    // Find all katex math elements
-    const mathElements = doc.querySelectorAll('.katex-mathml math');
-    
+    // Fallback 1: If an HTML sanitizer stripped the <math> tag but left the raw LaTeX inside .katex-mathml
+    const katexMathmlElements = doc.querySelectorAll('.katex-mathml');
+    for (let i = 0; i < katexMathmlElements.length; i++) {
+      const el = katexMathmlElements[i];
+      if (el.querySelectorAll('math').length === 0) {
+        let latex = el.textContent || '';
+        if (latex.trim()) {
+          latex = latex.replace(/\t/g, '\\t').replace(/ext\{/g, '\\text{');
+          try {
+            const katexModule = await import('katex');
+            const mathmlHtml = katexModule.default.renderToString(latex, { output: 'mathml' });
+            el.innerHTML = mathmlHtml;
+          } catch(e) { }
+        }
+      }
+    }
+
+    // Find all math elements directly
+    let mathElements = Array.from(doc.querySelectorAll('math'));
+
+    // Fallback: If no math elements were found but we have data-latex, use KaTeX to generate MathML
+    if (mathElements.length === 0) {
+      const latexContainers = doc.querySelectorAll('.math-expression[data-latex], .math-inline[data-latex]');
+      
+      for (let i = 0; i < latexContainers.length; i++) {
+        const container = latexContainers[i];
+        let latex = container.getAttribute('data-latex');
+        if (latex) {
+          // Fix single backslash issues that turn \text into tab-ext
+          latex = latex.replace(/\t/g, '\\t').replace(/ext\{/g, '\\text{');
+          
+          try {
+            const katexModule = await import('katex');
+            const mathmlHtml = katexModule.default.renderToString(latex, { output: 'mathml' });
+            container.innerHTML = mathmlHtml;
+          } catch(e) {
+            console.warn('>>> SRE KaTeX fallback rendering failed:', e);
+          }
+        }
+      }
+      
+      mathElements = Array.from(doc.querySelectorAll('math'));
+    }
+
     for (let i = 0; i < mathElements.length; i++) {
       const mathEl = mathElements[i];
       const mathmlString = mathEl.outerHTML;
       
       try {
-        const spokenText = sre.toSpeech(mathmlString);
+        const spokenText = this.sre.toSpeech(mathmlString);
         
         const mathContainer = mathEl.closest('.math-expression') || 
                               mathEl.closest('.math-inline') || 
                               mathEl.closest('.katex') || 
                               mathEl;
 
-        // Replace it with the spoken text
-        // We wrap math equations in speed markers so the TTS engine can read them slower!
         const textNode = doc.createTextNode(' [SLOW] ' + spokenText + ' [NORMAL] ');
         if (mathContainer.parentNode) {
           mathContainer.parentNode.replaceChild(textNode, mathContainer);
         }
-      } catch (e) {
-        console.error('SRE parsing error for element:', mathEl, e);
+      } catch (e: any) {
+        console.error('>>> SRE parsing error for element:', e);
       }
     }
 
@@ -97,15 +170,17 @@ export class SpeechParserService {
       }
     }
 
-    // Add spaces around block elements to prevent paragraph mashing
+    // Add spaces around block elements to prevent paragraph mashing, and a full stop to force a natural pause
     const blockElements = doc.querySelectorAll('p, div, br, h1, h2, h3, h4, h5, h6, li, tr, td, th');
     blockElements.forEach(el => {
       el.insertAdjacentText('beforebegin', ' ');
-      el.insertAdjacentText('afterend', ' ');
+      el.insertAdjacentText('afterend', '. ');
     });
 
     // Use textContent to naturally decode all HTML entities (like &nbsp;)
     const cleanText = (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
-    return cleanText + emphasisSummary
+    const result = cleanText + emphasisSummary;
+    this.cache.set(cacheKey, result);
+    return result;
   }
 }

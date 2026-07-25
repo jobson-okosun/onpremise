@@ -92,7 +92,7 @@
     <p-menu #calculator [popup]="true" class="flex justify-center" styleClass="w-max">
         <ng-template #start>
             <div class="flex flex-col p-1 cursor-pointer">
-                @for(item of ['SIMPLE', 'SCIENTIFIC']; track item) {
+                @for(item of supportedCalculators(); track item) {
                     <button (click)="showCalculator.set(item); calculator.toggle($event)" class="p-2 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left first-letter:uppercase">{{ item.toLowerCase() }} calculator</button>
                 }
             </div>
