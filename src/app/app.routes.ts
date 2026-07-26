@@ -45,7 +45,7 @@ export const routes: Routes = [
     },
     {
         path: 'instruction',
-        canActivate: [hasActiveExam, isLoggedin],
+        // canActivate: [hasActiveExam, isLoggedin],
         loadComponent: () => import('./instructions/instructions')
     },
     {
