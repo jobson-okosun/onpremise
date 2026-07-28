@@ -11,7 +11,7 @@ export const loginData = {
     ],
     "login_times": [],
     "passport": "https://cdn.example.com/passports/john_doe.png",
-    "accessibility_support": "NO"
+    "accessibility_support": "YES"
   },
   "sections_overview": [
     {
