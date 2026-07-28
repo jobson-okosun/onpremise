@@ -40,12 +40,12 @@ export default class Instructions implements OnInit {
 
   async ngOnInit() {
     if (!this.store().loginData) {
-      if (!environment.production) {
+      // if (!environment.production) {
         const { preloginData } = await import('../../../mock/prelogin-data.mock');
         const { loginData } = await import('../../../mock/login-data.mock');
         this._authService.setPreLoginData(preloginData as any);
         this._postLoginService.formatLoginDataToStore(loginData as any);
-      }
+      // }
     }
 
     this._eventService.logEvent({ event_type: CandidateEventType.INSTRUCTIONS_VIEWED });
