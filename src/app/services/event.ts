@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import { ICandidateEvent, ICandidateEventPayload } from "../store/model/events/events.interface";
 import { CandidateEventType } from "../store/model/events/events.enum";
 import { Store } from "../store/store";
+import { v7 as uuidv7 } from 'uuid';
 
 @Injectable({
     providedIn: 'root'
@@ -42,6 +43,8 @@ export class EventService {
     }
 
     private generateUUID(): string {
+        /*
+        // Old manual UUID v4 generation
         if (crypto?.randomUUID) {
             return crypto.randomUUID();
         }
@@ -61,6 +64,9 @@ export class EventService {
             hex.slice(8, 10).join(''),
             hex.slice(10, 16).join('')
         ].join('-');
+        */
+       
+        return uuidv7();
     }
 
     updatePastEventsSessionId(): void {

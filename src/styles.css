@@ -103,6 +103,19 @@ button:disabled {
   @apply border border-gray-400 p-2;
 }
 
+/* .editor-content table {
+  @apply border-collapse w-full my-4 rounded overflow-hidden;
+}
+
+.editor-content th {
+  @apply border border-gray-200 p-3 bg-gray-50 text-left font-semibold;
+}
+
+.editor-content td {
+  @apply border border-gray-200 p-3 align-top;
+} */
+
+
 .editor-content ul {
   @apply list-disc ml-5 my-2;
 }
@@ -118,6 +131,71 @@ button:disabled {
 .editor-content p:last-child {
   @apply mb-0;
 }
+
+/* tiptap editor table */
+preserve-space p:empty::before {
+    content: "\200B";
+}
+
+.preserve-space table {
+  @apply border-collapse w-full;
+}
+
+.preserve-space table {
+    @apply w-full text-left text-sm text-gray-500 border-separate border-spacing-0 rounded-2xl overflow-hidden border border-gray-200
+}
+
+.preserve-space table tbody tr:first-child {
+    @apply bg-gray-50 text-xs text-gray-700 border border-b-0 border-gray-200
+}
+
+.preserve-space table tbody tr:first-child .table-header {
+    @apply px-3 py-2 border-r border-gray-200
+}
+
+.preserve-space table tbody tr:not(:first-child){
+    @apply bg-white border-b border-gray-200 hover:bg-gray-50
+}
+
+.preserve-space table tbody tr:not(:first-child) .table-cell {
+    @apply px-3 py-2 font-semibold border-l border-gray-100 transition-colors
+}
+
+.preserve-space table .table-header, 
+.preserve-space table .table-cell {
+    @apply border-b border-gray-200 border-r;
+}
+
+.preserve-space table .table-cell:last-child {
+    @apply border-r-0;
+}
+
+.preserve-space table tbody tr:last-child .table-cell {
+    @apply border-b-0;
+}
+
+.preserve-space ul {
+  @apply list-disc ml-5 my-2;
+}
+
+.preserve-space ol {
+  @apply list-decimal ml-5 my-2;
+}
+
+.preserve-space p {
+  @apply my-2;
+}
+
+.preserve-space p:last-child {
+  @apply mb-0;
+}
+
+.math-expression { 
+   display: inline-flex; 
+   align-items: center; 
+   margin: 0 4px; 
+}
+
 
 /* Angular CDK LiveAnnouncer styles to hide text visually */
 .cdk-visually-hidden, .cdk-live-announcer-element {

@@ -8,10 +8,12 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHotToastConfig } from '@ngxpert/hot-toast';
 import { protobufInterceptor } from './interceptors/protobuf.interceptor';
 import { CustomPreloadingStrategy } from './utils/custom-preloading.strategy';
+import { provideAteEditor } from '@flogeez/angular-tiptap-editor';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAteEditor(),
     provideBrowserGlobalErrorListeners(), 
     provideZonelessChangeDetection(),
     provideRouter(routes, withHashLocation(), withPreloading(CustomPreloadingStrategy)),

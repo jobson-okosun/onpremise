@@ -57,6 +57,8 @@
               "@ngxpert/hot-toast/styles.css",
               "src/styles.css",
               "node_modules/animate.css/animate.min.css",
+              "node_modules/@fontsource/material-symbols-outlined/index.css",
+              "node_modules/@flogeez/angular-tiptap-editor/styles/index.css",
               "node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [

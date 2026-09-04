@@ -34,6 +34,7 @@ export class ExamTools {
   isExamAlpha = computed(() => this._exam.isExamAlpha())
   isProctoredExam = computed(() => this._exam.isProctoredExam())
   supportedCalculators = signal(['SIMPLE'])
+  screenWidth = computed(() => this._exam.screenWidth())
   
   fullscreen() {
     fullscreen()
