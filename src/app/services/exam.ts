@@ -353,7 +353,7 @@ export class ExamService {
 
         if (payload) {
             this._eventService.clearSentEvents(payload?.pending_events ?? [])
-            // this.saveEventsToLocalStorage(payload.pending_events || []);
+            this.saveEventsToLocalStorage(payload.pending_events || []);
         }
 
         if(!('auto_saved' in autosaveData)) {
