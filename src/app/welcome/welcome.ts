@@ -39,7 +39,10 @@ export default class Welcome {
   constructor() {
     effect(() => {
       untracked(() => {
-        if (this.store().examSettings?.prelogin_datas.length == 1 && this.store().examSettings?.exam_mode == this.examModes.Offline) {
+        if (
+          this.store().examSettings?.prelogin_datas.length == 1 &&
+          [this.examModes.Offline, this.examModes.Epaper].includes(this.store().examSettings?.exam_mode!)
+        ) {
           this.selectExam(this.store().examSettings?.prelogin_datas[0]!)
         } else if (this.store().examSettings?.exam_mode == this.examModes.Online) {
           this.resolveRoute()
@@ -78,7 +81,10 @@ export default class Welcome {
       return
     }
 
-    if (this.examModes.Offline && this.store().examSettings!.exam_mode.length <= 1) {
+    if (
+      [this.examModes.Offline, this.examModes.Epaper].includes(this.store().examSettings!.exam_mode) &&
+      this.store().examSettings!.prelogin_datas.length <= 1
+    ) {
       this._router.navigate(['login'])
       return
     }

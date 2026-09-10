@@ -52,7 +52,7 @@ export default class UsageGuide {
             return
           }
 
-          if (res.exam_mode == DeploymentMode.Offline) {
+          if ([DeploymentMode.Offline, DeploymentMode.Epaper].includes(res.exam_mode)) {
             if (res.prelogin_datas.length) {
               this._store.updateStore({ examSettings: res })
               this.gotoWelcomePage()

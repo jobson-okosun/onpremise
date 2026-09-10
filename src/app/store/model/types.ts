@@ -8,6 +8,7 @@ export interface ExamSettings {
 export enum DeploymentMode {
   Online = 'Online',
   Offline = 'Offline',
+  Epaper = 'Epaper'
 }
 
 export interface IAssessmentPreLoginData {

@@ -7,5 +7,7 @@ export const environment = {
         UPLOAD: "https://ml-server-api.ngrok.app/ml_server/upload-speed",
         LATENCY: "https://ml-server-api.ngrok.app/ml_server/ping"
     },
-    PROCTORING_WS: "wss://beta.examalpha.com:4080/ws"
+    PROCTORING_WS: "wss://beta.examalpha.com:4080/ws",
+    tabletModeDevelopmentIp: 'http://127.0.0.1:18080',
+    tabletRelayBase: 'http://127.0.0.1:18081',
 };

@@ -15,6 +15,7 @@ import { EventService } from "./event";
 import { CandidateEventType } from "../store/model/events/events.enum";
 import { PostLogin } from "./onboarding/post-login";
 import { TauriService } from "./ipc/tauri";
+import { APIIPC } from "./ipc/api-ipc";
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -28,6 +29,7 @@ export class ExamService {
     private _liveProctoringService = inject(LiveProctoringService);
     private _systemCheckService = inject(SystemCheckService)
     public _eventService = inject(EventService)
+    public _apiIPc = inject(APIIPC)
 
     examTimerSub$: Subscription;
     proctoringNetworkSubscription$: Subscription
@@ -66,7 +68,7 @@ export class ExamService {
     pinnedRestrictionApplied = signal(false)
     lastUnpinnedTimeInMins = signal(0)
     lastAutosaveTimeDifference = signal(0)
-    
+
     examType = computed(() => this.store().preloginData?.exam_type ?? ExamType.EXAMALPHA)
     isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
 
@@ -100,6 +102,16 @@ export class ExamService {
                 }
             });
         });
+
+        effect(() => {
+            const autoSaveResponseUpdate = this._apiIPc.autoSaveResponseUpdate()
+
+            if(autoSaveResponseUpdate) {
+                return untracked(() => {
+                    this.autosaveSuccess(autoSaveResponseUpdate, new Date(), null)
+                })
+            }
+        })
     }
 
     isAppPinned = effect(() => {
@@ -225,7 +237,7 @@ export class ExamService {
         this.lastAutoSaveTime.set(new Date())
         this.inactivityTimer.set(Date.now())
 
-        this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() }) 
+        this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() })
     }
 
     examTimerCallback() {
@@ -298,7 +310,7 @@ export class ExamService {
     autoSaveExam() {
         const syncStart = Date.now();
         const payload = generatePayLoadForAutoSave(this, this._store)
-        
+
         this.isAutoSaving.set(true)
         this.isAutoSaveSuccessful.set(false)
 
@@ -325,7 +337,7 @@ export class ExamService {
         this._toast.error('Your network is disconnected. Contact the administrator', { dismissible: true })
     }
 
-    autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any, payload: ICandidateAutoSave) {
+    autosaveSuccess(autosaveData: ICandidateAutoSaveResponse, syncTime: any, payload: ICandidateAutoSave | null) {
         if (!autosaveData) {
             this.autosaveFailed(syncTime)
             return
@@ -333,15 +345,20 @@ export class ExamService {
 
         const duration_ms = syncTime ? Date.now() - syncTime : undefined;
         this._eventService.logEvent({ event_type: CandidateEventType.SYNC_COMPLETED, duration_ms });
-        
-        this.isAutosaveSaved.set(autosaveData.auto_saved)
+
+        this.isAutosaveSaved.set(autosaveData?.auto_saved ?? true)
         this.lastAutoSaveTime.set(new Date())
         this.itemsLastSync.set(syncTime)
         this.connectionStatus.set(true)
-        
-        this._eventService.clearSentEvents(payload.pending_events || [])
 
-        // this.saveEventsToLocalStorage(payload.pending_events || []);
+        if (payload) {
+            this._eventService.clearSentEvents(payload?.pending_events ?? [])
+            // this.saveEventsToLocalStorage(payload.pending_events || []);
+        }
+
+        if(!('auto_saved' in autosaveData)) {
+            return
+        }
 
         if (autosaveData.compensatory_time_added) {
             this.handleCompensatoryTimeAddition();
@@ -442,8 +459,8 @@ export class ExamService {
 
     private handleEndExamOnSuccess(value: ICandidationEndExamResponse) {
         this.examEnded.set(true)
-        
-        if(this.store().platformIsTauri) {
+
+        if (this.store().platformIsTauri) {
             this._tauriService.sendExamEnded()
         }
 
@@ -508,12 +525,12 @@ export class ExamService {
     }
 
     triggerActivityWarning() {
-        if(this.isProctoringNetworkRetryActive()){
+        if (this.isProctoringNetworkRetryActive()) {
             return
         }
 
         this.isActivityWarningDisplayed.set(true);
-        
+
         Swal.close();
 
         Swal.fire({
@@ -714,7 +731,7 @@ export class ExamService {
         if (this.isAutoProctoring()) {
             this._autoProctoringService.cleanUpProctoring()
         }
-        
+
         if (this.isLiveProctoring()) {
             this._liveProctoringService.cleanUpLiveProctoring()
         }
@@ -791,7 +808,7 @@ export class ExamService {
         this.proctoringLatencyStatus.set('poor');
         this.proctoringNetworkRetryCount.set(0);
         disableRestrictedActions();
-        
+
         if (this.isAutoProctoring()) {
             this._autoProctoringService.isNetworkRetryActive.set(true);
             this._autoProctoringService.cleanUpProctoring();
@@ -819,11 +836,11 @@ export class ExamService {
                 this.isProctoringNetworkRetryActive.set(false);
                 this.proctoringNetworkRetryCount.set(0);
                 this.proctoringLatencyStatus.set('checking');
-                
+
                 if (!this.isCandidateSuspended() && this.store().appIsPinned) {
                     enableRestrictedActions();
                 }
-                
+
                 if (this.isAutoProctoring() && !this._autoProctoringService.isStreaming()) {
                     this._autoProctoringService.isNetworkRetryActive.set(false);
                     const success = await this._autoProctoringService.initialize();
@@ -831,7 +848,7 @@ export class ExamService {
                         this._toast.error('Unable to restart proctoring after network recovery. Please contact the administrator.', { duration: 150000, dismissible: true });
                     }
                 }
-                
+
                 if (this.isLiveProctoring() && !this._liveProctoringService.isStreaming()) {
                     const success = await this._liveProctoringService.initialize();
                     if (!success) {
@@ -844,7 +861,7 @@ export class ExamService {
                 // Connection still poor
                 this.handleFailedRetryCheck();
             }
-        } 
+        }
         catch (e) {
             // Connection still dead
             this.proctoringNetworkSpeed.set(0);
@@ -858,12 +875,12 @@ export class ExamService {
     handleFailedRetryCheck() {
         const currentCount = this.proctoringNetworkRetryCount() + 1;
         this.proctoringNetworkRetryCount.set(currentCount);
-        
+
         if (currentCount >= 10) {
             this.stopNetworkRetryCountdown();
             this.stopProctoringNetworkMonitor();
             this.displayConectionLossModal();
-            
+
             if (this.examTimerSub$) {
                 this.examTimerSub$.unsubscribe();
             }
@@ -878,7 +895,7 @@ export class ExamService {
 
     startNetworkRetryCountdown(delay: number = 3) {
         if (this.proctoringNetworkRetryCountdown() !== null) return;
-        
+
         this.proctoringNetworkRetryCountdown.set(delay);
         this.proctoringNetworkRetrySub = interval(1000).subscribe(() => {
             const current = this.proctoringNetworkRetryCountdown();

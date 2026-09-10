@@ -8,16 +8,18 @@ import { Menu } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { EventService } from '../../services/event';
 import { CandidateEventType } from '../../store/model/events/events.enum';
+import { APIIPC } from '../../services/ipc/api-ipc';
 @Component({
   selector: 'app-exam-tools',
   templateUrl: './exam-tools.html',
   styleUrl: './exam-tools.css',
   imports: [PopoverModule, Overview,Menu, TooltipModule], 
-})
+}) 
 export class ExamTools {
   private _store = inject(Store)
   private _exam = inject(ExamService)
   private _eventService = inject(EventService)
+  private _apiIpc = inject(APIIPC);
 
   store = computed(() => this._store.store())
   countDownTimer = computed(() => this._exam.timeDisplay())
@@ -35,6 +37,7 @@ export class ExamTools {
   isProctoredExam = computed(() => this._exam.isProctoredExam())
   supportedCalculators = signal(['SIMPLE'])
   screenWidth = computed(() => this._exam.screenWidth())
+  isTabletMode = computed(() => this._apiIpc.isRunningOnDevice());
   
   fullscreen() {
     fullscreen()

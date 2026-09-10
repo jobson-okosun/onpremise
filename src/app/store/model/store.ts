@@ -52,7 +52,7 @@ export class StoreDTO {
             currentYear: new Date().getFullYear().toString(),
             version: APP_VERSION
         },
-            this.candidatePassport = null
+        this.candidatePassport = null
         this.loginData = null
         this.sections = []
         this.currentSection = null

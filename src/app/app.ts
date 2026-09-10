@@ -7,6 +7,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { TauriService } from './services/ipc/tauri';
+import { APIIPC } from './services/ipc/api-ipc';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class App {
   private _dataService = inject(DataService)
   private _tauriService = inject(TauriService)
   private _store = inject(Store)
+  private _apiIPc = inject(APIIPC)
 
   store = computed(() => this._store.store())
   userExitPassword = new FormControl('', Validators.required)
@@ -32,10 +34,10 @@ export class App {
     })
   ))
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this._apiIPc.checkDeviceStatus()
     this._tauriService.updatePlatformType() 
     this._dataService.downloadOrganizationAssets()
-    this._tauriService.initializeBatteryStatus()
     this.unlockSpeechSynthesis()
   }
 

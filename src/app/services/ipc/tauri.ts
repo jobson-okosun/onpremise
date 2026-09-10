@@ -1,8 +1,7 @@
 import { effect, inject, Injectable, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { async, interval } from "rxjs";
+import { interval } from "rxjs";
 import { Store } from "../../store/store";
-import { BatteryStatus } from "../../store/model/types";
 
 @Injectable({ providedIn: 'root' })
 export class TauriService {
@@ -76,13 +75,6 @@ export class TauriService {
         }
     }
 
-    initializeBatteryStatus() {
-        const noneStatus: BatteryStatus = { battery: 'NONE' };
-        const batteryStatus = noneStatus
-
-        this._store.updateStore({ batteryStatus })
-    }
-
     async closeApp() {
         try {
             await this.tauriInvoke()('close_app');
@@ -92,6 +84,7 @@ export class TauriService {
             } catch (_) { }
         }
     }
+
 
     async sendExamStarted() {
         try {
@@ -149,6 +142,6 @@ export class TauriService {
 
     isAndroid() {
         const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-        return /android/i.test(userAgent)
+        return /android/i.test(userAgent);
     }
 }

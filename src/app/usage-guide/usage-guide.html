@@ -44,7 +44,14 @@
                                 </button>
                             }
 
-                            <button type="button" [disabled]="isLoadingExamSettings()" (click)="fetchExamSettingsData()" class="btn p-4! flex-1!">Proceed to exam</button>
+                            <button type="button" [disabled]="isLoadingExamSettings()" (click)="fetchExamSettingsData()" class="btn p-4! flex-1! flex items-center justify-center gap-3">
+                                @if(isLoadingExamSettings()) {
+                                    <div class="border-3 border-gray-300 border-t-white rounded-full size-5 animate-spin"></div>
+                                    <span>Please wait...</span>
+                                } @else {
+                                    <span>Proceed to exam</span>
+                                }
+                            </button>
                         </div>
                     </div>
 

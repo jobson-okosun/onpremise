@@ -1,3 +1,5 @@
+@let notTheoryExam = store().currentSection?.section_type !== sectionTypes().THEORY;
+
 <div class="proctor-boundary flex flex-col gap-3 justify-between h-dvh overflow-hidden bg-gray-100 p-2 pt-0 animate__animated animate__fadeIn select-none">
     <!-- top mobile -->    
     @if(screenWidth() < 500) {
@@ -130,7 +132,7 @@
                     </div>
                     
                     <div class="w-full lg:w-max">
-                        @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                        @if(!notTheoryExam) {
                             <app-paginator class="w-full"></app-paginator>
                         }
                         
@@ -139,7 +141,7 @@
                         }
                     </div>
 
-                    @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                    @if(notTheoryExam) {
                         <div class="hidden lg:flex gap-5 bg-gray-100 items-center rounded-2xl w-max py-1.5 px-3">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="font-bold">{{ currentSectionSummary()?.summary?.attempted?.length }}</div>
@@ -281,7 +283,7 @@
     <!-- bottom -->
     <div>
         <div class="hidden md:flex flex-col md:flex-row gap-5 md:gap-3 md:items-center justify-between bg-transparent rounded-md">
-            @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+            @if(notTheoryExam) {
                 <div class="flex justify-between items-center md:justify-between gap-3">
                     @if(store().currentQuestionIndex > 0) {
                         <button (click)="prev()" class="btn gap-3!">
@@ -325,7 +327,7 @@
                     <div>Attempted {{ allSectionsAttemp() }} of {{ totalSectionsQuestions() }} for all {{ !isExamAlpha() ? 'Subjects' : 'Sections' }}</div>
                 </div>
 
-                @if(store().currentSection?.section_type !== sectionTypes().THEORY) {
+                @if(notTheoryExam) {
                     <button (click)="examprogress.toggle($event)"class="p-3 py-2 rounded-2xl bg-primary text-white text-sm font-medium flex items-center justify-center gap-2">
                         <div>Show attempts</div>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" class="text-white">

@@ -6,9 +6,9 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router } from "@angular/router";
 import { Store } from "../../store/store";
-import { environment } from "../../../environments/environment";
 import { APP_BRANDING, MINIMUM_REASONABLE_DOWNLOAD_SPEED } from "../../utils/constants";
 import { formatExamResponseData } from "../../utils/helper";
+import { ApiResolver } from "./api-resolver";
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -16,6 +16,7 @@ export class DataService {
     private _http = inject(HttpClient)
     private _sanitizer = inject(DomSanitizer)
     private _store = inject(Store)
+    private _apiResolver = inject(ApiResolver)
 
     pollSub$: Subscription
     store = computed(() => this._store.store())
@@ -43,23 +44,23 @@ export class DataService {
     }
 
     fetchExamSettingsData(): Observable<ExamSettings> {
-        return this._http.get<ExamSettings>(`${environment.domain}/exam_mode`);
+        return this._http.get<ExamSettings>(`${this._apiResolver.getExamModeUrl('exam_mode')}`);
     }
 
     fetchPreLoginData(): Observable<IAssessmentPreLoginData> {
-        return this._http.get<IAssessmentPreLoginData>(`${environment.developmentIP}/candidate/fetch_prelogin_data`);
+        return this._http.get<IAssessmentPreLoginData>(`${this._apiResolver.getPreloginDataBaseUrl('fetch_prelogin_data')}`);
     }
 
     fetchPreLoginDataWithCode(code: string): Observable<IAssessmentPreLoginData> {
-        return this._http.get<IAssessmentPreLoginData>(`${environment.developmentIP}/candidate/fetch_prelogin_data/${code}`);
+        return this._http.get<IAssessmentPreLoginData>(`${this._apiResolver.getCandidateBaseUrl(`fetch_prelogin_data/${code}`)}`);
     }
 
     pingServer(payload: Ping): Observable<Pong> {
-        return this._http.post<any>(`${environment.developmentIP}/candidate/heartbeat`, payload, { withCredentials: true });
+        return this._http.post<any>(`${this._apiResolver.getCandidateBaseUrl('heartbeat')}`, payload, { withCredentials: true });
     }
 
     login(payload: Partial<ICandidateLoginDTO>): Observable<ICandidateLoginResponse> {
-        return this._http.post<ICandidateLoginResponse>(`${environment.developmentIP}/auth/candidate_login`, payload);
+        return this._http.post<ICandidateLoginResponse>(`${this._apiResolver.getAuthBaseUrl('candidate_login')}`, payload);
     }
 
     autoSave(payload: ICandidateAutoSave): Observable<null | ICandidateAutoSaveResponse> {
@@ -71,8 +72,8 @@ export class DataService {
         const assessmentId = this.store().preloginData?.id
         const loginValue = this.store().loginData?.candidate_data.login_field_value
         const computerId = this.store().preloginData?.unique_id;
-        const battery_status = this.store().batteryStatus
-        const autoSaveUrl = `${environment.developmentIP}/candidate/auto_save/assessment/${assessmentId}/login_value/${loginValue}/computer_id/${computerId}`;
+        const battery_status = { battery: "NONE" }
+        const autoSaveUrl = `${this._apiResolver.getCandidateBaseUrl(`auto_save/assessment/${assessmentId}/login_value/${loginValue}/computer_id/${computerId}`)}`
 
         payload = { ...payload, battery_status }
         return this._http.post<ICandidateAutoSaveResponse>(autoSaveUrl, payload).pipe(finalize(() => this.isAutoSavePendingResolve.set(false)));
@@ -88,7 +89,7 @@ export class DataService {
         endExamPayload = formatExamResponseData(endExamPayload)
 
         return this._http.post<ICandidationEndExamResponse>(
-            `${environment.developmentIP}/candidate/end_exam/assessment/${assessmentId}/login_value/${loginValue}`,
+            `${this._apiResolver.getCandidateBaseUrl(`end_exam/assessment/${assessmentId}/login_value/${loginValue}`)}`,
             endExamPayload
         );
     }
@@ -97,7 +98,7 @@ export class DataService {
         const hasNoBranding = { organizationAssets: { ...this.store().organizationAssets, logo: APP_BRANDING.logo, hasLogo: false } }
 
         try {
-            let response = await fetch(`${environment.developmentIP}/candidate/logo`);
+            let response = await fetch(`${this._apiResolver.getCandidateBaseUrl('logo')}`);
             let blob = await response.blob();
 
             if (!blob || !response.ok) {
@@ -121,7 +122,7 @@ export class DataService {
         const passportLocation = this.store().preloginData?.passport_location
 
         try {
-            let response = await fetch(`${environment.developmentIP}/candidate/passport/${loginId}.jpg/assessment/${passportLocation}`);
+            let response = await fetch(`${this._apiResolver.getCandidateBaseUrl(`passport/${loginId}.jpg/assessment/${passportLocation}`)}`);
             let blob = await response.blob();
 
             if (!blob || !response.ok) {
@@ -188,7 +189,7 @@ export class DataService {
     private async _checkDownloadSpeed() {
         const SIZE_MB = 2.04;
 
-        const url = environment.NETWORK_CHECK.DOWNLOAD
+        const url = this._apiResolver.getNetworkCheckUrl().DOWNLOAD
         const start = performance.now();
 
         const response = await fetch(url, { cache: "no-store" });
@@ -220,7 +221,7 @@ export class DataService {
             );
         }
 
-        const url = environment.NETWORK_CHECK.UPLOAD;
+        const url = this._apiResolver.getNetworkCheckUrl().UPLOAD;
         const start = performance.now();
 
         const res = await fetch(url, {
@@ -237,7 +238,7 @@ export class DataService {
 
     async checkLatency(samples = 5) {
         const rtts = [];
-        const url = environment.NETWORK_CHECK.LATENCY;
+        const url = this._apiResolver.getNetworkCheckUrl().LATENCY;
         const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
         for (let i = 0; i < samples; i++) {

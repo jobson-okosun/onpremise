@@ -45,7 +45,17 @@
                         }
                     </div>
                     <div class="my-10">
-                        <button type="button" [disabled]="isLoading() || !candidateId.value" (click)="login()" class="btn w-full! rounded-full!">Continue</button>
+                        <button 
+                            type="button" 
+                            [disabled]="isLoading() || !candidateId.value" (click)="login()" 
+                            class="btn w-full! rounded-full! flex items-center justify-center gap-3">
+                            @if(isLoading()) {
+                                <div class="border-3 border-gray-300 border-t-white rounded-full size-5 animate-spin"></div>
+                                <span>Please wait...</span>
+                            } @else {
+                                <span>Continue</span>
+                            }
+                        </button>
                     </div>
                 </div>
             }

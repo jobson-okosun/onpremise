@@ -24,7 +24,6 @@ export default class ProctoredStartExamStep {
   sectionsCount = computed(() => this.store().sections?.length ?? 0);
   candidateName = computed(() => this.store().loginData?.candidate_data?.name ?? 'Candidate');
 
-  // Check if all required steps are completed
   canStartExam = computed(() => this._onboardingService.allRequiredStepsCompleted());
   completionStatus = computed(() => this._onboardingService.completionStatus());
 
