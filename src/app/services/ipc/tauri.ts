@@ -10,23 +10,23 @@ export class TauriService {
     unlistenFns: any[] = []
     tauriInvoke = signal<any | null>(null)
     tauriListen = signal<any | null>(null)
-    poolInterval = toSignal(interval(3000));
-    pinPool = effect(() => {
-        const tick = this.poolInterval();
-        if (tick === undefined) {
-            return
-        }
+    // poolInterval = toSignal(interval(3000));
+    // pinPool = effect(() => {
+    //     const tick = this.poolInterval();
+    //     if (tick === undefined) {
+    //         return
+    //     }
 
-        if (!this._store.store().platformIsTauri) {
-            return
-        }
+    //     if (!this._store.store().platformIsTauri) {
+    //         return
+    //     }
 
-        if (!this.isAndroid()) {
-            return
-        }
+    //     if (!this.isAndroid()) {
+    //         return
+    //     }
 
-        this.isAppPinned();
-    });
+    //     this.isAppPinned();
+    // });
 
     isTauri(): boolean {
         return !!(window as any).__TAURI_INTERNALS__;

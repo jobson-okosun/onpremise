@@ -1,10 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { 
-    ALL_ONBOARDING_STEPS,
-    INITIAL_STEP_COMPLETION, 
-    OnboardingStepId, 
-    StepCompletionStatus 
-} from '../../store/model/types';
+import { ALL_ONBOARDING_STEPS,INITIAL_STEP_COMPLETION, OnboardingStepId, StepCompletionStatus } from '../../store/model/types';
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {

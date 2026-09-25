@@ -1,6 +1,6 @@
 <router-outlet />
 
-<p-dialog [visible]="!store().appIsPinned" [modal]="true" [dismissableMask]="false" [closable]="false"
+<!-- <p-dialog [visible]="!store().appIsPinned" [modal]="true" [dismissableMask]="false" [closable]="false"
     [draggable]="false" styleClass="w-full max-w-md">
     <div class="text-center p-6">
         <h4 class="text-xl font-semibold mb-3">Unpinned Notice</h4>
@@ -9,7 +9,7 @@
             <button type="button" class="btn rounded-md!" (click)="pinApp()">Pin App</button>
         </div>
     </div>
-</p-dialog>
+</p-dialog> -->
 
 <p-dialog [visible]="!!store().infridgementMessage" [modal]="true" [closable]="false" [dismissableMask]="false"
     [style]="{ width: '28rem' }" [contentStyle]="{ padding: '0' }">
