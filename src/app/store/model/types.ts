@@ -499,3 +499,37 @@ export interface UsageEvent {
   current_section_id?: string;
   timestamp: Date
 }
+
+export type Severity = 'info' | 'warning' | 'critical';
+
+export interface IntegrityEvent {
+  eventId: string;
+  eventType: string;
+  severity: Severity;
+  occurredAt: string;
+  details: Record<string, unknown>;
+  scope?: string;
+}
+
+export interface ExamPause {
+  pauseId: string;
+  reason: string;
+  message: string;
+  resolution: 'in_place' | 'exit_required';
+  details: Record<string, unknown>;
+  startedAt: string;
+}
+
+export interface DetectionResult {
+  candidateId: string;
+  examId: string;
+  batchId: string;
+  frameId: string;
+  savedFramePath: null | string;
+  modelType: number;
+  infractionType: number;
+  timestamp: string;
+  infractionEpisodeTimestamp: string | null;
+  infractionStrikes: number;
+  maxStrikeReached: boolean;
+}

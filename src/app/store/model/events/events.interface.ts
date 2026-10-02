@@ -109,7 +109,7 @@ export interface ICandidateEvent {
   event_id: string;
   events_session_id: string;
   sequence: number;
-  event_type: CandidateEventType;
+  event_type: CandidateEventType | string;
   elapsed_ms: number;
   section_id: string | null;
   question_id: string | null;
@@ -118,4 +118,5 @@ export interface ICandidateEvent {
   navigation_method?: NavigationMethod | null;
   duration_ms: number;
   battery_level: number | null;
+  details?: string;
 }

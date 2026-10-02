@@ -67,20 +67,20 @@ export class ProctorService {
                 return false;
             }
 
-            const wsPort = await this.tauriInvoke()("start_stream", {
+            const streamInfo: any = await this.tauriInvoke()("start_stream", {
                 candidateId: cInfo.candidate_id,
                 examId: cInfo.exam_id,
                 batchId: cInfo.batch_id
             });
 
-            if (!wsPort) {
-                console.error("Web Socket Port is null")
+            if (!streamInfo || !streamInfo.port || !streamInfo.token) {
+                console.error("Stream info is invalid", streamInfo)
                 return false;
             }
 
             try {
                 this.ws = await new Promise<WebSocket>((resolve, reject) => {
-                    const sock = new WebSocket(`ws://127.0.0.1:${wsPort}`);
+                    const sock = new WebSocket(`ws://127.0.0.1:${streamInfo.port}`, streamInfo.token);
                     sock.binaryType = "arraybuffer";
 
                     sock.onopen = () => resolve(sock);
@@ -146,8 +146,10 @@ export class ProctorService {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d')!;
 
-            canvas.width = cam.videoWidth;
-            canvas.height = cam.videoHeight;
+            // canvas.width = cam.videoWidth;
+            // canvas.height = cam.videoHeight;
+            canvas.width = 320;
+            canvas.height = 320;
             ctx.drawImage(cam, 0, 0, canvas.width, canvas.height);
 
             const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/jpeg", 0.85))
@@ -258,21 +260,6 @@ export class ProctorService {
         }
 
         const infractionType = payload.infractionType as keyof typeof INFRACTION_LABELS;
-
-        const infractionToEventMap: Record<number, CandidateEventType> = {
-            1: CandidateEventType.LOOKING_AWAY,
-            3: CandidateEventType.MULTIPLE_FACES,
-            5: CandidateEventType.FACE_LOST,
-            6: CandidateEventType.PHONE_DETECTED,
-            7: CandidateEventType.BOOK_DETECTED,
-            24: CandidateEventType.CAMERA_BLOCKED,
-            25: CandidateEventType.MIC_BLOCKED,
-        };
-
-        const mappedEvent = infractionToEventMap[payload.infractionType as number];
-        if (mappedEvent) {
-            this._eventService.logEvent({ event_type: mappedEvent } as any);
-        }
 
         const data: CandidateInfractionEntry = {
             id: Date.now().toString(),

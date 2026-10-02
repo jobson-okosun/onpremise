@@ -7,6 +7,7 @@ import { StoreDTO } from "../../store/model/store";
 export class PostLogin {
     private _store = inject(Store)
     
+    
     store = computed(() => this._store.store())
     cummulativeExamDuration = signal(0)
 

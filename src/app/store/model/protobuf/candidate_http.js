@@ -9619,6 +9619,7 @@ export const candidate_http = $root.candidate_http = (() => {
          * @property {string|null} [navigation_method] CandidateClientEventProto navigation_method
          * @property {number|Long|null} [duration_ms] CandidateClientEventProto duration_ms
          * @property {number|null} [battery_level] CandidateClientEventProto battery_level
+         * @property {string|null} [details] CandidateClientEventProto details
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
 
@@ -9746,6 +9747,14 @@ export const candidate_http = $root.candidate_http = (() => {
          */
         CandidateClientEventProto.prototype.battery_level = null;
 
+        /**
+         * CandidateClientEventProto details.
+         * @member {string|null|undefined} details
+         * @memberof candidate_http.CandidateClientEventProto
+         * @instance
+         */
+        CandidateClientEventProto.prototype.details = null;
+
         // OneOf field names bound to virtual getters and setters
         let $oneOfFields;
 
@@ -9788,6 +9797,12 @@ export const candidate_http = $root.candidate_http = (() => {
         // Virtual OneOf for proto3 optional field
         $Object.defineProperty(CandidateClientEventProto.prototype, "_battery_level", {
             get: $util.oneOfGetter($oneOfFields = ["battery_level"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateClientEventProto.prototype, "_details", {
+            get: $util.oneOfGetter($oneOfFields = ["details"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -9847,6 +9862,8 @@ export const candidate_http = $root.candidate_http = (() => {
                 writer.uint32(/* id 11, wireType 0 =*/88).int64(message.duration_ms);
             if (message.battery_level != null && $Object.hasOwnProperty.call(message, "battery_level"))
                 writer.uint32(/* id 12, wireType 0 =*/96).int32(message.battery_level);
+            if (message.details != null && $Object.hasOwnProperty.call(message, "details"))
+                writer.uint32(/* id 13, wireType 2 =*/106).string(message.details);
             if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
                 for (let i = 0; i < message.$unknowns.length; ++i)
                     writer.raw(message.$unknowns[i]);
@@ -9988,6 +10005,13 @@ export const candidate_http = $root.candidate_http = (() => {
                         message._battery_level = "battery_level";
                         continue;
                     }
+                case 13: {
+                        if (wireType !== 2)
+                            break;
+                        message.details = reader.stringVerify();
+                        message._details = "details";
+                        continue;
+                    }
                 }
                 reader.skipType(wireType, _depth, tag);
                 if (!reader.discardUnknown) {
@@ -10082,6 +10106,11 @@ export const candidate_http = $root.candidate_http = (() => {
                 if (!$util.isInteger(message.battery_level))
                     return "battery_level: integer expected";
             }
+            if (message.details != null && $Object.hasOwnProperty.call(message, "details")) {
+                properties._details = 1;
+                if (!$util.isString(message.details))
+                    return "details: string expected";
+            }
             return null;
         };
 
@@ -10165,6 +10194,8 @@ export const candidate_http = $root.candidate_http = (() => {
                     message.duration_ms = new $util.LongBits(object.duration_ms.low >>> 0, object.duration_ms.high >>> 0).toNumber();
             if (object.battery_level != null)
                 message.battery_level = object.battery_level | 0;
+            if (object.details != null)
+                message.details = $String(object.details);
             return message;
         };
 
@@ -10251,6 +10282,8 @@ export const candidate_http = $root.candidate_http = (() => {
                     object.duration_ms = options.longs === $String ? $util.Long.prototype.toString.call(message.duration_ms) : options.longs === $Number ? new $util.LongBits(message.duration_ms.low >>> 0, message.duration_ms.high >>> 0).toNumber() : message.duration_ms;
             if (message.battery_level != null && $Object.hasOwnProperty.call(message, "battery_level"))
                 object.battery_level = message.battery_level;
+            if (message.details != null && $Object.hasOwnProperty.call(message, "details"))
+                object.details = message.details;
             return object;
         };
 

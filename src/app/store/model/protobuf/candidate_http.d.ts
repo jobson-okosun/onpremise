@@ -3250,6 +3250,9 @@ export namespace candidate_http {
         /** CandidateClientEventProto battery_level. */
         battery_level?: (number|null);
 
+        /** CandidateClientEventProto details. */
+        details?: (string|null);
+
         /**
          * Creates a new CandidateClientEventProto instance using the specified properties.
          * @param [properties] Properties to set
@@ -3369,6 +3372,9 @@ export namespace candidate_http {
 
             /** CandidateClientEventProto battery_level */
             battery_level?: (number|null);
+
+            /** CandidateClientEventProto details */
+            details?: (string|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];

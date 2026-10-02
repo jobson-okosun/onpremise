@@ -1,7 +1,6 @@
-import { effect, inject, Injectable, signal } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { interval } from "rxjs";
+import { inject, Injectable, signal } from "@angular/core";
 import { Store } from "../../store/store";
+import { ExamPause, IntegrityEvent } from "../../store/model/types";
 
 @Injectable({ providedIn: 'root' })
 export class TauriService {
@@ -60,7 +59,6 @@ export class TauriService {
                 return
             }
 
-            this.listenForInfrigement()
         }
         this._store.updateStore({ platformIsTauri })
     }
@@ -118,25 +116,88 @@ export class TauriService {
         }
     }
 
-    async listenForInfrigement() {
-        try {
-            const unlisten = await this.tauriListen()('infrigment::discovered', (event: any) => {
-                const infridgementMessage = event.payload || 'Infrigement Detected';
-                this._store.updateStore({ infridgementMessage });
-            });
-
-            this.unlistenFns.push(unlisten)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     async exitApplication(payload: { password: string }) {
         try {
             const result = await this.tauriInvoke()('exit', payload);
         } catch (error) {
             const message = (error as any)?.message || 'Unable to exit application';
             this._store.updateStore({ exitApplicationMessage: message });
+        }
+    }
+
+    async bindIntegrityScope(scope: string) {
+        try {
+            await this.tauriInvoke()('bind_integrity_scope', { scope });
+        } catch (error) {
+            console.error('Failed to bind integrity scope', error);
+        }
+    }
+
+    async getPendingIntegrityEvents(): Promise<IntegrityEvent[]> {
+        try {
+            return await this.tauriInvoke()('get_pending_integrity_events');
+        } catch (error) {
+            console.error('Failed to get pending integrity events', error);
+            return [];
+        }
+    }
+
+    async ackIntegrityEvents(eventIds: string[]) {
+        if (!eventIds.length) return;
+        try {
+            await this.tauriInvoke()('ack_integrity_events', { eventIds });
+        } catch (error) {
+            console.error('Failed to ack integrity events', error);
+        }
+    }
+
+    async getActivePauses(): Promise<ExamPause[]> {
+        try {
+            return await this.tauriInvoke()('get_active_pauses');
+        } catch (error) {
+            console.error('Failed to get active pauses', error);
+            return [];
+        }
+    }
+
+    async ackExamPause(pauseId: string) {
+        try {
+            await this.tauriInvoke()('ack_exam_pause', { pauseId });
+        } catch (error) {
+            console.error('Failed to ack exam pause', error);
+        }
+    }
+
+    async endExamSession() {
+        try {
+            await this.tauriInvoke()('end_exam_session');
+        } catch (error) {
+            console.error('Failed to end exam session', error);
+        }
+    }
+
+    async listenForIntegrityEvents(callback: (event: IntegrityEvent) => void) {
+        try {
+            const unlisten = await this.tauriListen()('integrity-event', (event: any) => {
+                callback(event.payload as IntegrityEvent);
+            });
+            this.unlistenFns.push(unlisten);
+        } catch (error) {
+            console.error('Failed to listen for integrity events', error);
+        }
+    }
+
+    async listenForExamPauses(onPause: (pause: ExamPause) => void, onResume: (pauseId: string) => void) {
+        try {
+            const unlistenPause = await this.tauriListen()('exam-pause', (event: any) => {
+                onPause(event.payload as ExamPause);
+            });
+            const unlistenResume = await this.tauriListen()('exam-resume', (event: any) => {
+                onResume(event.payload.pauseId);
+            });
+            this.unlistenFns.push(unlistenPause, unlistenResume);
+        } catch (error) {
+            console.error('Failed to listen for exam pauses', error);
         }
     }
 

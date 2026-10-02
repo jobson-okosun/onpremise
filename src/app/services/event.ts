@@ -3,12 +3,15 @@ import { ICandidateEvent, ICandidateEventPayload } from "../store/model/events/e
 import { CandidateEventType } from "../store/model/events/events.enum";
 import { Store } from "../store/store";
 import { v7 as uuidv7 } from 'uuid';
+import { TauriService } from "./ipc/tauri";
+import { IntegrityEvent } from "../store/model/types";
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventService {
     private _store = inject(Store);
+    private _tauri = inject(TauriService);
 
     private events_session_id = computed(() => this._store.store().loginData?.events_session_id || '');
     private resume_elapsed_ms = computed(() => this._store.store().loginData?.resume_elapsed_ms || 0);
@@ -22,6 +25,59 @@ export class EventService {
     private _sectionEntryTimes = new Map<string, number>();
 
     private _isSequenceSynced = signal(false);
+    private _queuedIntegrityEventIds = new Set<string>();
+
+    async initIntegrityEvents(): Promise<void> {
+        const store = this._store.store();
+        if (!store.platformIsTauri || !store.loginData || !store.preloginData) return;
+
+        const assessmentId = store.preloginData.r_id;
+        const participantId = store.loginData.candidate_data.participant_id
+        const scope = `${assessmentId}:${participantId}`;
+
+        await this._tauri.bindIntegrityScope(scope);
+
+        const pending = await this._tauri.getPendingIntegrityEvents();
+        pending.forEach(e => this.queueIntegrityEvent(e));
+
+        this._tauri.listenForIntegrityEvents((event: IntegrityEvent) => {
+            this.queueIntegrityEvent(event);
+        });
+    }
+
+    private queueIntegrityEvent(e: IntegrityEvent) {
+        if (this._queuedIntegrityEventIds.has(e.eventId)) return;
+        this._queuedIntegrityEventIds.add(e.eventId);
+
+        const currentSeq = this._sequenceCounter();
+        const start = this._localStartTimeMs();
+        const timeDiff = start !== null ? performance.now() - start : 0;
+        const currentElapsedMs = this.resume_elapsed_ms() + timeDiff;
+
+        let detailsStr = JSON.stringify(e.details);
+        if (detailsStr.length > 4096) {
+            detailsStr = detailsStr.substring(0, 4096);
+        }
+
+        const candEvent: ICandidateEvent = {
+            section_id: null,
+            question_id: null,
+            answer: null,
+            old_answer: null,
+            navigation_method: null,
+            duration_ms: 0,
+            battery_level: null,
+            event_type: e.eventType,
+            event_id: e.eventId,
+            events_session_id: this.events_session_id(),
+            sequence: currentSeq,
+            elapsed_ms: Math.floor(currentElapsedMs),
+            details: detailsStr
+        };
+
+        this._sequenceCounter.update(seq => seq + 1);
+        this._pendingEvents.update((events) => [...events, candEvent]);
+    }
 
     initializeSession(): void {
         this._localStartTimeMs.set(performance.now());
@@ -43,29 +99,6 @@ export class EventService {
     }
 
     private generateUUID(): string {
-        /*
-        // Old manual UUID v4 generation
-        if (crypto?.randomUUID) {
-            return crypto.randomUUID();
-        }
-
-        const bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-
-        bytes[6] = (bytes[6] & 0x0f) | 0x40;
-        bytes[8] = (bytes[8] & 0x3f) | 0x80;
-
-        const hex = [...bytes].map(b => b.toString(16).padStart(2, '0'));
-
-        return [
-            hex.slice(0, 4).join(''),
-            hex.slice(4, 6).join(''),
-            hex.slice(6, 8).join(''),
-            hex.slice(8, 10).join(''),
-            hex.slice(10, 16).join('')
-        ].join('-');
-        */
-       
         return uuidv7();
     }
 

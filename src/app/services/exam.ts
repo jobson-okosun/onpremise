@@ -81,9 +81,12 @@ export class ExamService {
     proctoringNetworkRetryCount = signal(0)
     proctoringNetworkRetryCountdown = signal<number | null>(null);
     isProctoringNetworkRetryActive = signal(false);
+
     private proctoringNetworkRetrySub?: Subscription;
     private proctoringLatencyMonitorSub$?: Subscription;
     private proctoringUploadMonitorSub$?: Subscription;
+
+    private _isTimerPaused = signal(false);
 
     constructor() {
         console.log('-----Oh youre here 🤣🤣🤣! Goodluck hahaha-----------------')
@@ -240,6 +243,23 @@ export class ExamService {
         this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() })
     }
 
+    pauseExamTimer() {
+        if (this.examTimerSub$ && !this.examTimerSub$.closed) {
+            this.examTimerSub$.unsubscribe();
+            this._isTimerPaused.set(true);
+        }
+        disableRestrictedActions();
+    }
+
+    resumeExamTimer() { 
+        enableRestrictedActions();
+        if (this._isTimerPaused() && !this.examEnded() && this.examDuration() > 0) {
+            this._isTimerPaused.set(false);
+            this.examTimerSub$?.unsubscribe();
+            this.examTimerSub$ = timer(1000, 1000).subscribe({ next: () => this.examTimerCallback() });
+        }
+    }
+
     examTimerCallback() {
         if (this.examEnded()) {
             return
@@ -353,7 +373,12 @@ export class ExamService {
 
         if (payload) {
             this._eventService.clearSentEvents(payload?.pending_events ?? [])
-            this.saveEventsToLocalStorage(payload.pending_events || []);
+            // this.saveEventsToLocalStorage(payload.pending_events || []);
+
+            if (this.store().platformIsTauri && payload.pending_events?.length) {
+                const eventIds = payload.pending_events.map(e => e.event_id);
+                this._tauriService.ackIntegrityEvents(eventIds);
+            }
         }
 
         if(!('auto_saved' in autosaveData)) {
@@ -461,7 +486,7 @@ export class ExamService {
         this.examEnded.set(true)
 
         if (this.store().platformIsTauri) {
-            this._tauriService.sendExamEnded()
+            this._tauriService.endExamSession()
         }
 
         this._store.updateStore({ endExamResponse: value })

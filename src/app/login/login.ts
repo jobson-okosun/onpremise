@@ -154,6 +154,7 @@ export default class Login implements AfterViewInit {
     this._postLoginService.formatLoginDataToStore(value).then(async () => {
       this._eventService.syncSequence(value.last_sequence);
       this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_SUCCEEDED });
+      this._eventService.initIntegrityEvents();
       
       await this._dataService.downloadParticipantPassport()
 
@@ -161,7 +162,7 @@ export default class Login implements AfterViewInit {
         this._tauriService.sendExamStarted()
       }
 
-      if (this.store().preloginData?.delivery_method == DeliveryMethod.AUTO_PROCTORING || this.store().preloginData?.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+      if ([DeliveryMethod.AUTO_PROCTORING, DeliveryMethod.LIVE_PROCTORING].includes(this.store().preloginData?.delivery_method as DeliveryMethod)) {
         this._router.navigate(['proctored/onboarding'])
         return
       }
