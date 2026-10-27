@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
 import { Store } from "../../store/store";
-import { ExamPause, IntegrityEvent } from "../../store/model/types";
+import { ExamPause, IntegrityEvent, OnboardingInstruction, OnboardingResult } from "../../store/model/types";
 
 @Injectable({ providedIn: 'root' })
 export class TauriService {
@@ -198,6 +198,75 @@ export class TauriService {
             this.unlistenFns.push(unlistenPause, unlistenResume);
         } catch (error) {
             console.error('Failed to listen for exam pauses', error);
+        }
+    }
+
+    async listenForSecurityEvents(callback: (event: any) => void) {
+        try {
+            const unlisten = await this.tauriListen()('security-event', (event: any) => {
+                // Local-only security event; NEVER forward to autosave
+                callback(event?.payload);
+            });
+            this.unlistenFns.push(unlisten);
+        } catch (error) {
+            console.error('Failed to listen for security events', error);
+        }
+    }
+
+    async startOnboarding(payload: {
+        examId: string;
+        candidateId: string;
+        batchId: string;
+        mlToken: string;
+        onboardingServer?: string;
+    }): Promise<{ port: number; token: string }> {
+        return await this.tauriInvoke()('start_onboarding', payload);
+    }
+
+    async stopOnboarding(): Promise<void> {
+        try {
+            await this.tauriInvoke()('stop_onboarding');
+        } catch (error) {
+            console.error('Failed to stop onboarding', error);
+        }
+    }
+
+    async listenForOnboardingInstruction(callback: (instruction: OnboardingInstruction) => void): Promise<(() => void) | undefined> {
+        try {
+            const unlisten = await this.tauriListen()('onboarding_instruction', (event: any) => {
+                callback(event.payload as OnboardingInstruction);
+            });
+            this.unlistenFns.push(unlisten);
+            return unlisten;
+        } catch (error) {
+            console.error('Failed to listen for onboarding_instruction', error);
+            return undefined;
+        }
+    }
+
+    async listenForOnboardingResult(callback: (result: OnboardingResult) => void): Promise<(() => void) | undefined> {
+        try {
+            const unlisten = await this.tauriListen()('onboarding_result', (event: any) => {
+                callback(event.payload as OnboardingResult);
+            });
+            this.unlistenFns.push(unlisten);
+            return unlisten;
+        } catch (error) {
+            console.error('Failed to listen for onboarding_result', error);
+            return undefined;
+        }
+    }
+
+    async listenForOnboardingError(callback: (err: string) => void): Promise<(() => void) | undefined> {
+        try {
+            const unlisten = await this.tauriListen()('onboarding_error', (event: any) => {
+                callback(event.payload as string);
+            });
+            this.unlistenFns.push(unlisten);
+            return unlisten;
+        } catch (error) {
+            console.error('Failed to listen for onboarding_error', error);
+            return undefined;
         }
     }
 

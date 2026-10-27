@@ -841,6 +841,21 @@ export namespace candidate_http {
         /** CandidateLoginResponseProto resume_elapsed_ms. */
         resume_elapsed_ms: (number|Long);
 
+        /** CandidateLoginResponseProto media_token. */
+        media_token?: (string|null);
+
+        /** CandidateLoginResponseProto media_server_url. */
+        media_server_url?: (string|null);
+
+        /** CandidateLoginResponseProto media_batch_id. */
+        media_batch_id?: (string|null);
+
+        /** CandidateLoginResponseProto media_user_id. */
+        media_user_id?: (string|null);
+
+        /** CandidateLoginResponseProto ml_token. */
+        ml_token?: (string|null);
+
         /**
          * Creates a new CandidateLoginResponseProto instance using the specified properties.
          * @param [properties] Properties to set
@@ -945,6 +960,21 @@ export namespace candidate_http {
 
             /** CandidateLoginResponseProto resume_elapsed_ms */
             resume_elapsed_ms?: (number|Long|null);
+
+            /** CandidateLoginResponseProto media_token */
+            media_token?: (string|null);
+
+            /** CandidateLoginResponseProto media_server_url */
+            media_server_url?: (string|null);
+
+            /** CandidateLoginResponseProto media_batch_id */
+            media_batch_id?: (string|null);
+
+            /** CandidateLoginResponseProto media_user_id */
+            media_user_id?: (string|null);
+
+            /** CandidateLoginResponseProto ml_token */
+            ml_token?: (string|null);
 
             /** Unknown fields preserved while decoding when enabled */
             $unknowns?: Uint8Array[];

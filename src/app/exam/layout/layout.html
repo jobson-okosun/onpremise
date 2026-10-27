@@ -607,7 +607,10 @@
         </span>
         <div class="flex-1">
             <div class="text-sm font-semibold text-{{ toastRef.data.color }}">{{ toastRef.data.label }}</div>
-            <div class="text-xs text-gray-700">Strikes: <strong> {{ toastRef.data.strikes }} </strong></div>
+            @if (toastRef.data.message) {
+                <div class="text-xs text-gray-600 mt-0.5">{{ toastRef.data.message }}</div>
+            }
+            <div class="text-xs text-gray-700 mt-0.5">Strikes: <strong> {{ toastRef.data.strikes }} </strong></div>
         </div>
     </div>
 </ng-template>

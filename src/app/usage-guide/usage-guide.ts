@@ -5,7 +5,7 @@ import { DataService } from '../services/data/data';
 import { finalize } from 'rxjs';
 import { DeploymentMode, Slide } from '../store/model/types';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '../store/store';
 import { NgClass } from '@angular/common';
 import { EventService } from '../services/event';
@@ -14,7 +14,7 @@ import { TauriService } from '../services/ipc/tauri';
 
 @Component({
   selector: 'app-usage-guide',
-  imports: [NgClass, DialogModule],
+  imports: [NgClass, DialogModule, RouterLink],
   templateUrl: './usage-guide.html',
   styleUrl: './usage-guide.css',
 })

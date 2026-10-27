@@ -5,6 +5,7 @@ import { CandidateEventType } from '../../store/model/events/events.enum';
 import { Dialog } from 'primeng/dialog';
 import { Store } from '../../store/store';
 import { DrawerModule } from 'primeng/drawer';
+import { Menu } from 'primeng/menu';
 import { AccordionModule } from 'primeng/accordion';
 import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/event.service';
 import { EventService } from '../../services/event';
@@ -12,10 +13,12 @@ import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
 import { getParentLabel as getParentLabelHelper, getChildLabel as getChildLabelHelper } from '../../utils/helper';
 import { TextToSpeechService } from '../../services/reader/text-to-speech';
 import { DrawingAndWritingStore } from '../item-types/drawing-and-writing/services/store.service';
+import { FormsModule } from '@angular/forms';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-question-tools',
-  imports: [Dialog, DrawerModule, AccordionModule, SafeHtmlPipe],
+  imports: [Dialog, DrawerModule, AccordionModule, SafeHtmlPipe, FormsModule],
   templateUrl: './question-tools.html',
   styleUrl: './question-tools.css',
 })
@@ -26,8 +29,24 @@ export class QuestionTools {
   private _eventService = inject(EventService)
   private _textToSpeech = inject(TextToSpeechService)
   private _drawingStore = inject(DrawingAndWritingStore)
+  private _toast = inject(HotToastService)
 
   isTextToSpeechEnabled = computed(() => this._textToSpeech.isTextToSpeechEnabled());
+  isCurrentQuestionFlagged = computed(() => {
+    const qId = this.currentQuestion()?.id;
+    return qId ? this._exam.isItemFlagged(qId) : false;
+  });
+
+  showFlagModal = signal(false);
+  flagReasons = signal<string[]>([]);
+  flagComment = signal<string>('');
+  readonly availableFlagReasons = [
+    { key: 'INCOMPLETE_QUESTION', label: 'Incomplete question' },
+    { key: 'INCOMPLETE_OPTION', label: 'Incomplete option(s)' },
+    { key: 'NO_CORRECT_ANSWER', label: 'No correct answer(s)' },
+    { key: 'IMAGE_NOT_SHOWING', label: 'Image not showing' },
+    { key: 'OTHER', label: 'Other issue' },
+  ];
 
   itemTypes = signal(ItemType);
   store = computed(() => this._store.store())
@@ -125,5 +144,55 @@ export class QuestionTools {
     const updatedConfig = { ...currentConfig, layoutFullMode: !currentConfig.layoutFullMode }
     this._store.updateStore({ drawingAndWritingConfig: updatedConfig })
     this._konvaEventTools._toggleDrawingAndWritingLayout$.next()
+  }
+
+  openFlagModal() {
+    const qId = this.currentQuestion()?.id;
+    if (!qId) return;
+
+    const existing = this._exam.getItemReport(qId);
+    if (existing) {
+      this.flagReasons.set([...existing.reasons]);
+      this.flagComment.set(existing.comment || '');
+    } else {
+      this.flagReasons.set([]);
+      this.flagComment.set('');
+    }
+    this.showFlagModal.set(true);
+  }
+
+  toggleFlagReason(key: string) {
+    this.flagReasons.update(current => {
+      if (current.includes(key)) {
+        return current.filter(k => k !== key);
+      } else {
+        return [...current, key];
+      }
+    });
+  }
+
+  submitFlag() {
+    const question = this.currentQuestion();
+    const section = this.currentSection();
+    if (!question || !section) return;
+
+    if (this.flagReasons().length === 0) {
+      this._toast.error('Please select at least one reason.');
+      return;
+    }
+
+    this._exam.flagItem(question.id, section.id, this.flagReasons(), this.flagComment());
+    this._toast.success('Question flagged successfully.');
+    this.showFlagModal.set(false);
+  }
+
+  withdrawFlag() {
+    const question = this.currentQuestion();
+    const section = this.currentSection();
+    if (!question || !section) return;
+
+    this._exam.unflagItem(question.id, section.id);
+    this._toast.info('Question unflagged.');
+    this.showFlagModal.set(false);
   }
 }

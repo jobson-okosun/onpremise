@@ -27,6 +27,8 @@ export interface IAssessmentPreLoginData {
 export enum DeliveryMethod {
   LIVE_PROCTORING = "LIVE_PROCTORING",
   AUTO_PROCTORING = "AUTO_PROCTORING",
+  HYBRID_PROCTORING = "HYBRID_PROCTORING",
+  RECORD_AND_REVIEW = "RECORD_AND_REVIEW",
   ONLINE_NO_PROCTORING = "ONLINE_NO_PROCTORING",
   ON_PREMISE_SECURE_BROWSER = "ON_PREMISE_SECURE_BROWSER",
   ON_PREMISE_NO_SECURE_BROWSER = "ON_PREMISE_NO_SECURE_BROWSER",
@@ -54,8 +56,63 @@ export interface ICandidateLoginResponse {
   sections_questions: Array<ICandidateSectionQuestions>;
   events_session_id: string;
   resume_elapsed_ms: number;
-  last_sequence: number
+  last_sequence: number;
+  media_token?: string;
+  media_server_url?: string;
+  media_batch_id?: string;
+  media_user_id?: string;
+  ml_token?: string;
 }
+
+export type IdentityCheckStatus = 'NEED_ONBOARDING' | 'PENDING_REVIEW' | 'BLOCKED' | 'UNAVAILABLE';
+
+export interface IIdentityCheck {
+  status: IdentityCheckStatus;
+  message: string;
+  ml_token?: string;
+  exam_id?: string;
+  candidate_id?: string;
+  batch_id?: string;
+  onboarding_server?: string;
+}
+
+export type LivenessStep =
+  | 'LOOK_AT_CAMERA'
+  | 'ONLY_YOU_IN_VIEW'
+  | 'TURN_LEFT'
+  | 'TURN_RIGHT'
+  | 'LOOK_UP'
+  | 'OPEN_MOUTH'
+  | 'CLOSE_EYES'
+  | 'PLEASE_WAIT';
+
+export interface OnboardingInstruction {
+  step: LivenessStep;
+  attempt: number;
+  maxAttempts: number;
+  stepIndex: number;
+  steps: number;
+  retryAfter?: string;
+  timeAllowedS: number;
+  release: boolean;
+}
+
+export interface OnboardingResult {
+  verdict: 'PASSED' | 'REVIEW' | 'FAILED' | 'ALLOWED' | 'NOT_REQUIRED';
+  reason?: string;
+  attempts: number;
+}
+
+export const ONBOARDING_STEP_TEXTS: Record<LivenessStep, { prompt: string; releasePrompt?: string }> = {
+  LOOK_AT_CAMERA: { prompt: 'Look straight at the camera' },
+  ONLY_YOU_IN_VIEW: { prompt: 'Only you should be in view' },
+  TURN_LEFT: { prompt: 'Turn your head to your left', releasePrompt: 'Good, now look back at the camera' },
+  TURN_RIGHT: { prompt: 'Turn your head to your right', releasePrompt: 'Good, now look back at the camera' },
+  LOOK_UP: { prompt: 'Look up', releasePrompt: 'Good, now look back at the camera' },
+  OPEN_MOUTH: { prompt: 'Open your mouth wide', releasePrompt: 'Good, now close your mouth' },
+  CLOSE_EYES: { prompt: 'Close your eyes briefly', releasePrompt: 'Good, now open your eyes' },
+  PLEASE_WAIT: { prompt: 'Checking…' },
+};
 
 export interface ICandidateData {
   name: string;
@@ -419,10 +476,11 @@ export interface CandidateInfractionEntry {
   maxStrikeReached?: boolean;
   frameId?: number;
   savedFramePath?: string;
-  color: string
+  color: string;
+  message?: string;
 }
 
-export const INFRACTION_LABELS = {
+export const INFRACTION_LABELS: Record<number, string> = {
   0: "Unspecified",
   1: "Looking Away",
   2: "Face Not Centered",
@@ -447,11 +505,19 @@ export const INFRACTION_LABELS = {
   21: "VPN Detected",
   22: "Proxy Detected",
   23: "Network Instability",
-  24: "Camera Disabled",
+  24: "Camera off or covered",
   25: "Microphone Disabled",
+  26: "Eyes off the screen",
+  27: "Looking down",
+  28: "Paper in view",
+  29: "Notes in view",
+  30: "Another person in view",
+  31: "Another screen in view",
+  32: "Watch detected",
+  33: "Bag in view",
 };
 
-export const INFRACTION_COLORS = {
+export const INFRACTION_COLORS: Record<number, string> = {
   0: "blue-500",
   1: "yellow-500",
   2: "yellow-500",
@@ -478,7 +544,87 @@ export const INFRACTION_COLORS = {
   23: "red-500",
   24: "red-500",
   25: "red-500",
-}
+  26: "yellow-500",
+  27: "yellow-500",
+  28: "yellow-500",
+  29: "red-500",
+  30: "red-500",
+  31: "red-500",
+  32: "yellow-500",
+  33: "yellow-500",
+};
+
+export const INFRACTION_MESSAGES: Record<number, string> = {
+  1: "Please face the screen directly.",
+  2: "Please center your face in the camera frame.",
+  3: "Multiple faces detected. Please ensure you are alone.",
+  4: "Face mismatch detected.",
+  5: "Face not detected. Please remain in front of the camera.",
+  6: "Mobile phone detected. Mobile phones are strictly prohibited.",
+  7: "Book detected. Books are prohibited.",
+  8: "Headphones detected. Please remove your headphones.",
+  9: "External keyboard detected.",
+  10: "External mouse detected.",
+  11: "Calculator detected.",
+  12: "Prohibited object detected.",
+  13: "Talking detected. Please remain silent.",
+  14: "Background voices detected.",
+  15: "App minimization detected. Please stay within the exam window.",
+  16: "Screenshot attempt detected.",
+  17: "Screen sharing detected.",
+  18: "External screen detected.",
+  19: "Screen recording detected.",
+  20: "Copy/paste attempt detected.",
+  21: "VPN detected. Please disable VPN.",
+  22: "Proxy detected.",
+  23: "Network instability detected.",
+  24: "Camera off or covered. Please ensure your camera is uncovered and functional.",
+  25: "Microphone disabled. Please re-enable your microphone.",
+  26: "Please keep your eyes on the screen.",
+  27: "Please keep your head up and your eyes on the screen.",
+  28: "Paper in view. Please put away any paper.",
+  29: "Notes in view. Please put away any notes.",
+  30: "Another person in view. Only you may be in view during the exam.",
+  31: "Another screen in view. Please switch off and remove other screens and devices.",
+  32: "Watch detected. Please remove your watch.",
+  33: "Bag in view. Please move bags out of reach.",
+};
+
+export const INFRACTION_EVENT_MAP: Record<number, string> = {
+  1: "LOOKING_AWAY",
+  2: "FACE_NOT_CENTERED",
+  3: "MULTIPLE_FACES",
+  4: "FACE_MISMATCH",
+  5: "FACE_NOT_DETECTED",
+  6: "PHONE_DETECTED",
+  7: "BOOK_DETECTED",
+  8: "HEADPHONE_DETECTED",
+  9: "EXTERNAL_KEYBOARD",
+  10: "EXTERNAL_MOUSE",
+  11: "CALCULATOR_DETECTED",
+  12: "PROHIBITED_OBJECT",
+  13: "TALKING_DETECTED",
+  14: "BACKGROUND_VOICES",
+  15: "APP_MINIMIZATION",
+  16: "SCREENSHOT_ATTEMPT",
+  17: "SCREEN_SHARING",
+  18: "EXTERNAL_SCREEN",
+  19: "SCREEN_RECORDING",
+  20: "COPY_ATTEMPT",
+  21: "VPN_DETECTED",
+  22: "PROXY_DETECTED",
+  23: "NETWORK_INSTABILITY",
+  24: "CAMERA_BLOCKED",
+  25: "MIC_BLOCKED",
+  26: "EYES_OFF_SCREEN",
+  27: "LOOKING_DOWN",
+  28: "PAPER_DETECTED",
+  29: "NOTES_DETECTED",
+  30: "MULTIPLE_PEOPLE_DETECTED",
+  31: "SECOND_SCREEN_DETECTED",
+  32: "WATCH_DETECTED",
+  33: "BAG_DETECTED",
+};
 
 export enum UsageEvents {
   SUBJECT_CHANGED = 'SUBJECT_CHANGED',

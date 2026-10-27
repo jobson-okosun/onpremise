@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, output, signal } from '@angular/core';
+import { Component, computed, inject, model, output, signal, input } from '@angular/core';
 import { PopoverModule } from 'primeng/popover';
 import { Overview } from "../overview/overview";
 import { fullscreen } from '../../utils/helper';
@@ -19,7 +19,7 @@ export class ExamTools {
   private _store = inject(Store)
   private _exam = inject(ExamService)
   private _eventService = inject(EventService)
-  private _apiIpc = inject(APIIPC);
+  private _apiIpc = inject(APIIPC); 
 
   store = computed(() => this._store.store())
   countDownTimer = computed(() => this._exam.timeDisplay())
@@ -30,6 +30,7 @@ export class ExamTools {
   showCalculator = model<null | string>()
   resizeFont = output<any>()
   overViewActiveTab = signal(0)
+  forceShowSubmit = input<boolean>(false) 
 
   spentTimeDisplay = computed(() => this._exam.spentTimeDisplay())
   totalExamTime = computed(() => this._exam.totalExamTime())

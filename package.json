@@ -41,6 +41,7 @@
     "@tinymce/tinymce-angular": "^5.0.1",
     "@types/katex": "^0.16.8",
     "animate.css": "^4.1.1",
+    "driver.js": "^1.9.0",
     "globalthis": "^1.0.4",
     "katex": "^0.17.0",
     "konva": "^10.0.12",

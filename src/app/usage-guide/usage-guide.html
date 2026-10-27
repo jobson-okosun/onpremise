@@ -1,14 +1,20 @@
 <div class="h-full bg-white">
     <div class="h-full flex flex-col justify-between lg:flex-row items-start gap-y-16 lg:gap-0 overflow-y-auto">
-        <div class="md:hidden p-5 w-full fixed top-0 left-0 bg-white z-50">
-            <img src="EXPryLogoHor.png" alt="Examlpha logo" width="150">
+        <div class="md:hidden p-4 w-full fixed top-0 left-0 bg-white z-50 flex items-center justify-between border-b border-gray-100">
+            <img src="EXPryLogoHor.png" alt="Examlpha logo" width="130">
+            <a routerLink="/practice-mode" class="btn-outline text-primary text-xs py-1.5 px-3">
+                <span>Practice</span>
+            </a>
         </div>
 
         <div class="flex w-full lg:w-1/2 lg:h-full px-3 lg:p-0">
             <div class="flex flex-col justify-between pb-5 md:pb-20 lg:p-10 lg:pb-0 w-full">
                 <div>
-                    <div class="hidden md:block mb-20">
+                    <div class="hidden md:flex items-center justify-between mb-16">
                         <img src="EXPryLogoHor.png" alt="Examlpha logo" width="150">
+                        <a routerLink="/practice-mode" class="btn-outline text-primary">
+                            <span>Practice</span>
+                        </a>
                     </div>
 
                     <div class="bg-[#c2e9f0] text-primary rounded-2xl px-6 py-2 w-max">Learn how to use!</div>
@@ -44,7 +50,7 @@
                                 </button>
                             }
 
-                            <button type="button" [disabled]="isLoadingExamSettings()" (click)="fetchExamSettingsData()" class="btn p-4! flex-1! flex items-center justify-center gap-3">
+                            <button type="button" [disabled]="isLoadingExamSettings()" (click)="fetchExamSettingsData()" class="btn p-4! flex-1! md:flex-initial! md:px-8! flex items-center justify-center gap-3">
                                 @if(isLoadingExamSettings()) {
                                     <div class="border-3 border-gray-300 border-t-white rounded-full size-5 animate-spin"></div>
                                     <span>Please wait...</span>

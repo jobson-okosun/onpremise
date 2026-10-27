@@ -1931,6 +1931,11 @@ export const candidate_http = $root.candidate_http = (() => {
          * @property {Uint8Array|null} [events_session_id] CandidateLoginResponseProto events_session_id
          * @property {number|Long|null} [last_sequence] CandidateLoginResponseProto last_sequence
          * @property {number|Long|null} [resume_elapsed_ms] CandidateLoginResponseProto resume_elapsed_ms
+         * @property {string|null} [media_token] CandidateLoginResponseProto media_token
+         * @property {string|null} [media_server_url] CandidateLoginResponseProto media_server_url
+         * @property {string|null} [media_batch_id] CandidateLoginResponseProto media_batch_id
+         * @property {string|null} [media_user_id] CandidateLoginResponseProto media_user_id
+         * @property {string|null} [ml_token] CandidateLoginResponseProto ml_token
          * @property {Array.<Uint8Array>} [$unknowns] Unknown fields preserved while decoding when enabled
          */
 
@@ -2021,6 +2026,79 @@ export const candidate_http = $root.candidate_http = (() => {
         CandidateLoginResponseProto.prototype.resume_elapsed_ms = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
 
         /**
+         * CandidateLoginResponseProto media_token.
+         * @member {string|null|undefined} media_token
+         * @memberof candidate_http.CandidateLoginResponseProto
+         * @instance
+         */
+        CandidateLoginResponseProto.prototype.media_token = null;
+
+        /**
+         * CandidateLoginResponseProto media_server_url.
+         * @member {string|null|undefined} media_server_url
+         * @memberof candidate_http.CandidateLoginResponseProto
+         * @instance
+         */
+        CandidateLoginResponseProto.prototype.media_server_url = null;
+
+        /**
+         * CandidateLoginResponseProto media_batch_id.
+         * @member {string|null|undefined} media_batch_id
+         * @memberof candidate_http.CandidateLoginResponseProto
+         * @instance
+         */
+        CandidateLoginResponseProto.prototype.media_batch_id = null;
+
+        /**
+         * CandidateLoginResponseProto media_user_id.
+         * @member {string|null|undefined} media_user_id
+         * @memberof candidate_http.CandidateLoginResponseProto
+         * @instance
+         */
+        CandidateLoginResponseProto.prototype.media_user_id = null;
+
+        /**
+         * CandidateLoginResponseProto ml_token.
+         * @member {string|null|undefined} ml_token
+         * @memberof candidate_http.CandidateLoginResponseProto
+         * @instance
+         */
+        CandidateLoginResponseProto.prototype.ml_token = null;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateLoginResponseProto.prototype, "_media_token", {
+            get: $util.oneOfGetter($oneOfFields = ["media_token"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateLoginResponseProto.prototype, "_media_server_url", {
+            get: $util.oneOfGetter($oneOfFields = ["media_server_url"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateLoginResponseProto.prototype, "_media_batch_id", {
+            get: $util.oneOfGetter($oneOfFields = ["media_batch_id"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateLoginResponseProto.prototype, "_media_user_id", {
+            get: $util.oneOfGetter($oneOfFields = ["media_user_id"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        // Virtual OneOf for proto3 optional field
+        $Object.defineProperty(CandidateLoginResponseProto.prototype, "_ml_token", {
+            get: $util.oneOfGetter($oneOfFields = ["ml_token"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
          * Creates a new CandidateLoginResponseProto instance using the specified properties.
          * @function create
          * @memberof candidate_http.CandidateLoginResponseProto
@@ -2068,6 +2146,16 @@ export const candidate_http = $root.candidate_http = (() => {
                 writer.uint32(/* id 6, wireType 0 =*/48).uint64(message.last_sequence);
             if (message.resume_elapsed_ms != null && $Object.hasOwnProperty.call(message, "resume_elapsed_ms") && (typeof message.resume_elapsed_ms === "object" ? message.resume_elapsed_ms.low || message.resume_elapsed_ms.high : message.resume_elapsed_ms !== 0))
                 writer.uint32(/* id 7, wireType 0 =*/56).uint64(message.resume_elapsed_ms);
+            if (message.media_token != null && $Object.hasOwnProperty.call(message, "media_token"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.media_token);
+            if (message.media_server_url != null && $Object.hasOwnProperty.call(message, "media_server_url"))
+                writer.uint32(/* id 9, wireType 2 =*/74).string(message.media_server_url);
+            if (message.media_batch_id != null && $Object.hasOwnProperty.call(message, "media_batch_id"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.media_batch_id);
+            if (message.media_user_id != null && $Object.hasOwnProperty.call(message, "media_user_id"))
+                writer.uint32(/* id 11, wireType 2 =*/90).string(message.media_user_id);
+            if (message.ml_token != null && $Object.hasOwnProperty.call(message, "ml_token"))
+                writer.uint32(/* id 12, wireType 2 =*/98).string(message.ml_token);
             if (message.$unknowns != null && $Object.hasOwnProperty.call(message, "$unknowns"))
                 for (let i = 0; i < message.$unknowns.length; ++i)
                     writer.raw(message.$unknowns[i]);
@@ -2170,6 +2258,41 @@ export const candidate_http = $root.candidate_http = (() => {
                             delete message.resume_elapsed_ms;
                         continue;
                     }
+                case 8: {
+                        if (wireType !== 2)
+                            break;
+                        message.media_token = reader.stringVerify();
+                        message._media_token = "media_token";
+                        continue;
+                    }
+                case 9: {
+                        if (wireType !== 2)
+                            break;
+                        message.media_server_url = reader.stringVerify();
+                        message._media_server_url = "media_server_url";
+                        continue;
+                    }
+                case 10: {
+                        if (wireType !== 2)
+                            break;
+                        message.media_batch_id = reader.stringVerify();
+                        message._media_batch_id = "media_batch_id";
+                        continue;
+                    }
+                case 11: {
+                        if (wireType !== 2)
+                            break;
+                        message.media_user_id = reader.stringVerify();
+                        message._media_user_id = "media_user_id";
+                        continue;
+                    }
+                case 12: {
+                        if (wireType !== 2)
+                            break;
+                        message.ml_token = reader.stringVerify();
+                        message._ml_token = "ml_token";
+                        continue;
+                    }
                 }
                 reader.skipType(wireType, _depth, tag);
                 if (!reader.discardUnknown) {
@@ -2213,6 +2336,7 @@ export const candidate_http = $root.candidate_http = (() => {
                 _depth = 0;
             if (_depth > $util.recursionLimit)
                 return "max depth exceeded";
+            let properties = {};
             if (message.candidate_data != null && $Object.hasOwnProperty.call(message, "candidate_data")) {
                 let error = $root.candidate_http.CandidateDataProto.verify(message.candidate_data, _depth + 1);
                 if (error)
@@ -2250,6 +2374,31 @@ export const candidate_http = $root.candidate_http = (() => {
             if (message.resume_elapsed_ms != null && $Object.hasOwnProperty.call(message, "resume_elapsed_ms"))
                 if (!$util.isInteger(message.resume_elapsed_ms) && !(message.resume_elapsed_ms && $util.isInteger(message.resume_elapsed_ms.low) && $util.isInteger(message.resume_elapsed_ms.high)))
                     return "resume_elapsed_ms: integer|Long expected";
+            if (message.media_token != null && $Object.hasOwnProperty.call(message, "media_token")) {
+                properties._media_token = 1;
+                if (!$util.isString(message.media_token))
+                    return "media_token: string expected";
+            }
+            if (message.media_server_url != null && $Object.hasOwnProperty.call(message, "media_server_url")) {
+                properties._media_server_url = 1;
+                if (!$util.isString(message.media_server_url))
+                    return "media_server_url: string expected";
+            }
+            if (message.media_batch_id != null && $Object.hasOwnProperty.call(message, "media_batch_id")) {
+                properties._media_batch_id = 1;
+                if (!$util.isString(message.media_batch_id))
+                    return "media_batch_id: string expected";
+            }
+            if (message.media_user_id != null && $Object.hasOwnProperty.call(message, "media_user_id")) {
+                properties._media_user_id = 1;
+                if (!$util.isString(message.media_user_id))
+                    return "media_user_id: string expected";
+            }
+            if (message.ml_token != null && $Object.hasOwnProperty.call(message, "ml_token")) {
+                properties._ml_token = 1;
+                if (!$util.isString(message.ml_token))
+                    return "ml_token: string expected";
+            }
             return null;
         };
 
@@ -2327,6 +2476,16 @@ export const candidate_http = $root.candidate_http = (() => {
                         message.resume_elapsed_ms = object.resume_elapsed_ms;
                     else if (typeof object.resume_elapsed_ms === "object")
                         message.resume_elapsed_ms = new $util.LongBits(object.resume_elapsed_ms.low >>> 0, object.resume_elapsed_ms.high >>> 0).toNumber(true);
+            if (object.media_token != null)
+                message.media_token = $String(object.media_token);
+            if (object.media_server_url != null)
+                message.media_server_url = $String(object.media_server_url);
+            if (object.media_batch_id != null)
+                message.media_batch_id = $String(object.media_batch_id);
+            if (object.media_user_id != null)
+                message.media_user_id = $String(object.media_user_id);
+            if (object.ml_token != null)
+                message.ml_token = $String(object.ml_token);
             return message;
         };
 
@@ -2402,6 +2561,16 @@ export const candidate_http = $root.candidate_http = (() => {
                     object.resume_elapsed_ms = options.longs === $String ? $String(message.resume_elapsed_ms) : message.resume_elapsed_ms;
                 else
                     object.resume_elapsed_ms = options.longs === $String ? $util.Long.prototype.toString.call(message.resume_elapsed_ms) : options.longs === $Number ? new $util.LongBits(message.resume_elapsed_ms.low >>> 0, message.resume_elapsed_ms.high >>> 0).toNumber(true) : message.resume_elapsed_ms;
+            if (message.media_token != null && $Object.hasOwnProperty.call(message, "media_token"))
+                object.media_token = message.media_token;
+            if (message.media_server_url != null && $Object.hasOwnProperty.call(message, "media_server_url"))
+                object.media_server_url = message.media_server_url;
+            if (message.media_batch_id != null && $Object.hasOwnProperty.call(message, "media_batch_id"))
+                object.media_batch_id = message.media_batch_id;
+            if (message.media_user_id != null && $Object.hasOwnProperty.call(message, "media_user_id"))
+                object.media_user_id = message.media_user_id;
+            if (message.ml_token != null && $Object.hasOwnProperty.call(message, "ml_token"))
+                object.ml_token = message.ml_token;
             return object;
         };
 

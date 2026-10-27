@@ -28,7 +28,13 @@ export default class Welcome {
     const preLoginData = this.store().preloginData;
     if (!preLoginData) return false;
 
-    if (preLoginData.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING || preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+    if (
+      preLoginData.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER ||
+      preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.HYBRID_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.RECORD_AND_REVIEW
+    ) {
       const isSecure = this.store().platformIsTauri
       return !isSecure
     }

@@ -61,6 +61,7 @@ export class ExamService {
     isPermanentNetworkLossModalActive = signal(false)
     examTimedOut = signal(false)
     timeDisplay = signal({ min: 0, sec: 0 })
+    flaggedItems = signal<Map<string, { reasons: string[]; comment?: string }>>(new Map())
     store = computed(() => this._store.store())
     sectionsSummary = signal<null | { id: string, summary: { attempted: number[], unattempted: number[], revisits: number[], progress: number } }[]>(null)
     totalSectionsQuestions = computed(() => this.store().sections.reduce((curr, item) => curr + item.items.length, 0))
@@ -72,8 +73,9 @@ export class ExamService {
     examType = computed(() => this.store().preloginData?.exam_type ?? ExamType.EXAMALPHA)
     isExamAlpha = computed(() => ExamType.EXAMALPHA == this.examType())
 
-    isAutoProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.AUTO_PROCTORING)
-    isLiveProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.LIVE_PROCTORING)
+    isHybridProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.HYBRID_PROCTORING)
+    isAutoProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.AUTO_PROCTORING || this.isHybridProctoring())
+    isLiveProctoring = computed(() => this.store().preloginData?.delivery_method == DeliveryMethod.LIVE_PROCTORING || this.isHybridProctoring())
     isProctoredExam = computed(() => this.isLiveProctoring() || this.isAutoProctoring())
     isCheckingProctoringNetwork = signal(false)
     proctoringNetworkSpeed = linkedSignal(() => this._systemCheckService.networkCheckResults()?.upload ?? 0)
@@ -221,6 +223,49 @@ export class ExamService {
 
         currentQuestion.revisit = !currentQuestion.revisit
         this._store.updateStore({ currentQuestion })
+    }
+
+    flagItem(questionId: string, sectionId: string, reasons: string[], comment?: string) {
+        this._eventService.logEvent({
+            event_type: CandidateEventType.ITEM_REPORTED,
+            question_id: questionId,
+            section_id: sectionId,
+            details: JSON.stringify({
+                reasons: reasons,
+                comment: comment ? comment.trim().slice(0, 500) : undefined
+            })
+        });
+
+        this.flaggedItems.update(map => {
+            const newMap = new Map(map);
+            newMap.set(questionId, { reasons, comment: comment?.trim() });
+            return newMap;
+        });
+    }
+
+    unflagItem(questionId: string, sectionId: string) {
+        this._eventService.logEvent({
+            event_type: CandidateEventType.ITEM_REPORTED,
+            question_id: questionId,
+            section_id: sectionId,
+            details: JSON.stringify({
+                reasons: []
+            })
+        });
+
+        this.flaggedItems.update(map => {
+            const newMap = new Map(map);
+            newMap.delete(questionId);
+            return newMap;
+        });
+    }
+
+    isItemFlagged(questionId: string): boolean {
+        return this.flaggedItems().has(questionId);
+    }
+
+    getItemReport(questionId: string): { reasons: string[]; comment?: string } | undefined {
+        return this.flaggedItems().get(questionId);
     }
 
     getExamDuration(startTime?: number) {

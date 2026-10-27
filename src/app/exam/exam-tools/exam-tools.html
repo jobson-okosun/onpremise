@@ -1,4 +1,4 @@
-@let showSubmitButton = canEndExam() && countDownTimer().min >= 1;
+@let showSubmitButton = forceShowSubmit() || (canEndExam() && countDownTimer().min >= 1);
 
 @if(screenWidth() <= 500) {
     <div class="flex gap-2 items-center justify-between">

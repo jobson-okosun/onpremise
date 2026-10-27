@@ -29,6 +29,10 @@ export const routes: Routes = [
     },
     { path: 'usage-guide', loadComponent: () => import('./usage-guide/usage-guide') },
     {
+        path: 'practice-mode',
+        loadComponent: () => import('./exam/practice-mode/practice-mode')
+    },
+    {
         path: 'welcome',
         canActivate: [hasExamSettings],
         loadComponent: () => import('./welcome/welcome')
@@ -47,7 +51,7 @@ export const routes: Routes = [
         path: 'instruction',
         canActivate: [hasActiveExam, isLoggedin],
         loadComponent: () => import('./instructions/instructions')
-    },
+    }, 
     {
         path: 'exam',
         canActivate: [hasActiveExam, isLoggedin, examNotEnded],

@@ -8,6 +8,7 @@ export interface LiveProctoringConfig {
   batch_id: string;
   role: 'candidate';
   user_id: string;
+  token?: string;
 }
 
 @Injectable({
@@ -25,10 +26,14 @@ export class LiveProctoringService {
 
       if (!store.loginData || !store.preloginData) return undefined;
 
+      const batchId = store.loginData.media_batch_id || store.preloginData.batch_id;
+      const userId = store.loginData.media_user_id || store.loginData.candidate_data.participant_id || '';
+
       return {
-          batch_id: store.preloginData.batch_id,
+          batch_id: batchId,
           role: 'candidate' as const,
-          user_id: store.loginData.candidate_data.participant_id
+          user_id: userId,
+          token: store.loginData.media_token
       };
   });
 
@@ -60,7 +65,8 @@ export class LiveProctoringService {
     try {
       await this.startUserMedia();
 
-      await this.signalingService.connect();
+      const mediaServerUrl = this.store().loginData?.media_server_url;
+      await this.signalingService.connect(mediaServerUrl);
 
       this.signalingService.send('joinRoom', config);
 

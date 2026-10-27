@@ -11,6 +11,7 @@ import { APIIPC } from './services/ipc/api-ipc';
 import { ExamPauseService } from './services/exam-pause';
 import { ExamService } from './services/exam';
 import { effect } from '@angular/core';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ export class App {
   private _store = inject(Store)
   private _apiIPc = inject(APIIPC)
   private _examPauseService = inject(ExamPauseService)
+  private _toast = inject(HotToastService)
 
   store = computed(() => this._store.store())
   userExitPassword = new FormControl('', Validators.required)
@@ -58,6 +60,18 @@ export class App {
     await this._apiIPc.checkDeviceStatus()
     await this._tauriService.updatePlatformType() 
     this._examPauseService.init()
+
+    if (this._tauriService.isTauri()) {
+      this._tauriService.listenForSecurityEvents((payload: any) => {
+        // Local-only notification; NEVER forward to autosave
+        const eventType = payload?.type || payload?.name || (typeof payload === 'string' ? payload : '');
+        if (eventType === 'virtual-camera-detected') {
+          this._toast.warning('Virtual camera detected. Only physical webcams are permitted.');
+        } else if (eventType === 'camera-unavailable') {
+          this._toast.warning('Camera is currently unavailable.');
+        }
+      });
+    }
 
     this._dataService.downloadOrganizationAssets()
     this.unlockSpeechSynthesis()

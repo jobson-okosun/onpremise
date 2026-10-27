@@ -108,6 +108,11 @@ message CandidateLoginResponseProto {
     bytes  events_session_id  = 5;
     uint64 last_sequence      = 6;
     uint64 resume_elapsed_ms  = 7;
+    optional string media_token        = 8;   // present only for live-proctored exams
+    optional string media_server_url   = 9;
+    optional string media_batch_id     = 10;  // → joinRoom.batch_id
+    optional string media_user_id      = 11;  // → joinRoom.user_id
+    optional string ml_token           = 12;  // AI proctoring token
 }
 
 message CandidateDataProto {

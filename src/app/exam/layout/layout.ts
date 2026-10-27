@@ -245,31 +245,32 @@ export default class Layout implements OnDestroy {
       fullscreen(this._eventService)
     }
 
+    this._eventService.initIntegrityEvents();
+
     if (this.isProctoredExam()) {
-
-      if (this.isLiveProctoring()) {
-        const success = await this._liveProctoring.initialize()
-        if (!success) {
-          this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true })
-        }
-
-        // effect tracking full screen sharing will start the exam
-        return
-      }
-
       if (this.isAutoProctoring()) {
-        const success = await this._autoProctorService.initialize()
+        const success = await this._autoProctorService.initialize();
 
         if (!success) {
           this.autoProctoringFailed.set(true);
-          return
+          return;
         }
       }
 
-      this._exam.startProctoringNetworkMonitor()
+      if (this.isLiveProctoring()) {
+        const success = await this._liveProctoring.initialize();
+        if (!success) {
+          this._toast.error('Unable to start live proctoring. Please try again.', { duration: 150000, dismissible: true });
+        }
+
+        // effect tracking full screen sharing will start the exam
+        return;
+      }
+
+      this._exam.startProctoringNetworkMonitor();
     }
 
-    this.initiateExam()
+    this.initiateExam();
   }
 
   private initiateExam() {

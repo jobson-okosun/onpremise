@@ -11,11 +11,12 @@ export class SignalingService {
   public onEvent = (msg: any) => { };
   public connectionStatus = signal<'connected' | 'disconnected' | 'connecting'>('disconnected');
 
-  connect(): Promise<void> {
+  connect(url?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.connectionStatus.set('connecting');
       
-      this.socket = new WebSocket(environment.PROCTORING_WS);
+      const wsUrl = url || environment.PROCTORING_WS;
+      this.socket = new WebSocket(wsUrl);
 
       this.socket.onopen = () => {
         this.connectionStatus.set('connected');

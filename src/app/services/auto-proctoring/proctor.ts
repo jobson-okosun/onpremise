@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal, TemplateRef } from "@angular/core";
 import { Store } from "../../store/store";
-import { CandidateInfractionEntry, INFRACTION_COLORS, INFRACTION_LABELS } from "../../store/model/types";
+import { CandidateInfractionEntry, DeliveryMethod, INFRACTION_COLORS, INFRACTION_EVENT_MAP, INFRACTION_LABELS, INFRACTION_MESSAGES } from "../../store/model/types";
 import { HotToastService } from "@ngxpert/hot-toast";
 import { EventService } from "../event";
 import { CandidateEventType } from "../../store/model/events/events.enum";
@@ -26,7 +26,8 @@ export class ProctorService {
         return {
             candidate_id: store.loginData.candidate_data.participant_id,
             batch_id: store.preloginData.batch_id,
-            exam_id: store.preloginData.r_id
+            exam_id: store.preloginData.r_id,
+            ml_token: store.loginData.ml_token || ''
         };
     });
 
@@ -70,7 +71,8 @@ export class ProctorService {
             const streamInfo: any = await this.tauriInvoke()("start_stream", {
                 candidateId: cInfo.candidate_id,
                 examId: cInfo.exam_id,
-                batchId: cInfo.batch_id
+                batchId: cInfo.batch_id,
+                mlToken: cInfo.ml_token
             });
 
             if (!streamInfo || !streamInfo.port || !streamInfo.token) {
@@ -121,14 +123,29 @@ export class ProctorService {
         }
     }
 
+    activeCameraLabel = signal<string>('');
+
     async startMediaFeed(): Promise<boolean> {
         try {
             const stream = await navigator.mediaDevices.getUserMedia(this._streamConstraints);
             this.stream.set(stream);
 
+            const videoTrack = stream.getVideoTracks()[0];
+            if (videoTrack) {
+                this.activeCameraLabel.set(videoTrack.label);
+                console.log('Opened camera device for proctoring:', videoTrack.label);
+            }
+
             return true;
         } catch (error: any) {
             console.error('media stream failed to start:', error);
+            if (error?.name === 'NotFoundError') {
+                this._toast.error('No camera that can be used for proctoring was found. Please connect a webcam.');
+            } else if (error?.name === 'NotAllowedError') {
+                this._toast.error('The camera that opened is not allowed for proctoring. Please try again.');
+            } else {
+                this._toast.error('Could not start camera feed for proctoring.');
+            }
             return false;
         } 
     }
@@ -253,30 +270,49 @@ export class ProctorService {
     }
 
     onInfractions(event: any) {
-        const payload = event.payload
+        const payload = event.payload;
 
         if (!payload.infractionType) {
-            return
+            return;
         }
 
         const infractionType = payload.infractionType as keyof typeof INFRACTION_LABELS;
 
+        // In HYBRID_PROCTORING, the proctor decides: maxStrikeReached is always false on client
+        const isHybrid = this.store().preloginData?.delivery_method === DeliveryMethod.HYBRID_PROCTORING;
+        const maxStrikeReached = isHybrid ? false : (payload.maxStrikeReached ?? false);
+
+        // Log the infraction event so it syncs to server audit timeline via Protobuf autosave
+        const eventName = INFRACTION_EVENT_MAP[infractionType] ?? `AI_INFRACTION_${payload.infractionType}`;
+        if (eventName) {
+            this._eventService.logEvent({
+                event_type: eventName as any,
+                details: JSON.stringify({
+                    strikes: payload.infractionStrikes ?? 0,
+                    frameId: payload.frameId,
+                    savedFramePath: payload.savedFramePath,
+                    maxStrikeReached: maxStrikeReached
+                })
+            });
+        }
+
         const data: CandidateInfractionEntry = {
             id: Date.now().toString(),
-            label: INFRACTION_LABELS[infractionType] ?? `Type ${payload.infractionType}`,
+            label: INFRACTION_LABELS[infractionType] ?? `Proctoring Warning (${payload.infractionType})`,
+            message: INFRACTION_MESSAGES[infractionType] ?? 'Please ensure all exam integrity rules are observed.',
             time: new Date().toLocaleTimeString(),
             timestamp: new Date().toISOString(),
             type: payload.infractionType,
             strikes: payload.infractionStrikes ?? 0,
-            maxStrikeReached: payload.maxStrikeReached ?? false,
-            color: INFRACTION_COLORS[infractionType]
-        }
+            maxStrikeReached: maxStrikeReached,
+            color: INFRACTION_COLORS[infractionType] ?? 'yellow-500'
+        };
 
         if (!this.infractionTemplateRef()) { 
-            return
+            return;
         }
 
-        this._toast.show(this.infractionTemplateRef(), { data: { ...data }, duration: 7000, position: "top-left" })
+        this._toast.show(this.infractionTemplateRef(), { data: { ...data }, duration: 7000, position: "top-left" });
     } 
 
     async cleanUpProctoring() {

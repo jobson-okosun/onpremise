@@ -1,0 +1,17 @@
+/* Custom subtle animations for onboarding liveness component */
+:host {
+  display: block;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(3, 142, 220, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(3, 142, 220, 0.45);
+  }
+}
+
+.focus-active {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}

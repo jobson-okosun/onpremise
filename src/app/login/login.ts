@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, computed, effect, ElementRef, inject, linkedSignal, QueryList, signal, untracked, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, inject, linkedSignal, OnDestroy, QueryList, signal, untracked, ViewChildren } from '@angular/core';
 import { Store } from '../store/store';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
-import { DeliveryMethod, DeploymentMode, ICandidateLoginDTO, ICandidateLoginResponse } from '../store/model/types';
+import { CommonModule } from '@angular/common';
+import { DeliveryMethod, DeploymentMode, ICandidateLoginDTO, ICandidateLoginResponse, IIdentityCheck } from '../store/model/types';
 import { DataService } from '../services/data/data';
 import { finalize, lastValueFrom } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -12,14 +13,15 @@ import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
 import { PostLogin } from '../services/onboarding/post-login';
 import { TauriService } from '../services/ipc/tauri';
+import { OnboardingLivenessModal } from './onboarding-liveness-modal/onboarding-liveness-modal';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule, OnboardingLivenessModal],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export default class Login implements AfterViewInit {
+export default class Login implements AfterViewInit, OnDestroy {
   private _store = inject(Store)
   private _postLoginService = inject(PostLogin)
   private _dataService = inject(DataService)
@@ -42,11 +44,27 @@ export default class Login implements AfterViewInit {
   codeDigits = signal(['', '', '', '', '', '', '', '']);
   hasEnteredCode = computed(() => this.codeDigits().every(digit => digit !== ''));
 
+  // Identity Check & Onboarding State
+  identityCheck = signal<IIdentityCheck | null>(null);
+  showOnboardingModal = signal(false);
+  isReviewPending = signal(false);
+  isBlocked = signal(false);
+  isServiceUnavailable = signal(false);
+  isRetryingUnavailable = signal(false);
+  identityMessage = signal('');
+  private reviewPollTimer: any = null;
+
   invalidExamEnvironment = linkedSignal(() => {
     const preLoginData = this.store().preloginData;
     if (!preLoginData) return false;
 
-    if (preLoginData.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING || preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+    if (
+      preLoginData.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER ||
+      preLoginData.delivery_method == DeliveryMethod.AUTO_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.LIVE_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.HYBRID_PROCTORING ||
+      preLoginData.delivery_method == DeliveryMethod.RECORD_AND_REVIEW
+    ) {
       const isSecure = this.store().platformIsTauri
       return !isSecure
     }
@@ -78,13 +96,23 @@ export default class Login implements AfterViewInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.clearReviewPolling();
+  }
+
   async fetchPreloginData() {
     try {
       this.isLoadingPreloginData.set(true)
 
       const res = await lastValueFrom(this._dataService.fetchPreLoginDataWithCode(this.examCode.value!))
 
-      if (res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER || res.delivery_method == DeliveryMethod.AUTO_PROCTORING || res.delivery_method == DeliveryMethod.LIVE_PROCTORING) {
+      if (
+        res.delivery_method == DeliveryMethod.ON_PREMISE_SECURE_BROWSER ||
+        res.delivery_method == DeliveryMethod.AUTO_PROCTORING ||
+        res.delivery_method == DeliveryMethod.LIVE_PROCTORING ||
+        res.delivery_method == DeliveryMethod.HYBRID_PROCTORING ||
+        res.delivery_method == DeliveryMethod.RECORD_AND_REVIEW
+      ) {
         const isSecure = this.store().platformIsTauri
 
         if (!isSecure) {
@@ -97,7 +125,7 @@ export default class Login implements AfterViewInit {
 
     } catch (error) {
       const err = error as HttpErrorResponse
-      this._toast.error(err.error.error ?? 'Sorry! Unable to complete task')
+      this._toast.error(err.error?.error ?? 'Sorry! Unable to complete task')
       this._router.navigate(['/'])
     } finally {
       this.isLoadingPreloginData.set(false)
@@ -135,19 +163,97 @@ export default class Login implements AfterViewInit {
 
     this._dataService.login(payload)
       .pipe(
-        this._toast.observe({ loading: 'Please wait...', success: 'Login successfull', error: 'Error!' }),
-        finalize(() => this.isLoading.set(false))
+        finalize(() => {
+          this.isLoading.set(false);
+          this.isRetryingUnavailable.set(false);
+        })
       )
       .subscribe({
-        next: (res) => this.onSuccessfullLogin(res),
+        next: (res) => {
+          this.clearReviewPolling();
+          this.isReviewPending.set(false);
+          this._toast.success('Login successful');
+          this.onSuccessfullLogin(res);
+        },
         error: (err: HttpErrorResponse) => {
           this._eventService.logEvent({ event_type: CandidateEventType.LOGIN_FAILED });
-          const control = this.candidateId
 
-          control.setErrors({ serverError: { msg: err.error.error ?? 'Sorry Unable to complete login' } });
+          // Intercept Identity Check responses
+          const identityCheck = err?.error?.identity_check;
+          if (identityCheck) {
+            if (err.status === 428 && identityCheck.status === 'NEED_ONBOARDING') {
+              this.identityCheck.set(identityCheck);
+              this.showOnboardingModal.set(true);
+              return;
+            }
+
+            if (err.status === 428 && identityCheck.status === 'PENDING_REVIEW') {
+              this.isReviewPending.set(true);
+              this.identityMessage.set(identityCheck.message || 'A proctor is confirming your identity.');
+              this.startReviewPolling();
+              return;
+            }
+
+            if (err.status === 403 && identityCheck.status === 'BLOCKED') {
+              this.isBlocked.set(true);
+              this.identityMessage.set(identityCheck.message || 'You are blocked from taking this exam.');
+              return;
+            }
+
+            if (err.status === 503 && identityCheck.status === 'UNAVAILABLE') {
+              this.isServiceUnavailable.set(true);
+              this.identityMessage.set(identityCheck.message || 'Verification service is temporarily unavailable. Please try again shortly.');
+              return;
+            }
+          }
+
+          const control = this.candidateId;
+          const msg = err.error?.error ?? err.error?.message ?? 'Sorry, unable to complete login';
+          control.setErrors({ serverError: { msg } });
           control.markAsTouched();
+          this._toast.error(msg);
         }
       })
+  }
+
+  startReviewPolling() {
+    this.clearReviewPolling();
+    this.reviewPollTimer = setTimeout(() => {
+      if (this.isReviewPending()) {
+        this.login();
+      }
+    }, 6000);
+  }
+
+  clearReviewPolling() {
+    if (this.reviewPollTimer) {
+      clearTimeout(this.reviewPollTimer);
+      this.reviewPollTimer = null;
+    }
+  }
+
+  onOnboardingCompleted() {
+    this.showOnboardingModal.set(false);
+    this.login();
+  }
+
+  onOnboardingCancelled() {
+    this.showOnboardingModal.set(false);
+  }
+
+  dismissBlockedModal() {
+    this.isBlocked.set(false);
+  }
+
+  dismissUnavailableModal() {
+    this.isRetryingUnavailable.set(false);
+    this.isServiceUnavailable.set(false);
+  }
+
+  retryUnavailableLogin() {
+    this.isRetryingUnavailable.set(true);
+    this.isServiceUnavailable.set(false);
+    this.login();
   }
 
   onSuccessfullLogin(value: ICandidateLoginResponse) {
@@ -162,7 +268,7 @@ export default class Login implements AfterViewInit {
         this._tauriService.sendExamStarted()
       }
 
-      if ([DeliveryMethod.AUTO_PROCTORING, DeliveryMethod.LIVE_PROCTORING].includes(this.store().preloginData?.delivery_method as DeliveryMethod)) {
+      if ([DeliveryMethod.AUTO_PROCTORING, DeliveryMethod.LIVE_PROCTORING, DeliveryMethod.HYBRID_PROCTORING].includes(this.store().preloginData?.delivery_method as DeliveryMethod)) {
         this._router.navigate(['proctored/onboarding'])
         return
       }

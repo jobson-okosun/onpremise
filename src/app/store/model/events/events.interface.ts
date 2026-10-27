@@ -3,6 +3,7 @@ import { CandidateEventType, NavigationMethod } from './events.enum';
 export type BasePayload = {
   battery_level?: number | null;
   duration_ms?: number;
+  details?: string;
 };
 
 export type BasicEventPayload = BasePayload & {
@@ -65,12 +66,37 @@ export type BasicEventPayload = BasePayload & {
       | CandidateEventType.PROCTOR_MESSAGE_RECEIVED
       | CandidateEventType.FACE_DETECTED
       | CandidateEventType.FACE_LOST
+      | CandidateEventType.LOOKING_AWAY
+      | CandidateEventType.FACE_NOT_CENTERED
       | CandidateEventType.MULTIPLE_FACES
+      | CandidateEventType.FACE_MISMATCH
+      | CandidateEventType.FACE_NOT_DETECTED
       | CandidateEventType.PHONE_DETECTED
       | CandidateEventType.BOOK_DETECTED
-      | CandidateEventType.LOOKING_AWAY
-      | CandidateEventType.MIC_BLOCKED
+      | CandidateEventType.HEADPHONE_DETECTED
+      | CandidateEventType.EXTERNAL_KEYBOARD
+      | CandidateEventType.EXTERNAL_MOUSE
+      | CandidateEventType.CALCULATOR_DETECTED
+      | CandidateEventType.PROHIBITED_OBJECT
+      | CandidateEventType.TALKING_DETECTED
+      | CandidateEventType.BACKGROUND_VOICES
+      | CandidateEventType.APP_MINIMIZATION
+      | CandidateEventType.SCREEN_SHARING
+      | CandidateEventType.EXTERNAL_SCREEN
+      | CandidateEventType.SCREEN_RECORDING
+      | CandidateEventType.VPN_DETECTED
+      | CandidateEventType.PROXY_DETECTED
+      | CandidateEventType.NETWORK_INSTABILITY
       | CandidateEventType.CAMERA_BLOCKED
+      | CandidateEventType.MIC_BLOCKED
+      | CandidateEventType.EYES_OFF_SCREEN
+      | CandidateEventType.LOOKING_DOWN
+      | CandidateEventType.PAPER_DETECTED
+      | CandidateEventType.NOTES_DETECTED
+      | CandidateEventType.MULTIPLE_PEOPLE_DETECTED
+      | CandidateEventType.SECOND_SCREEN_DETECTED
+      | CandidateEventType.WATCH_DETECTED
+      | CandidateEventType.BAG_DETECTED
       | CandidateEventType.APPLICATION_EXIT_REQUESTED
       | CandidateEventType.APPLICATION_EXITED
       | CandidateEventType.APPLICATION_CRASHED;
@@ -96,14 +122,19 @@ export type QuestionAnswerPayload = BasePayload & {
   old_answer: string | null;
 };
 
-
+export type ItemReportedPayload = BasePayload & {
+  event_type: CandidateEventType.ITEM_REPORTED;
+  section_id: string;
+  question_id: string;
+  details: string;
+};
 
 export type ICandidateEventPayload = 
   | BasicEventPayload 
   | SectionEventPayload 
   | QuestionNavigationPayload 
-  | QuestionNavigationPayload 
-  | QuestionAnswerPayload;
+  | QuestionAnswerPayload
+  | ItemReportedPayload;
 
 export interface ICandidateEvent {
   event_id: string;
