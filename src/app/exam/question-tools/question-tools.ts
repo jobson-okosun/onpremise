@@ -5,7 +5,6 @@ import { CandidateEventType } from '../../store/model/events/events.enum';
 import { Dialog } from 'primeng/dialog';
 import { Store } from '../../store/store';
 import { DrawerModule } from 'primeng/drawer';
-import { Menu } from 'primeng/menu';
 import { AccordionModule } from 'primeng/accordion';
 import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/event.service';
 import { EventService } from '../../services/event';

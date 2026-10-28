@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { ICandidateEvent, ICandidateEventPayload } from "../store/model/events/events.interface";
 import { CandidateEventType } from "../store/model/events/events.enum";
 import { Store } from "../store/store";
@@ -12,6 +13,11 @@ import { IntegrityEvent } from "../store/model/types";
 export class EventService {
     private _store = inject(Store);
     private _tauri = inject(TauriService);
+    private _router = inject(Router);
+
+    private isPracticeMode(): boolean {
+        return this._router.url?.includes('practice-mode') ?? false;
+    }
 
     private events_session_id = computed(() => this._store.store().loginData?.events_session_id || '');
     private resume_elapsed_ms = computed(() => this._store.store().loginData?.resume_elapsed_ms || 0);
@@ -46,6 +52,7 @@ export class EventService {
     }
 
     private queueIntegrityEvent(e: IntegrityEvent) {
+        if (this.isPracticeMode()) return;
         if (this._queuedIntegrityEventIds.has(e.eventId)) return;
         this._queuedIntegrityEventIds.add(e.eventId);
 
@@ -107,16 +114,33 @@ export class EventService {
         if (!sessionId) return;
 
         this._pendingEvents.update(events => {
-            return events.map(event => {
-                if (!event?.events_session_id) {
-                    return { ...event, events_session_id: sessionId };
-                }
-                return event;
-            });
+            return events
+                .filter(event =>
+                    !(typeof event.question_id === 'string' && event.question_id.startsWith('mock-')) &&
+                    !(typeof event.section_id === 'string' && event.section_id.startsWith('mock-'))
+                )
+                .map(event => {
+                    if (!event?.events_session_id) {
+                        return { ...event, events_session_id: sessionId };
+                    }
+                    return event;
+                });
         });
     }
 
     logEvent(payload: ICandidateEventPayload): void {
+        if (this.isPracticeMode()) {
+            return;
+        }
+
+        if ('question_id' in payload && typeof payload.question_id === 'string' && payload.question_id.startsWith('mock-')) {
+            return;
+        }
+
+        if ('section_id' in payload && typeof payload.section_id === 'string' && payload.section_id.startsWith('mock-')) {
+            return;
+        }
+
         const start = this._localStartTimeMs();
 
         const timeDiff = start !== null ? performance.now() - start : 0;
