@@ -390,6 +390,9 @@ export class ExamSpeechService implements OnDestroy {
       '<p>To navigate to the previous question, press letter P.</p>' +
       '<p>To switch between subjects, press the number of the subject, such as 1, 2, or 3.</p>' +
       '<p>To pause or resume reading, press the spacebar.</p>' +
+      '<p>To check your remaining time and question summary, press letter T.</p>' +
+      '<p>To end or submit the exam, press the letter S twice quickly.</p>' +
+      '<p>To re-read these shortcut instructions at any time, press letter R.</p>' +
       '<p>So, are you ready to begin? Press the letter Q so I can read to you the first question.</p>';
 
     this.play(normalizeForSpeech(welcomeHtml, this.config.normalize));
@@ -429,6 +432,10 @@ export class ExamSpeechService implements OnDestroy {
     }
 
     html += `<p>Please confirm the exam information before continuing.</p>`;
+    html += `<p>Here is a quick guide on how to navigate using shortcuts.</p>`;
+    html += `<p>To continue to the instructions, press the Enter key.</p>`;
+    html += `<p>To re-read this overview, press the letter R.</p>`;
+    html += `<p>To pause or resume reading, press the spacebar.</p>`;
 
     this.play(normalizeForSpeech(html, this.config.normalize));
   }
@@ -439,6 +446,7 @@ export class ExamSpeechService implements OnDestroy {
 
     let html = `<p>Instructions. Please read through the following instruction sets carefully.</p>`;
     html += `<p>Here is a quick guide on how to navigate this page using shortcuts.</p>`;
+    html += `<p>To go back to the overview page, press the Backspace key or letter B.</p>`;
     html += `<p>To re-read these instructions, press the letter R.</p>`;
     html += `<p>To pause or resume reading, press the spacebar.</p>`;
     html += `<p>To begin the exam, press the Enter key.</p>`;
@@ -535,6 +543,108 @@ export class ExamSpeechService implements OnDestroy {
     }
 
     speechHtml += '<p>If you want to continue your exam, select Continue Exam. If you are ready to submit, select End Exam.</p>';
+
+    this.play(normalizeForSpeech(speechHtml, this.config.normalize));
+  }
+
+  public announceStatusSummary(overviewSections?: any[]): void {
+    if (!this.isTextToSpeechEnabled()) return;
+
+    this.stop();
+
+    const timer = this._exam?.timeDisplay?.() || { min: 0, sec: 0 };
+    const sections = overviewSections || this._store.store().sections.map(sec => {
+      const s = this._exam?.sectionsSummary()?.find((item: any) => item.id === sec.id);
+      return { ...sec, summary: s?.summary };
+    });
+
+    const formatNumbers = (indices: number[]): string => {
+      const nums = indices.map(i => i + 1);
+      if (nums.length === 0) return '';
+      if (nums.length === 1) return `${nums[0]}`;
+      if (nums.length === 2) return `${nums[0]} and ${nums[1]}`;
+      return `${nums.slice(0, -1).join(', ')}, and ${nums[nums.length - 1]}`;
+    };
+
+    let speechHtml = '<p>Exam status summary.</p>';
+
+    // Time remaining
+    if (timer.min > 0 && timer.sec > 0) {
+      speechHtml += `<p>Time remaining: ${timer.min} ${timer.min === 1 ? 'minute' : 'minutes'} and ${timer.sec} ${timer.sec === 1 ? 'second' : 'seconds'}.</p>`;
+    } else if (timer.min > 0) {
+      speechHtml += `<p>Time remaining: ${timer.min} ${timer.min === 1 ? 'minute' : 'minutes'}.</p>`;
+    } else if (timer.sec > 0) {
+      speechHtml += `<p>Time remaining: ${timer.sec} ${timer.sec === 1 ? 'second' : 'seconds'}.</p>`;
+    } else {
+      speechHtml += `<p>Exam time has expired.</p>`;
+    }
+
+    const totalAttempted = sections.reduce(
+      (acc: number, sec: any) => acc + (sec.summary?.attempted?.length || 0),
+      0
+    );
+    const totalUnattempted = sections.reduce(
+      (acc: number, sec: any) => acc + (sec.summary?.unattempted?.length || 0),
+      0
+    );
+    const totalRevisits = sections.reduce(
+      (acc: number, sec: any) => acc + (sec.summary?.revisits?.length || 0),
+      0
+    );
+    const totalQuestions = totalAttempted + totalUnattempted;
+
+    if (totalUnattempted === 0 && totalRevisits === 0) {
+      speechHtml += `<p>All ${totalQuestions} questions across all subjects have been attempted.</p>`;
+    } else {
+      speechHtml += `<p>Across all subjects: ${totalAttempted} of ${totalQuestions} questions answered. ${totalUnattempted} unanswered.`;
+      if (totalRevisits > 0) {
+        speechHtml += ` ${totalRevisits} marked for revisit.`;
+      }
+      speechHtml += `</p>`;
+
+      sections.forEach((sec: any) => {
+        const unattempted: number[] = sec.summary?.unattempted || [];
+        const revisits: number[] = sec.summary?.revisits || [];
+
+        let secDetails = '';
+
+        if (unattempted.length === 0 && revisits.length === 0) {
+          secDetails = 'All questions answered.';
+        } else {
+          const parts: string[] = [];
+
+          if (unattempted.length > 0) {
+            if (unattempted.length <= 5) {
+              const qWord = unattempted.length === 1 ? 'Question' : 'Questions';
+              parts.push(
+                `${unattempted.length} ${unattempted.length === 1 ? 'question is' : 'questions are'} unanswered, ${qWord} ${formatNumbers(unattempted)}`
+              );
+            } else {
+              parts.push(`${unattempted.length} questions are unanswered`);
+            }
+          } else {
+            parts.push('All questions answered');
+          }
+
+          if (revisits.length > 0) {
+            if (revisits.length <= 5) {
+              const qWord = revisits.length === 1 ? 'Question' : 'Questions';
+              parts.push(
+                `${revisits.length} ${revisits.length === 1 ? 'question is' : 'questions are'} marked for revisit, ${qWord} ${formatNumbers(revisits)}`
+              );
+            } else {
+              parts.push(`${revisits.length} questions are marked for revisit`);
+            }
+          }
+
+          secDetails = parts.join('. ') + '.';
+        }
+
+        speechHtml += `<p>In ${sec.name}: ${secDetails}</p>`;
+      });
+    }
+
+    speechHtml += '<p>Press letter Q to return to your current question, or spacebar to pause.</p>';
 
     this.play(normalizeForSpeech(speechHtml, this.config.normalize));
   }

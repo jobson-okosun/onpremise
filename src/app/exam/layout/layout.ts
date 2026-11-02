@@ -468,7 +468,9 @@ export default class Layout implements OnDestroy {
       const currentTime = Date.now();
       if (currentTime - this.lastPressTime() < this.threshold()) {
         if (this.canEndExam()) {
-          this._exam.showUnattemptedModal.set(true)
+          this._exam.showUnattemptedModal.set(true);
+        } else if (this._ttsService.isTextToSpeechEnabled()) {
+          this._ttsService.announceFeedback('You cannot end the exam yet.');
         }
       }
 
@@ -547,6 +549,10 @@ export default class Layout implements OnDestroy {
       this._ttsService.announceCurrentQuestion();
     } else if (key === 'o') {
       this._ttsService.announceCurrentOptions();
+    } else if (key === 'r') {
+      this._ttsService.announceWelcomeMessage();
+    } else if (key === 't') {
+      this._ttsService.announceStatusSummary(this.overviewSections());
     }
   }
 

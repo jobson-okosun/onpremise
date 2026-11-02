@@ -299,6 +299,9 @@ export class TextToSpeechService {
       "To navigate to the next question, press letter N. [PAUSE] " +
       "To navigate to the previous question, press letter P. [PAUSE] " +
       "To pause or resume reading, press the spacebar. [PAUSE] " +
+      "To check your remaining time and question summary, press letter T. [PAUSE] " +
+      "To end or submit the exam, press the letter S twice quickly. [PAUSE] " +
+      "To re-read these shortcut instructions at any time, press letter R. [PAUSE] " +
       "So, are you ready to begin? press letter Q so i can read to you the first question.";
       
     this.speak(message);
@@ -336,7 +339,11 @@ export class TextToSpeechService {
       });
     }
 
-    message += `Please confirm the exam information before continuing.`;
+    message += `Please confirm the exam information before continuing. [PAUSE] `;
+    message += `Here is a quick guide on how to navigate using shortcuts. [PAUSE] `;
+    message += `To continue to the instructions, press the Enter key. [PAUSE] `;
+    message += `To re-read this overview, press the letter R. [PAUSE] `;
+    message += `To pause or resume reading, press the spacebar. [PAUSE] `;
 
     this.speak(message);
   }
@@ -348,6 +355,7 @@ export class TextToSpeechService {
     let message = `Instructions. Please read through the following instruction sets carefully. [PAUSE] `;
     
     message += `Here is a quick guide on how to navigate this page using shortcuts. [PAUSE] `;
+    message += `To go back to the overview page, press the Backspace key or letter B. [PAUSE] `;
     message += `To re-read these instructions, press the letter R. [PAUSE] `;
     message += `To pause or resume reading, press the spacebar. [PAUSE] `;
     message += `To begin the exam, press the Enter key. [PAUSE] `;

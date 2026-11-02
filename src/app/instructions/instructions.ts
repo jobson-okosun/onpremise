@@ -78,11 +78,17 @@ export default class Instructions implements OnInit, OnDestroy {
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
     if (isInput) return;
 
+    const key = event.key.toLowerCase();
+
     if (event.key === 'Enter') {
       event.preventDefault();
       this._tts.stop();
       this._router.navigate(['exam']);
-    } else if (event.key.toLowerCase() === 'r') {
+    } else if (event.key === 'Backspace' || key === 'b') {
+      event.preventDefault();
+      this._tts.stop();
+      this._router.navigate(['overview']);
+    } else if (key === 'r') {
       if (this._tts.isTextToSpeechEnabled()) {
         event.preventDefault();
         this._tts.announceInstructions();
