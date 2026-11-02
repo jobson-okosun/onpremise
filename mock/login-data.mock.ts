@@ -50,7 +50,7 @@ export const loginData = {
       "section_settings": {
         "minutes_left": 40,
         "seconds_left": 0,
-        "duration_in_minutes": 45,
+        "duration_in_minutes": 1,
         "shuffle_items": false,
         "shuffle_options": true,
         "allow_calculator": false,
@@ -65,49 +65,6 @@ export const loginData = {
           "block_type": "SINGLE_QUESTIONS",
           "total_questions": 3,
           "items": [
-            {
-              "id": "ENG-Q9",
-              "stimulus": `<p><span class="math-expression" data-latex="25\int_0^{\infty}\!\forall\,\mathrm{d}x+36\cdot65^2+\int_0^{\infty}\!3\sqrt{569}\,\mathrm{d}x" contenteditable="false"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>25</mn><msubsup><mo>∫</mo><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mtext> ⁣</mtext><mi mathvariant="normal">∀</mi><mtext> </mtext><mi mathvariant="normal">d</mi><mi>x</mi><mo>+</mo><mn>36</mn><mo>⋅</mo><msup><mn>65</mn><mn>2</mn></msup><mo>+</mo><msubsup><mo>∫</mo><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mtext> ⁣</mtext><mn>3</mn><msqrt><mn>569</mn></msqrt><mtext> </mtext><mi mathvariant="normal">d</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">25\int_0^{\infty}\!\forall\,\mathrm{d}x+36\cdot65^2+\int_0^{\infty}\!3\sqrt{569}\,\mathrm{d}x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1.2151em;vertical-align:-0.3558em;"></span><span class="mord">25</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="margin-right:0.1945em;position:relative;top:-0.0006em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8593em;"><span style="top:-2.3442em;margin-left:-0.1945em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.2579em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∞</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3558em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">∀</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathrm">d</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">36</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">6</span><span class="mord"><span class="mord">5</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1.263em;vertical-align:-0.3558em;"></span><span class="mop"><span class="mop op-symbol small-op" style="margin-right:0.1945em;position:relative;top:-0.0006em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8593em;"><span style="top:-2.3442em;margin-left:-0.1945em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span><span style="top:-3.2579em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∞</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3558em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">3</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9072em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">569</span></span></span><span style="top:-2.8672em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
-c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
-c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
-c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
-s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
-c69,-144,104.5,-217.7,106.5,-221
-l0 -0
-c5.3,-9.3,12,-14,20,-14
-H400000v40H845.2724
-s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
-c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1328em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathrm">d</span><span class="mord mathnormal">x</span></span></span></span></span><br></p><table style="min-width: 300px;"><colgroup><col style="min-width: 100px;"><col style="min-width: 100px;"><col style="min-width: 100px;"></colgroup><tbody><tr><th class="table-header" colspan="1" rowspan="1"><p>vzxvzxv</p></th><th class="table-header" colspan="1" rowspan="1"><p></p></th><th class="table-header" colspan="1" rowspan="1"><p>zxvzx</p></th></tr><tr><td class="table-cell" colspan="1" rowspan="1"><p>zxvzzxv</p></td><td class="table-cell" colspan="1" rowspan="1"><p>zxvxv</p></td><td class="table-cell" colspan="1" rowspan="1"><p>zxvzx</p></td></tr><tr><td class="table-cell" colspan="1" rowspan="1"><p>zxv</p></td><td class="table-cell" colspan="1" rowspan="1"><p>zxv</p></td><td class="table-cell" colspan="1" rowspan="1"><p></p></td></tr></tbody></table><p><strong>ok good</strong></p>`,
-              "options": [
-                {
-                  "label": "Run",
-                  "value": "0"
-                },
-                {
-                  "label": "Beauty",
-                  "value": "1"
-                },
-                {
-                  "label": "Quickly",
-                  "value": "2"
-                },
-                {
-                  "label": "Blue",
-                  "value": "3"
-                }
-              ],
-              "item_type": "MCQ",
-              "responses": [],
-              "max_responses": 1,
-              "image_data": {
-                "image": "",
-                "width": null,
-                "height": null
-              },
-              "drawing_writing_split_type": "NONE",
-              "revisit": false
-            },
             {
               "id": "ENG-Qasfasfa8",
               "stimulus": "Which of the <b>following</b> words are <i>coordinating</i> <u>conjunctions</u>?",
@@ -1812,7 +1769,7 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
       "section_settings": {
         "minutes_left": 40,
         "seconds_left": 0,
-        "duration_in_minutes": 40,
+        "duration_in_minutes": 1,
         "shuffle_items": false,
         "shuffle_options": true,
         "allow_calculator": false,
@@ -2423,7 +2380,7 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
       "section_settings": {
         "minutes_left": 40,
         "seconds_left": 0,
-        "duration_in_minutes": 45,
+        "duration_in_minutes": 2,
         "shuffle_items": false,
         "shuffle_options": true,
         "allow_calculator": false,
@@ -4172,7 +4129,7 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
       "section_settings": {
         "minutes_left": 40,
         "seconds_left": 0,
-        "duration_in_minutes": 45,
+        "duration_in_minutes": 1,
         "shuffle_items": false,
         "shuffle_options": true,
         "allow_calculator": false,

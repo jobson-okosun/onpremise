@@ -12,7 +12,7 @@ import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
 import { TauriService } from '../services/ipc/tauri';
 
-@Component({
+@Component({ 
   selector: 'app-usage-guide',
   imports: [NgClass, DialogModule, RouterLink],
   templateUrl: './usage-guide.html',

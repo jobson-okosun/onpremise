@@ -41,24 +41,20 @@ export class LabelImageWithDropdownselect {
 
     currentQuestion.responses[index] = value;
 
-    const possibleResponses = currentQuestion.possible_responses?.[index]?.responses || [];
-    const answerIndex = value ? possibleResponses.findIndex((opt: any) => opt.value === value).toString() : '';
-
-    const oldAnswerIndices = oldAnswers.map((ans, idx) => {
-      if (!ans) return '';
-      const pr = currentQuestion.possible_responses?.[idx]?.responses || [];
-      return pr.findIndex((opt: any) => opt.value === ans).toString();
-    }).join(',');
+    const oldAnswer = oldAnswers[index];
+    const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
 
     this._eventService.logEvent({
-      event_type: oldAnswers[index] ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+      event_type: hasOldAnswer
+        ? (!value ? CandidateEventType.ANSWER_CLEARED : CandidateEventType.ANSWER_CHANGED)
+        : CandidateEventType.ANSWER_SELECTED,
       question_id: currentQuestion.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndices
-    })
-    currentQuestion.lastUpdated = new Date()
+      answer: value ? value.toString() : null,
+      old_answer: hasOldAnswer ? oldAnswer.toString() : null
+    });
+    currentQuestion.lastUpdated = new Date();
 
-    this._store.updateStore({ currentQuestion })
+    this._store.updateStore({ currentQuestion });
   }
 }

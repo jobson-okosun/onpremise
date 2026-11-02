@@ -1,12 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { TextToSpeechService } from './text-to-speech';
+import { ExamSpeechService } from './exam-speech.service';
 import { Store } from '../../store/store';
 import { AlphabetList } from '../../store/model/types';
 import { ExamService } from '../exam';
+import { normalizeForSpeech, SpeechChunk } from './speech/normalizer';
 
 @Injectable()
 export class ClozeTtsShortcutService {
-  private _tts = inject(TextToSpeechService);
+  private _tts = inject(ExamSpeechService);
   private _store = inject(Store);
   private _exam = inject(ExamService);
   private alphabetList = AlphabetList;
@@ -92,23 +93,35 @@ export class ClozeTtsShortcutService {
 
     if (possibleResponses.length === 0) return;
 
-    let message = prefixMessage + `Options for Blank ${activeIndex + 1} are: `;
-    const letters: string[] = [];
+    const chunks: SpeechChunk[] = [];
+    if (prefixMessage) {
+      chunks.push(...normalizeForSpeech(prefixMessage));
+    }
+    chunks.push({ text: `Options for Blank ${activeIndex + 1} are:`, pauseAfterMs: 200 });
 
+    const letters: string[] = [];
     possibleResponses.forEach((opt: any, idx: number) => {
       let cleanLetter = '';
       if (this.alphabetList && this.alphabetList[idx]) {
         cleanLetter = this.alphabetList[idx].replace(/[()]/g, '');
       } else {
-        cleanLetter = String.fromCharCode(65 + idx); // fallback A, B, C...
+        cleanLetter = String.fromCharCode(65 + idx);
       }
-      
       letters.push(cleanLetter);
-      const optText = opt.label?.replace(/<[^>]*>?/gm, ' ').trim() || '';
-      message += `Option ${cleanLetter} is "${optText}". `;
+
+      chunks.push({ text: `Option ${cleanLetter}.`, pauseAfterMs: 150 });
+      const optChunks = normalizeForSpeech(opt.label || '');
+      if (optChunks.length) {
+        optChunks[optChunks.length - 1].pauseAfterMs = 350;
+      }
+      chunks.push(...optChunks);
     });
 
-    message += `Press ${letters.join(' or ')} to select an answer for Blank ${activeIndex + 1}. `;
-    this._tts.speak(message);
+    chunks.push({
+      text: `Press ${letters.join(' or ')} to select an answer for Blank ${activeIndex + 1}.`,
+      pauseAfterMs: 200,
+    });
+
+    this._tts.play(chunks);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, untracked, HostListener } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, OnDestroy, untracked, HostListener } from '@angular/core';
 import { Store } from '../store/store';
 import { Router, RouterLink } from '@angular/router';
 import { HotToastService } from '@ngxpert/hot-toast';
@@ -7,8 +7,7 @@ import { interval } from 'rxjs';
 import { EventService } from '../services/event';
 import { CandidateEventType } from '../store/model/events/events.enum';
 import { SafeHtmlPipe } from '../utils/safe-html.pipe';
-import { TextToSpeechService } from '../services/reader/text-to-speech';
-import { environment } from '../../environments/environment';
+import { ExamSpeechService } from '../services/reader/exam-speech.service';
 import { PostLogin } from '../services/onboarding/post-login';
 import { AuthService } from '../services/auth';
 
@@ -18,12 +17,12 @@ import { AuthService } from '../services/auth';
   templateUrl: './instructions.html',
   styleUrl: './instructions.css',
 })
-export default class Instructions implements OnInit {
+export default class Instructions implements OnInit, OnDestroy {
   private _store = inject(Store)
   private _router = inject(Router)
   private _toast = inject(HotToastService)
   private _eventService = inject(EventService)
-  private _tts = inject(TextToSpeechService)
+  private _tts = inject(ExamSpeechService)
   private _postLoginService = inject(PostLogin)
   private _authService = inject(AuthService)
 
@@ -81,10 +80,17 @@ export default class Instructions implements OnInit {
 
     if (event.key === 'Enter') {
       event.preventDefault();
+      this._tts.stop();
       this._router.navigate(['exam']);
     } else if (event.key.toLowerCase() === 'r') {
-      event.preventDefault();
-      this._tts.announceInstructions();
+      if (this._tts.isTextToSpeechEnabled()) {
+        event.preventDefault();
+        this._tts.announceInstructions();
+      }
     }
+  }
+
+  ngOnDestroy(): void {
+    this._tts.stop();
   }
 }

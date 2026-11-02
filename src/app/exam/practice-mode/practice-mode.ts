@@ -7,7 +7,6 @@ import { useShortcut } from '../../utils/helper';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED } from '../../utils/constants';
-import { TextToSpeechService } from '../../services/reader/text-to-speech';
 import { driver } from 'driver.js';
 import Swal from 'sweetalert2';
 
@@ -37,7 +36,6 @@ export default class PracticeMode implements OnDestroy {
   private _store = inject(Store)
   private _exam = inject(ExamService)
   private breakpointObserver = inject(BreakpointObserver);
-  private _ttsService = inject(TextToSpeechService)
   private _router = inject(Router)
   private sub!: Subscription;
 
@@ -65,7 +63,7 @@ export default class PracticeMode implements OnDestroy {
   multipleChoice = viewChild<any>('multipleChoice')
   yesOrNo = viewChild<any>('yesOrNo')
   trueOrFalse = viewChild<any>('trueOrFalse')
-  
+
   store = computed(() => this._store.store())
   isCandidateSuspendedModalActive = computed(() => false)
   isLogoutNoticeActive = computed(() => false)
@@ -148,7 +146,7 @@ export default class PracticeMode implements OnDestroy {
       .subscribe(() => {
         const width = window.innerWidth;
         this._exam.screenWidth.set(width);
-      });
+      }); 
 
     effect(() => {
       if (!this.isInteractiveTourActive()) return;
@@ -157,10 +155,15 @@ export default class PracticeMode implements OnDestroy {
       const currentQIdx = this.store().currentQuestionIndex;
       const responses = this.store().currentQuestion?.responses || [];
       const showModal = this._exam.showUnattemptedModal();
+      const currentQId = this.store().currentQuestion?.id;
+      const isFlagged = currentQId ? this._exam.isItemFlagged(currentQId) : false;
 
       untracked(() => {
-        if (step === 1 || step === 2 || step === 5 || step === 8 || step === 11 || step === 14) {
+        if (step === 1 || step === 2 || step === 5 || step === 8 || step === 9 || step === 12 || step === 15) {
           // Handled by onNextClick in the step config
+          if (step === 9 && isFlagged) {
+            this.advanceInteractiveTour(10);
+          }
         } else if (step === 3 && currentQIdx === 0 && responses.length > 0) {
           this.advanceInteractiveTour(4); // Paginator to 2
         } else if (step === 4 && currentQIdx === 1) {
@@ -169,19 +172,19 @@ export default class PracticeMode implements OnDestroy {
           this.advanceInteractiveTour(7); // Next Button to 3
         } else if (step === 7 && currentQIdx === 2) {
           this.advanceInteractiveTour(8); // Read Q3
-        } else if (step === 9 && currentQIdx === 2 && responses.length > 0) {
-          this.advanceInteractiveTour(10); // Paginator to 4
-        } else if (step === 10 && currentQIdx === 3) {
-          this.advanceInteractiveTour(11); // Read Q4
-        } else if (step === 12 && currentQIdx === 3 && responses.length > 0) {
-          this.advanceInteractiveTour(13); // Next Button to 5
-        } else if (step === 13 && currentQIdx === 4) {
-          this.advanceInteractiveTour(14); // Read Q5
-        } else if (step === 15 && currentQIdx === 4 && responses.length > 0) {
-          this.advanceInteractiveTour(16); // Submit
-        } else if (step === 16 && showModal) {
+        } else if (step === 10 && currentQIdx === 2 && responses.length > 0) {
+          this.advanceInteractiveTour(11); // Paginator to 4
+        } else if (step === 11 && currentQIdx === 3) {
+          this.advanceInteractiveTour(12); // Read Q4
+        } else if (step === 13 && currentQIdx === 3 && responses.length > 0) {
+          this.advanceInteractiveTour(14); // Next Button to 5
+        } else if (step === 14 && currentQIdx === 4) {
+          this.advanceInteractiveTour(15); // Read Q5
+        } else if (step === 16 && currentQIdx === 4 && responses.length > 0) {
+          this.advanceInteractiveTour(17); // Submit
+        } else if (step === 17 && showModal) {
           setTimeout(() => {
-            this.advanceInteractiveTour(17); // Confirm
+            this.advanceInteractiveTour(18); // Confirm
           }, 300);
         }
       });
@@ -376,7 +379,7 @@ export default class PracticeMode implements OnDestroy {
           element: subjectSwitcherSelector, 
           popover: { 
             title: 'Switch Subjects', 
-            description: 'If your exam has multiple subjects or sections, you can switch between them here at any time.', 
+            description: 'If your exam has multiple subjects or sections, you can switch between them here at any time, or simply press the corresponding number key (1, 2, 3...) on your keyboard to switch directly.', 
             side: 'bottom', align: 'start' 
           }
         },
@@ -392,7 +395,7 @@ export default class PracticeMode implements OnDestroy {
           element: 'app-exam-tools button.bg-red-700\\!', 
           popover: { 
             title: 'Submit Exam', 
-            description: 'When you have finished answering all questions, click this button to submit your exam. It will display a summary of any unanswered questions before final submission.', 
+            description: 'When you have finished answering all questions, click this button or press the "S" key twice quickly (S-S) on your keyboard to submit your exam. It will display a summary of any unanswered questions before final submission.', 
             side: 'bottom', align: 'start' 
           }
         },
@@ -440,7 +443,15 @@ export default class PracticeMode implements OnDestroy {
           element: 'app-question-tools > div > button:nth-child(2)', 
           popover: { 
             title: 'Revisit Later', 
-            description: 'Not sure about the answer? Click here to flag this question so you can review it again later.', 
+            description: 'Not sure about the answer? Click here to mark this question so you can review it again later.', 
+            side: 'bottom', align: 'start' 
+          }
+        },
+        { 
+          element: 'app-question-tools button[title*="Flag"]', 
+          popover: { 
+            title: 'Flag Question', 
+            description: 'If you notice an error with a question (such as missing options, unclear diagrams, or incorrect content), click here to report and flag it.', 
             side: 'bottom', align: 'start' 
           }
         },
@@ -488,7 +499,7 @@ export default class PracticeMode implements OnDestroy {
           element: '#tour-end-btn',  
           popover: { 
             title: 'Review Your Attempts', 
-            description: 'Click here to review which questions you have answered and to submit or end the exam.', 
+            description: 'Click here or press the "S" key twice quickly (S-S) on your keyboard to review which questions you have answered and to submit or end the exam.', 
             side: 'top', align: 'start' 
           }
         }
@@ -609,6 +620,10 @@ export default class PracticeMode implements OnDestroy {
           popover: { title: 'Read the Question', description: 'Read Question 3 carefully. Click Next when ready.', side: 'right', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(9) }
         },
         { 
+          element: 'app-question-tools button[title*="Flag"]', 
+          popover: { title: 'Flag Question', description: 'If you ever spot a mistake in a question or diagram, you can click this Flag button to report it. Click Next to continue.', side: 'bottom', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(10) }
+        },
+        { 
           element: 'app-single-choice .p-5 > div:nth-child(3)', 
           popover: { title: 'Answer Question 3', description: 'Select Option C by clicking it or pressing the "C" key.', side: 'top', align: 'start' }
         },
@@ -618,7 +633,7 @@ export default class PracticeMode implements OnDestroy {
         },
         { 
           element: 'app-single-choice .lg\\:w-1\\/2:first-child .bg-white', 
-          popover: { title: 'Read the Question', description: 'Read Question 4 carefully. Click Next when ready.', side: 'right', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(12) }
+          popover: { title: 'Read the Question', description: 'Read Question 4 carefully. Click Next when ready.', side: 'right', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(13) }
         },
         { 
           element: 'app-single-choice .p-5 > div:nth-child(4)', 
@@ -630,7 +645,7 @@ export default class PracticeMode implements OnDestroy {
         },
         { 
           element: 'app-single-choice .lg\\:w-1\\/2:first-child .bg-white', 
-          popover: { title: 'Read the Question', description: 'Read Question 5 carefully. Click Next when ready.', side: 'right', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(15) }
+          popover: { title: 'Read the Question', description: 'Read Question 5 carefully. Click Next when ready.', side: 'right', align: 'start', showButtons: ['next'], onNextClick: () => this.advanceInteractiveTour(16) }
         },
         { 
           element: 'app-single-choice .p-5 > div:nth-child(2)', 
@@ -638,7 +653,7 @@ export default class PracticeMode implements OnDestroy {
         },
         { 
           element: 'app-exam-tools button.bg-red-700\\!', 
-          popover: { title: 'Submit Exam', description: 'You have answered enough questions! Click Submit Exam to finish the practice.', side: 'bottom', align: 'start' }
+          popover: { title: 'Submit Exam', description: 'You have answered enough questions! Click Submit Exam or press the "S" key twice quickly (S-S) on your keyboard to finish the practice.', side: 'bottom', align: 'start' }
         },
         { 
           element: 'p-dialog button.bg-red-600', 
@@ -781,6 +796,16 @@ export default class PracticeMode implements OnDestroy {
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
     if (isInput) return;
 
+    if (event.key.toLowerCase() === 's') {
+      const currentTime = Date.now();
+      if (currentTime - this.lastPressTime() < this.threshold()) {
+        if (this.canEndExam()) {
+          this._exam.showUnattemptedModal.set(true);
+        }
+      }
+      this.lastPressTime.set(currentTime);
+    }
+
     if (!this.store().currentQuestion) return;
 
     let component;
@@ -789,13 +814,6 @@ export default class PracticeMode implements OnDestroy {
     }
 
     useShortcut(event.key, this.store().currentQuestionIndex, this.paginator()!, this.totalSectionsQuestions(), this.store().currentQuestion!, component)
-
-    const letters = 'abcdefghijk';
-    if (letters.includes(event.key.toLowerCase())) {
-      setTimeout(() => {
-        this._ttsService.announceFeedback(`You just selected Option ${event.key.toUpperCase()}.`);
-      }, 100);
-    }
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -805,11 +823,21 @@ export default class PracticeMode implements OnDestroy {
     
     if (isInput) return;
 
-    const key = event.key.toLowerCase();
-    if (key === 'q') {
-      this._ttsService.announceCurrentQuestion();
-    } else if (key === 'o') {
-      this._ttsService.announceCurrentOptions();
+    if (event.ctrlKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    const num = parseInt(event.key, 10);
+    if (!isNaN(num) && num >= 1 && num <= 9) {
+      const targetIndex = num - 1;
+      const sections = this.store().sections;
+      if (sections && targetIndex < sections.length) {
+        const targetSection = sections[targetIndex];
+        if (this.store().currentSection?.id !== targetSection.id) {
+          this.selectSectionInFullMode(targetSection);
+        }
+      }
+      return;
     }
   }
 

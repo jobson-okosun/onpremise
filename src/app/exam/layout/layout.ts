@@ -42,7 +42,7 @@ import { environment } from '../../../environments/environment';
 import { LiveProctoringService } from '../../services/live-proctoring/live-proctoring.service';
 import { MINIMUM_REASONABLE_DOWNLOAD_SPEED } from '../../utils/constants';
 import { EventService } from '../../services/event';
-import { TextToSpeechService } from '../../services/reader/text-to-speech';
+import { ExamSpeechService } from '../../services/reader/exam-speech.service';
 
 @Component({
   selector: 'app-layout',
@@ -63,8 +63,11 @@ export default class Layout implements OnDestroy {
   private _liveProctoring = inject(LiveProctoringService)
   private breakpointObserver = inject(BreakpointObserver);
   private _eventService = inject(EventService)
-  private _ttsService = inject(TextToSpeechService)
+  private _ttsService = inject(ExamSpeechService)
   private sub!: Subscription;
+
+  private announcedTimeMinutes = new Set<number>();
+  private pendingTimeMinute: number | null = null;
 
   isTargetSpeaking = computed(() => this._liveProctoring.isTargetSpeaking())
 
@@ -174,7 +177,28 @@ export default class Layout implements OnDestroy {
 
   constructor() {
     effect(() => {
-      this._ttsService.autoAnnounceQuestion();
+      const q = this.store().currentQuestion;
+      const s = this.store().currentSection;
+      if (q && s) {
+        untracked(() => {
+          this._ttsService.autoAnnounceQuestion();
+        });
+      }
+    });
+
+    effect(() => {
+      const isModalOpen = this.showUnattemptedModal();
+      if (isModalOpen) {
+        untracked(() => {
+          this._ttsService.announceEndExamSummary(this.overviewSections());
+        });
+      } else {
+        untracked(() => {
+          if (this._ttsService.speaking()) {
+            this._ttsService.stop();
+          }
+        });
+      }
     });
 
     this.sub = this.breakpointObserver
@@ -235,6 +259,52 @@ export default class Layout implements OnDestroy {
         onCleanup(() => resizeObserver.disconnect());
       }
     });
+
+    effect(() => {
+      if (!this._ttsService.isTextToSpeechEnabled()) return;
+
+      const timer = this._exam.timeDisplay();
+      const remainingSeconds = timer.min * 60 + timer.sec;
+      const isSpeaking = this._ttsService.state() !== 'idle';
+
+      // Reset milestones if compensatory time or time was added back
+      for (const m of this.announcedTimeMinutes) {
+        if (remainingSeconds > m * 60 + 30) {
+          this.announcedTimeMinutes.delete(m);
+        }
+      }
+
+      // Check for 5 (300s), 3 (180s), or 2 (120s) minutes milestones
+      if (timer.sec === 0 && [5, 3, 2].includes(timer.min) && !this.announcedTimeMinutes.has(timer.min)) {
+        if (!isSpeaking) {
+          this.announcedTimeMinutes.add(timer.min);
+          this.pendingTimeMinute = null;
+          untracked(() => {
+            this._ttsService.speak(`You have ${timer.min} minutes left for the exam to end.`);
+          });
+        } else {
+          // TTS is busy reading; hold announcement until reading finishes
+          this.pendingTimeMinute = timer.min;
+        }
+      }
+
+      // If announcement was held because TTS was busy, speak as soon as it becomes idle (within 30s)
+      if (this.pendingTimeMinute && !isSpeaking) {
+        const milestoneSeconds = this.pendingTimeMinute * 60;
+        if (remainingSeconds >= milestoneSeconds - 30) {
+          const min = this.pendingTimeMinute;
+          this.pendingTimeMinute = null;
+          this.announcedTimeMinutes.add(min);
+          untracked(() => {
+            this._ttsService.speak(`You have ${min} minutes left for the exam to end.`);
+          });
+        } else {
+          // Grace period (30s) expired
+          this.announcedTimeMinutes.add(this.pendingTimeMinute);
+          this.pendingTimeMinute = null;
+        }
+      }
+    });
   }
 
   async ngOnInit() {
@@ -277,6 +347,8 @@ export default class Layout implements OnDestroy {
     this.disableContextMenu()
     this.disableCopyAndPaste()
     this.disablePrintAndScreenshot()
+    this.announcedTimeMinutes.clear();
+    this.pendingTimeMinute = null;
  
     this._exam.startExam()
 
@@ -437,6 +509,11 @@ export default class Layout implements OnDestroy {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    const globalModalIsOpened = document.querySelector('.root-modal');
+    if (globalModalIsOpened) {
+      return;
+    }
+
     if (this._exam.isProctoringNetworkRetryActive() || this._exam.isPermanentNetworkLossModalActive()) {
       return;
     }
@@ -445,6 +522,23 @@ export default class Layout implements OnDestroy {
     const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
     
     if (isInput) {
+      return;
+    }
+
+    if (event.ctrlKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    const num = parseInt(event.key, 10);
+    if (!isNaN(num) && num >= 1 && num <= 9) {
+      const targetIndex = num - 1;
+      const sections = this.store().sections;
+      if (sections && targetIndex < sections.length) {
+        const targetSection = sections[targetIndex];
+        if (this.store().currentSection?.id !== targetSection.id) {
+          this.selectSectionInFullMode(targetSection);
+        }
+      }
       return;
     }
 
@@ -537,9 +631,10 @@ export default class Layout implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._exam.destroySubscription()
+    this._ttsService.stop();
+    this._exam.destroySubscription();
     this.sub.unsubscribe();
-    this._exam.cleanUpProctoring()
+    this._exam.cleanUpProctoring();
   }
 
   handleAutoProctorEvent(msg: any) {

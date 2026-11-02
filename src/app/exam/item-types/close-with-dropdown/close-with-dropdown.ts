@@ -7,7 +7,7 @@ import { CandidateEventType } from '../../../store/model/events/events.enum';
 import { EventService } from '../../../services/event';
 import { SafeHtmlPipe } from '../../../utils/safe-html.pipe';
 import { ClozeTtsShortcutService } from '../../../services/reader/cloze-tts-shortcut.service';
-import { TextToSpeechService } from '../../../services/reader/text-to-speech';
+import { ExamSpeechService } from '../../../services/reader/exam-speech.service';
 
 @Component({
   selector: 'app-close-with-dropdown',
@@ -22,7 +22,7 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
   private renderer = inject(Renderer2);
 
   private ttsShortcutService = inject(ClozeTtsShortcutService);
-  private tts = inject(TextToSpeechService)
+  private tts = inject(ExamSpeechService)
 
   store = computed(() => this._store.store());
   currentQuestionId = computed(() => this.store().currentQuestion?.id);
@@ -99,21 +99,14 @@ export class CloseWithDropdown implements OnInit, AfterViewChecked {
     const oldAnswer = oldAnswers[index];
     const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
 
-    const possibleResponses = currentQuestion.possible_responses?.[index]?.responses || [];
-    const answerIndex = value ? possibleResponses.findIndex((opt: any) => opt.value === value).toString() : '';
-
-    const oldAnswerIndices = oldAnswers.map((ans, idx) => {
-      if (!ans) return '';
-      const pr = currentQuestion.possible_responses?.[idx]?.responses || [];
-      return pr.findIndex((opt: any) => opt.value === ans).toString();
-    }).join(',');
-
     this._eventService.logEvent({
-      event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
+      event_type: hasOldAnswer
+        ? (!value ? CandidateEventType.ANSWER_CLEARED : CandidateEventType.ANSWER_CHANGED)
+        : CandidateEventType.ANSWER_SELECTED,
       question_id: currentQuestion.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndices
+      answer: value ? value.toString() : null,
+      old_answer: hasOldAnswer ? oldAnswer.toString() : null
     });
 
     currentQuestion!.lastUpdated = new Date()

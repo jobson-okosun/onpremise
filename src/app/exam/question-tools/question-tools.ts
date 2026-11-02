@@ -10,7 +10,7 @@ import { KonvaToolsEvent } from '../item-types/drawing-and-writing/services/even
 import { EventService } from '../../services/event';
 import { SafeHtmlPipe } from '../../utils/safe-html.pipe';
 import { getParentLabel as getParentLabelHelper, getChildLabel as getChildLabelHelper } from '../../utils/helper';
-import { TextToSpeechService } from '../../services/reader/text-to-speech';
+import { ExamSpeechService } from '../../services/reader/exam-speech.service';
 import { DrawingAndWritingStore } from '../item-types/drawing-and-writing/services/store.service';
 import { FormsModule } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
@@ -26,11 +26,12 @@ export class QuestionTools {
   private _store = inject(Store)
   private _konvaEventTools = inject(KonvaToolsEvent)
   private _eventService = inject(EventService)
-  private _textToSpeech = inject(TextToSpeechService)
+  private _speech = inject(ExamSpeechService)
   private _drawingStore = inject(DrawingAndWritingStore)
   private _toast = inject(HotToastService)
 
-  isTextToSpeechEnabled = computed(() => this._textToSpeech.isTextToSpeechEnabled());
+  isTextToSpeechEnabled = computed(() => this._speech.isTextToSpeechEnabled());
+  speechState = computed(() => this._speech.state());
   isCurrentQuestionFlagged = computed(() => {
     const qId = this.currentQuestion()?.id;
     return qId ? this._exam.isItemFlagged(qId) : false;
@@ -126,8 +127,19 @@ export class QuestionTools {
     })
   }
 
+  toggleSpeech() {
+    const s = this._speech.state();
+    if (s === 'speaking') {
+      this._speech.pause();
+    } else if (s === 'paused') {
+      this._speech.resume();
+    } else {
+      this._speech.announceCurrentQuestion();
+    }
+  }
+
   readCurrentQuestion() {
-    this._textToSpeech.announceCurrentQuestion();
+    this.toggleSpeech();
   }
 
   getParentLabel(parentIndex: number): string {

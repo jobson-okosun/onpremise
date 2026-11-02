@@ -97,7 +97,7 @@ export class LabelImageWithDragAndDrop {
       boxes[idx] = option
       this.labels.set(boxes)
 
-      this.captureResponses(CandidateEventType.ANSWER_SELECTED, option.value)
+      this.captureResponses(CandidateEventType.ANSWER_SELECTED, option.value, null)
       return
     }
 
@@ -109,7 +109,7 @@ export class LabelImageWithDragAndDrop {
       if (item) {
         boxes[prevIdx] = null
         this.labels.set(boxes)
-        this.captureResponses(CandidateEventType.ANSWER_CLEARED, item.value)
+        this.captureResponses(CandidateEventType.ANSWER_CLEARED, null, item.value)
       }
 
       return
@@ -125,33 +125,30 @@ export class LabelImageWithDragAndDrop {
       boxes[currIdx] = tmp
       this.labels.set(boxes)
 
-      this.captureResponses(CandidateEventType.ANSWER_CHANGED, boxes[currIdx]?.value || '')
+      this.captureResponses(CandidateEventType.ANSWER_CHANGED, boxes[currIdx]?.value || '', tmp?.value || null)
       return
     }
   }
 
-  captureResponses(eventType: CandidateEventType.ANSWER_SELECTED | CandidateEventType.ANSWER_CHANGED | CandidateEventType.ANSWER_CLEARED, answerValue: string) {
+  captureResponses(
+    eventType: CandidateEventType.ANSWER_SELECTED | CandidateEventType.ANSWER_CHANGED | CandidateEventType.ANSWER_CLEARED,
+    answerValue: string | null,
+    oldAnswerValue: string | null = null
+  ) {
     const currentQuestion = this.store().currentQuestion
     if (!currentQuestion) {
       return
     }
 
     const boxes = this.labels()
-    const oldAnswers = [...currentQuestion.responses]
     const newAnswers = boxes.map(b => b ? b.value : '')
-
-    const answerIndex = answerValue ? currentQuestion.options.findIndex(opt => opt.value === answerValue).toString() : '';
-    const oldAnswerIndices = oldAnswers.map(ans => {
-      if (!ans) return '';
-      return currentQuestion.options.findIndex(opt => opt.value === ans).toString();
-    }).join(',');
 
     this._eventService.logEvent({
       event_type: eventType,
       question_id: currentQuestion.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndices
+      answer: answerValue ? answerValue.toString() : null,
+      old_answer: oldAnswerValue ? oldAnswerValue.toString() : null
     })
 
     currentQuestion.responses = newAnswers

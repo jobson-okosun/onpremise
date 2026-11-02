@@ -47,19 +47,12 @@ export class ChoiceMatrix {
 
     const hasOldAnswer = oldAnswers[stem] !== undefined && oldAnswers[stem] !== null && oldAnswers[stem] !== '';
 
-    const answerIndex = value ? currentQuestion.options.findIndex(opt => opt.value === value).toString() : '';
-
-    const oldAnswerIndices = oldAnswers.map(ans => {
-      if (!ans) return '';
-      return currentQuestion.options.findIndex(opt => opt.value === ans).toString();
-    }).join(',');
-
     this._eventService.logEvent({
       event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
       question_id: currentQuestion.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndices
+      answer: value != null ? value.toString() : null,
+      old_answer: hasOldAnswer ? oldAnswers[stem].toString() : null
     })
     currentQuestion!.lastUpdated = new Date()
 

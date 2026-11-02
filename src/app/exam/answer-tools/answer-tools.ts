@@ -43,12 +43,14 @@ export class AnswerTools {
 
     this._store.updateStore({ currentQuestion })
 
+    const validOldAnswers = oldAnswers.filter(ans => ans !== undefined && ans !== null && ans !== '');
+
     this._eventService.logEvent({
       event_type: CandidateEventType.ANSWER_CLEARED,
       question_id: this.store().currentQuestion!.id,
       section_id: this.store().currentSection!.id,
       answer: null,
-      old_answer: oldAnswers.length ? oldAnswers.join(',') : null
+      old_answer: validOldAnswers.length ? validOldAnswers.join(',') : null
     })
   }
 }

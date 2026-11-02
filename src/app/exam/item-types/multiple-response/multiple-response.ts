@@ -63,16 +63,14 @@ export class MultipleResponse {
     this._store.updateStore({ currentQuestion: this.store().currentQuestion });
 
     const isAdding = !oldAnswers.includes(value);
-
-    const answerIndex = this.store().currentQuestion!.options.findIndex(opt => opt.value === value).toString();
-    const oldAnswerIndices = oldAnswers.length ? oldAnswers.map(ans => this.store().currentQuestion!.options.findIndex(opt => opt.value === ans)).join(',') : null;
+    const validOldAnswers = oldAnswers.filter(ans => ans !== undefined && ans !== null && ans !== '');
 
     this._eventService.logEvent({
       event_type: isAdding ? CandidateEventType.ANSWER_SELECTED : CandidateEventType.ANSWER_CLEARED,
       question_id: this.store().currentQuestion!.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndices
-    })
+      answer: value != null ? value.toString() : null,
+      old_answer: validOldAnswers.length ? validOldAnswers.join(',') : null
+    });
   }
 }

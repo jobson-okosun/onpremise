@@ -1,0 +1,138 @@
+import { normalizeForSpeech, toSpeechText } from './normalizer';
+
+/**
+ * Golden tests: if you change a rule, re-read the diff out loud before
+ * updating an expectation. Runs under Jasmine/Karma (Angular CLI default) or Jest.
+ */
+const CASES: [string, string][] = [
+  ["Which of the following is <b>NOT</b> a noble gas?",
+   "Which of the following is not a noble gas?"],
+  ["The ______ is the powerhouse of the cell.",
+   "The blank is the powerhouse of the cell."],
+  ["I and III only",
+   "1 and 3 only"],
+  ["H<sub>2</sub>SO<sub>4</sub>",
+   "H 2 S O 4"],
+  ["What is the oxidation number of S in SO<sub>4</sub><sup>2-</sup>?",
+   "What is the oxidation number of S in S O 4, 2 minus?"],
+  ["CaCO<sub>3</sub>(s) → CaO(s) + CO<sub>2</sub>(g)",
+   "C A C O 3, solid, gives C A O, solid, plus C O 2, gas,"],
+  ["N<sub>2</sub> + 3H<sub>2</sub> ⇌ 2NH<sub>3</sub>",
+   "N 2 plus 3 H 2 is in equilibrium with 2 N H 3"],
+  ["Ca(OH)2 reacts with HCl to give CaCl2",
+   "C A open bracket O H close bracket 2 reacts with H C L to give C A C L 2"],
+  ["CuSO4·5H2O is blue",
+   "C U S O 4, dot 5 H 2 O is blue"],
+  ["Water (H2O) is a compound.",
+   "Water (H 2 O) is a compound."],
+  ["The electronic configuration 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>1</sup> belongs to",
+   "The electronic configuration 1 s 2, 2 s 2, 2 p 6, 3 s 1 belongs to"],
+  ["\\ce{SO4^2-}",
+   "S O 4, 2 minus"],
+  ["What is the pH of 0.01 mol dm<sup>-3</sup> HCl?",
+   "What is the p H of 0.01 moles per cubic decimetre H C L?"],
+  ["He said In this case No one Can do it. SHOW your working.",
+   "He said In this case No one Can do it. SHOW your working."],
+  ["A BSc degree costs N5000",
+   "A BSc degree costs 5000 naira"],
+  ["Solve x<sup>2</sup> + 5x + 6 = 0",
+   "Solve x squared plus 5x plus 6 equals 0"],
+  ["The speed of light is 3 × 10<sup>8</sup> m/s",
+   "The speed of light is 3 times 10 to the power of 8 metres per second"],
+  ["Evaluate log<sub>2</sub> 8",
+   "Evaluate log base 2 of 8"],
+  ["Simplify (x+1)^2 - (x-1)^2",
+   "Simplify open bracket x plus 1 close bracket squared minus open bracket x minus 1 close bracket squared"],
+  ["Water boils at 100<sup>0</sup>C",
+   "Water boils at 100 degrees Celsius"],
+  ["A triangle has an angle of 60<sup>o</sup>",
+   "A triangle has an angle of 60 degrees"],
+  ["Express ½ + ¾ as a fraction",
+   "Express 1 half plus 3 quarters as a fraction"],
+  ["The acceleration is 9.8 m/s<sup>2</sup>, mass 1 kg",
+   "The acceleration is 9.8 metres per second squared, mass 1 kilogram"],
+  ["Cost: ₦5,000 or $20, increased by 15%",
+   "Cost: 5,000 naira or 20 dollars, increased by 15 per cent"],
+  ["The 21<sup>st</sup> century",
+   "The 21st century"],
+  ["WHICH OF THE FOLLOWING IS NOT A METAL?",
+   "which of the following is not a metal?"],
+  ["The 2 men walked 5 m in 3 s.",
+   "The 2 men walked 5 metres in 3 seconds."],
+  ["Solve \\( x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\)",
+   "Solve x equals the fraction, minus b plus or minus the square root of, b squared minus 4 a c, end root, over, 2 a, end fraction"],
+  ["\\(\\int_0^1 x^2\\,dx\\)",
+   "the integral from 0 to 1 of x squared d x"],
+  ["\\(\\lim_{x \\to 0} \\frac{\\sin x}{x}\\)",
+   "the limit as x approaches 0, of the fraction, sine x, over, x, end fraction"],
+  ["\\(\\sin^2\\theta + \\cos^2\\theta = 1\\)",
+   "sine squared theta plus cosine squared theta equals 1"],
+  ["<math><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup></math>",
+   "1 over 2 plus x squared"],
+  ["<span class=\"katex\"><span class=\"katex-mathml\"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">\\frac{a}{b}</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\">junk</span></span> is a fraction",
+   "a over b is a fraction"],
+  ["<table><tr><th>Metal</th><th>Density</th></tr><tr><td>Iron</td><td>7.9 g/cm<sup>3</sup></td></tr></table>",
+   "A table with 1 row. Columns: Metal, Density. Row 1: Metal: Iron, Density: 7.9 grams per cubic centimetre. End of table."],
+  ["<span data-speech=\"the Michaelis constant\">K<sub>m</sub></span> is",
+   "the Michaelis constant is"],
+  ["Convert 101101<sub>2</sub> to base 10",
+   "Convert 1 0 1 1 0 1, base 2, to base 10"],
+  ["Convert 245<sub>10</sub> to base 8 and 1A<sub>16</sub> to base 2",
+   "Convert 245, base 10, to base 8 and 1 A, base 16, to base 2"],
+  ["Share ₦600 in the ratio 3:1",
+   "Share 600 naira in the ratio 3 to 1"],
+  ["The phenotypic ratio is 9:3:3:1",
+   "The phenotypic ratio is 9 to 3 to 3 to 1"],
+  ["A map has a scale of 1:50,000",
+   "A map has a scale of 1 to 50,000"],
+  ["The meeting is at 10:30. Read John 3:16.",
+   "The meeting is at 10:30. Read John 3:16."],
+  ["Lagos is at 6°27′N 3°24′E",
+   "Lagos is at 6 degrees 27 minutes north 3 degrees 24 minutes east"],
+  ["Find the bearing N30°E of Q from P, latitude 40°N",
+   "Find the bearing north 30 degrees east of Q from P, latitude 40 degrees north"],
+  ["Balance b/d ₦20,000. Dr Cash a/c, Cr Sales a/c. Figures in ₦'000. Depreciation (1,250.00)",
+   "Balance brought down 20,000 naira. debit Cash account, credit Sales account. Figures in thousands of naira. Depreciation minus 1,250.00"],
+  ["Dr. Okafor visited Lagos (15,000,000 people)",
+   "Dr. Okafor visited Lagos (15,000,000 people)"],
+  ["A torque of 20 N m and momentum 5 kg m s<sup>-1</sup>, specific heat 4200 J kg<sup>-1</sup> K<sup>-1</sup>",
+   "A torque of 20 newton metres and momentum 5 kilogram metres per second, specific heat 4200 joules per kilogram per kelvin"],
+  ["A 10 μF capacitor in a 2 T field, 60 dB",
+   "A 10 microfarad capacitor in a 2 tesla field, 60 decibels"],
+  ["Choose the word with the same vowel sound as the underlined: b<u>oo</u>k",
+   "Choose the word with the same vowel sound as the underlined: book, with the letters o o underlined,"],
+  ["The stressed syllable is in capitals: proGRESS",
+   "The stressed syllable is in capitals: progress, with the letters g r e s s in capitals,"],
+  ["Which word contains the sound /θ/?",
+   "Which word contains the sound, phonetic symbol theta?"],
+  ["He wrote to the AA in the USA in 2020.",
+   "He wrote to the AA in the USA in 2020."],
+  ["<sup>235</sup><sub>92</sub>U + <sup>1</sup><sub>0</sub>n → <sup>141</sup><sub>56</sub>Ba + <sup>92</sup><sub>36</sub>Kr + 3<sup>1</sup><sub>0</sub>n",
+   "uranium 235, atomic number 92 plus a neutron gives barium 141, atomic number 56 plus krypton 92, atomic number 36 plus 3 neutrons"],
+  ["²²⁶₈₈Ra → ²²²₈₆Rn + ⁴₂He",
+   "radium 226, atomic number 88 gives radon 222, atomic number 86 plus helium 4, an alpha particle"],
+  ["What is the output of <code>a == b && c != d</code>?",
+   "What is the output of a is equal to b and c is not equal to d?"],
+  ["In a cross Aa x Aa, what fraction of the offspring are aa?",
+   "In a cross capital A small a, crossed with, capital A small a, what fraction of the offspring are small a small a?"],
+  ["A colour-blind man X<sup>c</sup>Y marries a carrier X<sup>C</sup>X<sup>c</sup>. Find the genotypes.",
+   "A colour-blind man X small c, Y marries a carrier X capital C, X small c. Find the genotypes."],
+];
+
+describe('normalizeForSpeech', () => {
+  for (const [html, expected] of CASES) {
+    it(html, () => expect(toSpeechText(html)).toBe(expected));
+  }
+});
+
+describe('language tagging', () => {
+  it('tags lang="fr" spans', () => {
+    const chunks = normalizeForSpeech('Translate: <span lang="fr">Bonjour, ça va?</span> into English.');
+    expect(chunks.find((c) => c.lang === 'fr')?.text).toBe('Bonjour, ça va?');
+  });
+  it('detects Yoruba by its letters', () => {
+    const chunks = normalizeForSpeech('<p>Ọmọ náà lọ sí ọjà.</p><p>Choose the correct option.</p>');
+    expect(chunks[0].lang).toBe('yo');
+    expect(chunks[1].lang).toBeUndefined();
+  });
+});

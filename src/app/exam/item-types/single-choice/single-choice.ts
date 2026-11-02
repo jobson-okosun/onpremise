@@ -35,15 +35,12 @@ export class SingleChoice {
 
     const hasOldAnswer = oldAnswer !== undefined && oldAnswer !== null && oldAnswer !== '';
 
-    const answerIndex = currentQuestion!.options.findIndex(opt => opt.value === value).toString();
-    const oldAnswerIndex = hasOldAnswer ? currentQuestion!.options.findIndex(opt => opt.value === oldAnswer).toString() : null;
-
     this._eventService.logEvent({
       event_type: hasOldAnswer ? CandidateEventType.ANSWER_CHANGED : CandidateEventType.ANSWER_SELECTED,
       question_id: currentQuestion!.id,
       section_id: this.store().currentSection!.id,
-      answer: answerIndex,
-      old_answer: oldAnswerIndex
+      answer: value != null ? value.toString() : null,
+      old_answer: hasOldAnswer ? oldAnswer.toString() : null
     })
 
     currentQuestion!.responses[0] = value
